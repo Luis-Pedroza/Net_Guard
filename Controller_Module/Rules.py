@@ -83,8 +83,11 @@ class Firewall_Rules():
             # Execute command and check if it has an error
             output = subprocess.run(command, shell=True, capture_output=True, encoding='cp850')
             if output.returncode != 0:
-                # show the error
-                self.message.showMessage('UNABLE_To_addRule',output.stdout.splitlines()[1], self.iconFail)
+                # check if stdout has an error of use or elevation
+                if output.stdout.splitlines()[1] != "":
+                    self.message.showMessage('UNABLE_To_addRule',output.stdout.splitlines()[1], self.iconFail)
+                else: 
+                    self.message.showMessage('UNABLE_To_addRule',output.stdout, self.iconFail)
             else: 
                 # Show confirmation
                 self.message.showMessage('Se agrego la regla','',self.iconCorrect)
@@ -103,8 +106,11 @@ class Firewall_Rules():
             # Execute command and check if it has an error
             output = subprocess.run(command, shell=True, capture_output=True, encoding='cp850')
             if output.returncode != 0:
-                # Show error message
-                self.message.showMessage('UNABLE_To_deleteRule',output.stdout.splitlines()[1], self.iconFail)
+                # check if stdout has an error of use or elevation
+                if output.stdout.splitlines()[1] != "":
+                    self.message.showMessage('UNABLE_To_deleteRule',output.stdout.splitlines()[1], self.iconFail)
+                else: 
+                    self.message.showMessage('UNABLE_To_deleteRule',output.stdout, self.iconFail)
             else: 
                 # Show confirmation
                 self.message.showMessage('Se elimino la regla', '', self.iconCorrect)
@@ -120,10 +126,12 @@ class Firewall_Rules():
         command = f'netsh advfirewall firewall set rule name= "{oldName}" dir={oldDirection} protocol={oldProtocol} new name= "{name}" dir={direction} protocol={protocol} action={action} {port} profile={profile} description="{description}" enable={enable}'
         try:
             # Execute command and check if there's an error
-            output = subprocess.run(command, shell=True, capture_output=True, text=True)
+            output = subprocess.run(command, shell=True, capture_output=True, encoding='cp850')
             if output.returncode != 0:
-                # Show error message
-                self.message.showMessage('UNABLE_To_editRule',output.stdout.splitlines()[1], self.iconFail)
+                if output.stdout.splitlines()[1] != "":
+                    self.message.showMessage('UNABLE_To_editRule',output.stdout.splitlines()[1], self.iconFail)
+                else: 
+                    self.message.showMessage('UNABLE_To_editRule',output.stdout, self.iconFail)
             else: 
                 # Show confirmation
                 self.message.showMessage('Se edito la regla','',self.iconCorrect)
