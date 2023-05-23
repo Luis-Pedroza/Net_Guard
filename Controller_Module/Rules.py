@@ -84,7 +84,7 @@ class Firewall_Rules():
             output = subprocess.run(command, shell=True, capture_output=True, encoding='cp850')
             if output.returncode != 0:
                 # show the error
-                self.message.showMessage('UNABLE_To_addRule',output.stdout, self.iconFail)
+                self.message.showMessage('UNABLE_To_addRule',output.stdout.splitlines()[1], self.iconFail)
             else: 
                 # Show confirmation
                 self.message.showMessage('Se agrego la regla','',self.iconCorrect)
@@ -104,7 +104,7 @@ class Firewall_Rules():
             output = subprocess.run(command, shell=True, capture_output=True, encoding='cp850')
             if output.returncode != 0:
                 # Show error message
-                self.message.showMessage('UNABLE_To_deleteRule',output.stdout, self.iconFail)
+                self.message.showMessage('UNABLE_To_deleteRule',output.stdout.splitlines()[1], self.iconFail)
             else: 
                 # Show confirmation
                 self.message.showMessage('Se elimino la regla', '', self.iconCorrect)
@@ -123,7 +123,7 @@ class Firewall_Rules():
             output = subprocess.run(command, shell=True, capture_output=True, text=True)
             if output.returncode != 0:
                 # Show error message
-                self.message.showMessage('UNABLE_To_editRule',output.stdout, self.iconFail)
+                self.message.showMessage('UNABLE_To_editRule',output.stdout.splitlines()[1], self.iconFail)
             else: 
                 # Show confirmation
                 self.message.showMessage('Se edito la regla','',self.iconCorrect)
