@@ -54,24 +54,42 @@ class Firewall_Rules():
         else:
             command = f'netsh advfirewall firewall show rule name="{name}" profile="{profile}" dir={direction} verbose'
         rule_data = []
-
-        try:
-            # Execute command and get output
+        # Execute command and get output
+        output = subprocess.run(command, shell=True, capture_output=True, encoding='cp850')
+        lines = output.stdout.splitlines()
+        # Check if rule is'nt showing because of the profile
+        if lines[1] != 'Ninguna regla coincide con los criterios especificados.':
+            try:
+                rule_dict = {}
+                for line in lines:
+                    if line.startswith('Nombre de regla:'):
+                        rule_dict = {'Nombre de regla': line.split(':', 1)[1].strip()}
+                        rule_data.append(rule_dict)
+                    elif rule_data and ':' in line:
+                        key, value = [x.strip() for x in line.split(':', 1)]
+                        rule_dict[key] = value
+            # Exception control
+            except Exception as exception:
+                self.message.showMessage('UNABLE_TO_EXECUTE_searchRules', exception, self.iconFail)
+            finally: return rule_data
+        # if Therese's a problem with the profile, search without it  
+        else:
+            command = f'netsh advfirewall firewall show rule name="{name}" dir={direction} verbose'
             output = subprocess.run(command, shell=True, capture_output=True, encoding='cp850')
             lines = output.stdout.splitlines()
-
-            rule_dict = {}
-            for line in lines:
-                if line.startswith('Nombre de regla:'):
-                    rule_dict = {'Nombre de regla': line.split(':', 1)[1].strip()}
-                    rule_data.append(rule_dict)
-                elif rule_data and ':' in line:
-                    key, value = [x.strip() for x in line.split(':', 1)]
-                    rule_dict[key] = value
-        # Exception control
-        except Exception as exception:
-            self.message.showMessage('UNABLE_TO_EXECUTE_searchRules', exception, self.iconFail)
-        finally: return rule_data
+            try:
+                rule_dict = {}
+                for line in lines:
+                    if line.startswith('Nombre de regla:'):
+                        rule_dict = {'Nombre de regla': line.split(':', 1)[1].strip()}
+                        rule_data.append(rule_dict)
+                    elif rule_data and ':' in line:
+                        key, value = [x.strip() for x in line.split(':', 1)]
+                        rule_dict[key] = value
+            # Exception control
+            except Exception as exception:
+                self.message.showMessage('UNABLE_TO_EXECUTE_searchRules', exception, self.iconFail)
+            finally: return rule_data
 
     # Method to add rule
     def addRule(self, name, direction, action, protocol, port, profile, description, enable):
@@ -90,7 +108,7 @@ class Firewall_Rules():
                     self.message.showMessage('UNABLE_To_addRule',output.stdout, self.iconFail)
             else: 
                 # Show confirmation
-                self.message.showMessage('Se agrego la regla','',self.iconCorrect)
+                self.message.showMessage('Se agregó la regla','',self.iconCorrect)
         # exception control
         except Exception as exception: 
             self.message.showMessage('UNABLE_TO_EXECUTE_addRule', exception, self.iconFail)
@@ -113,7 +131,7 @@ class Firewall_Rules():
                     self.message.showMessage('UNABLE_To_deleteRule',output.stdout, self.iconFail)
             else: 
                 # Show confirmation
-                self.message.showMessage('Se elimino la regla', '', self.iconCorrect)
+                self.message.showMessage('Se eliminó la regla', '', self.iconCorrect)
         # exception control
         except subprocess.CalledProcessError as exception:
             self.message.showMessage('UNABLE_TO_EXECUTE_deleteRule', exception, self.iconFail)
@@ -123,8 +141,13 @@ class Firewall_Rules():
         # Check if there is a description, if not then add None
         if description == "":
             description = "None"
-        command = f'netsh advfirewall firewall set rule name= "{oldName}" dir={oldDirection} protocol={oldProtocol} new name= "{name}" dir={direction} protocol={protocol} action={action} {port} profile={profile} description="{description}" enable={enable}'
+        if protocol != 'any':
+            command = f'netsh advfirewall firewall set rule name= "{oldName}" dir={oldDirection} protocol={oldProtocol} new name= "{name}" dir={direction} protocol={protocol} action={action} {port} profile={profile} description="{description}" enable={enable}'
+        else:
+            command = f'netsh advfirewall firewall set rule name= "{oldName}" dir={oldDirection} protocol={oldProtocol} new name= "{name}" dir={direction} protocol={protocol} action={action} profile={profile} description="{description}" enable={enable}'
+
         try:
+            print(command)
             # Execute command and check if there's an error
             output = subprocess.run(command, shell=True, capture_output=True, encoding='cp850')
             if output.returncode != 0:
@@ -134,7 +157,7 @@ class Firewall_Rules():
                     self.message.showMessage('UNABLE_To_editRule',output.stdout, self.iconFail)
             else: 
                 # Show confirmation
-                self.message.showMessage('Se edito la regla','',self.iconCorrect)
+                self.message.showMessage('Se editó la regla','',self.iconCorrect)
         except subprocess.CalledProcessError as exception:
             # Exception control
             self.message.showMessage('UNABLE_TO_EXECUTE_addRule', exception, self.iconFail)

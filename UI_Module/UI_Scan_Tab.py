@@ -82,7 +82,7 @@ class Ports_Range(object):
 
     # Method to change range values
     def change(self):
-        code = 'Se cambio el rango seleccionado'
+        code = 'Se cambió el rango seleccionado'
         # change both values (TCP, UDP)
         # status False means an error
         if self.checkTCP.isChecked() and self.checkUDP.isChecked():
@@ -102,7 +102,7 @@ class Ports_Range(object):
                 self.message.showMessage(code,'',self.icon)
         # None checked
         else:
-            code = 'No selecciono una opción'
+            code = 'No seleccionó una opción'
             self.message.showMessage(code,'',self.icon)
             
     # method to reste default values

@@ -290,7 +290,7 @@ class RulesTable_Creator(object):
             self.rulesConnection.addRule(name, direction, action, protocol, port, profile, description, enable)
         # exception if name is empty
         else:
-            code = 'No ingreso el nombre de la regla'
+            code = 'No ingresó el nombre de la regla'
             error = 'Debe ingresar el nombre de la regla.\nRevise la ayuda para crear nuevas reglas'
             self.message.showMessage(code, error, self.icon)
 
@@ -337,12 +337,12 @@ class RulesTable_Creator(object):
         # NOTE: CHECK IF THE lineEditPort HAS AN ACCEPTABLE VALUE
         oldName = self.getRule[0]['Nombre de regla']
         oldDirection = 'in' if self.getRule[0]['Dirección'] == 'Dentro' else 'out'
-        oldProtocol = self.getRule[0]['Protocolo']
+        oldProtocol = 'any' if self.getRule[0]['Protocolo'] == 'Cualquiera' else self.getRule[0]['Protocolo']
         name = self.lineEditName.text()
         # Check if name has a value
         if name != "":
             description = self.textEditDescription.toPlainText()
-            protocol = self.comboBoxProtocol.currentText()
+            protocol = 'any' if self.comboBoxProtocol.currentText() == 'Cualquiera' else self.comboBoxProtocol.currentText()
             selectedPort = self.comboBoxPort.currentText()
             direction = 'in' if self.comboBoxDirection.currentText() == 'Dentro' else 'out'
             enable = 'yes' if self.checkBoxEnable.isChecked() else 'no'
