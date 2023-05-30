@@ -147,7 +147,6 @@ class Firewall_Rules():
             command = f'netsh advfirewall firewall set rule name= "{oldName}" dir={oldDirection} protocol={oldProtocol} new name= "{name}" dir={direction} protocol={protocol} action={action} profile={profile} description="{description}" enable={enable}'
 
         try:
-            print(command)
             # Execute command and check if there's an error
             output = subprocess.run(command, shell=True, capture_output=True, encoding='cp850')
             if output.returncode != 0:
