@@ -570,7 +570,7 @@ class Ui_MainWindow(object):
         elif self.TableApp.newTable.rowCount() == 0:
             #data is´nt on the DB
             code = 'No se encontraron datos coincidentes'
-            error = 'La búsqueda no arrojo ningún dato coincidente con los parámetros ingresados'
+            error = 'La búsqueda no arrojó ningún dato coincidente con los parámetros ingresados'
             self.errorMessage.showMessage(code, error, icon)
         else:
             #show the results

@@ -298,7 +298,7 @@ class RulesTable_Creator(object):
     def deleteSelectedRule(self):
         mainMessage = QtWidgets.QMessageBox()
         mainMessage.setWindowTitle('AVISO')
-        mainMessage.setText('Se eliminara la regla seleccionada')
+        mainMessage.setText('Se eliminará la regla seleccionada')
         mainMessage.setInformativeText('¿Desea continuar?')
         mainMessage.setIcon(QtWidgets.QMessageBox.Question)
         mainMessage.setStandardButtons(QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
