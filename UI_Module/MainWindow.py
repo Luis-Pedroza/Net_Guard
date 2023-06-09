@@ -460,10 +460,10 @@ class Ui_MainWindow(object):
         self.labelRangeValueUDP.setText(udpRange.split(':')[1])
 
     # Method to update the table in the rules tab
-    # REVISAR BUG AL ACTUALIZAR SIN DATOS NUEVOS
     def updateRulesTable(self, mainTable):
         # Clear the table and get new values
         mainTable.clearContents()
+        mainTable.setRowCount(0)
         rules = self.getRules.showRules()
         # Insert new values on table
         mainTable.setRowCount(len(rules))
