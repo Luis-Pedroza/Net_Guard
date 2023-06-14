@@ -52,7 +52,7 @@ class RulesTable_Creator(object):
             self.newTable.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
             self.newTable.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.ResizeToContents)
             self.newTable.horizontalHeader().setSectionResizeMode(0, QtWidgets.QHeaderView.Stretch)
-            self.newTable.cellDoubleClicked.connect(lambda item: self.initRuleWindow(self.Form, self.newTable.item(item, 5).text(), dataList, True,))
+            self.newTable.cellDoubleClicked.connect(self.getSelectedRule)
             # REVISAR BUG AL ELIMINAR UNA REGLA Y QUERER ELIMINAR OTRA
 
             # add information on the table
@@ -366,3 +366,24 @@ class RulesTable_Creator(object):
             code = 'Debe especificar un nombre'
             error = 'Debe especificar el nombre de la regla.\nRevise la ayuda para modificar nuevas reglas'
             self.message.showMessage(code, error, self.icon)
+
+    def getSelectedRule(self, row):
+        translations = {
+        "Pública": "public",
+        "Privada": "private",
+        "Dominio": "domain",
+        }
+        name = self.newTable.item(row, 0).text()
+        profile = self.newTable.item(row,2).text()
+        direction = self.newTable.item(row,4).text()
+        protocol = self.newTable.item(row,5).text()
+        
+        direction = 'in' if direction == 'Dentro' else 'out'
+
+        values = profile.split(",")
+        translated_values = [translations[value.strip()] if value.strip() in translations else value.strip() for value in values]
+        translated_value = ",".join(translated_values)
+        profile = translated_value
+
+        search = self.rulesConnection.searchRules(name, profile, direction)
+        self.initRuleWindow(self.Form, protocol, search, True)
