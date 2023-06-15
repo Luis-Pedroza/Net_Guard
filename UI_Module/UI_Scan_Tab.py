@@ -39,7 +39,7 @@ class Ports_Range(object):
         self.rangeTCP.setGeometry(QtCore.QRect(220, 50, 60, 22))
         self.rangeTCP.setObjectName("rangeTCP")
         self.rangeTCP.setMaximum(16384)
-        self.rangeTCP.setMinimum(300)
+        self.rangeTCP.setMinimum(255)
 
         self.checkUDP = QtWidgets.QCheckBox(self.centralWidget)
         self.checkUDP.setGeometry(QtCore.QRect(80, 95, 121, 17))
@@ -49,7 +49,7 @@ class Ports_Range(object):
         self.rangeUDP.setGeometry(QtCore.QRect(220, 90, 60, 22))
         self.rangeUDP.setObjectName("rangeUDP")
         self.rangeUDP.setMaximum(16384)
-        self.rangeUDP.setMinimum(300)
+        self.rangeUDP.setMinimum(255)
         
         # Button to change the range
         self.changeRangeBtn = QtWidgets.QToolButton(self.centralWidget)
