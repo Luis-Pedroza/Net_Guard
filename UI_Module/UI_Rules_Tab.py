@@ -194,10 +194,13 @@ class RulesTable_Creator(object):
         if action == True:
             try:
                 self.lineEditName.setText(rule[0]['Nombre de regla'])
-                self.textEditDescription.setText(rule[0]['Descripción'])
                 self.comboBoxDirection.setCurrentText(rule[0]['Dirección'])
                 self.comboBoxAction.setCurrentText(rule[0]['Acción'])
                 self.comboBoxProtocol.setCurrentText(protocol)
+
+                if 'Descripción' in rule[0]:
+                    self.textEditDescription.setText(rule[0]['Descripción'])
+                else: self.textEditDescription.setText('None')
 
                 if 'LocalPort' in rule[0] or 'RemotePort' in rule[0]:
                     if rule[0]['LocalPort'] != 'Cualquiera':
@@ -302,6 +305,8 @@ class RulesTable_Creator(object):
         mainMessage.setInformativeText('¿Desea continuar?')
         mainMessage.setIcon(QtWidgets.QMessageBox.Question)
         mainMessage.setStandardButtons(QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
+        buttonYes = mainMessage.button(QtWidgets.QMessageBox.Yes)
+        buttonYes.setText("Sí")
         mainMessage.setWindowIcon(QtGui.QIcon("Resources/icon.ico"))
         # translations of the profile
         translations = {
