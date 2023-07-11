@@ -1,4 +1,5 @@
 build/
 dist/
+test/
 __pycache__/
 Net Guard.spec
