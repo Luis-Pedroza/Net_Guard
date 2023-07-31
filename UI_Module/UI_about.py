@@ -28,6 +28,7 @@ class Ui_Dialog(object):
         self.aboutText = QtWidgets.QPlainTextEdit(Dialog)
         self.aboutText.setGeometry(QtCore.QRect(70, 0, 471, 471))
         self.aboutText.setObjectName("plainTextEdit")
+        self.aboutText.setReadOnly(True)
 
         self.closeWindow = QtWidgets.QPushButton(Dialog)
         self.closeWindow.setGeometry(QtCore.QRect(430, 360, 75, 23))
