@@ -31,11 +31,9 @@ class Table_Creator(object):
         MainWindow.setFixedSize(760, 350)
         MainWindow.setWindowTitle("Búsqueda")
         MainWindow.setWindowIcon(QtGui.QIcon("Resources/icon.ico"))
+        flags = MainWindow.windowFlags()
+        MainWindow.setWindowFlags(flags & ~QtCore.Qt.WindowContextHelpButtonHint)
 
-        #initialize a new widget and a layout
-        self.centralWidget = QtWidgets.QWidget(MainWindow)
-        self.centralWidget.setObjectName("centralWidget")
-        self.layOut = QtWidgets.QVBoxLayout(self.centralWidget)
 
         # get the data from the DB through the function get_search
         dataList = self.data_table_ports.get_search(self.port, self.protocol, self.service)
@@ -45,12 +43,12 @@ class Table_Creator(object):
             # get number of rows
             rows = len(dataList)
             # initialize widget with the specifications 
-            self.newTable = QtWidgets.QTableWidget(self.centralWidget)
+            self.newTable = QtWidgets.QTableWidget(MainWindow)
             header = ['Puerto', 'Servicio', 'Protocolo', 'Descripción', 'Referencia' ]
             self.newTable.setColumnCount(5)
             self.newTable.setRowCount(rows)
             self.newTable.setHorizontalHeaderLabels(header)
-            self.newTable.setGeometry(QtCore.QRect(1, 0, 759, 511))
+            self.newTable.setGeometry(QtCore.QRect(1, 0, 759, 349))
             self.newTable.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
             self.newTable.horizontalHeader().setSectionResizeMode(3,QtWidgets.QHeaderView.Stretch)
             # if a row is double clicked then use showRowInfo function
@@ -61,35 +59,12 @@ class Table_Creator(object):
                 for col_num, col_data in enumerate(row_data):
                     item = QtWidgets.QTableWidgetItem(str(col_data))
                     self.newTable.setItem(row_num, col_num, item)
-
-            #add the table to the layout    
-            self.layOut.addWidget(self.newTable)
-            self.scrollArea = QtWidgets.QScrollArea()
-            self.scrollArea.setWidgetResizable(True)
-            self.scrollArea.setWidget(self.centralWidget)
-
-            # set the scroll Area on the MainWindow
-            MainWindow.setCentralWidget(self.scrollArea)
             
         # if there is´nt data initialize an empty widget
-        else: self.newTable = QtWidgets.QTableWidget(self.centralWidget)
+        else: self.newTable = QtWidgets.QTableWidget(self.MainWindow)
 
     def showRowInfo(self):
         code = 'Función en construcción'
         message = 'Función showPortsTableInfo en construcción'
         icon = QtWidgets.QMessageBox.Information
         self.errorMessage.showMessage(code, message, icon)
-        
-            
-        
-        
-        
-        
-        
-
-        
-
-        
-
-        
-

@@ -16,13 +16,13 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 from Controller_Module.Ports import Get_Data, Table_Counter
-from Controller_Module.Scan import Scan_Ports
 from Controller_Module.Rules import Firewall_Rules
-from .UI_Scan_Tab import Ports_Range
+from Controller_Module.Scan import Scan_Ports
 from .UI_Rules_Tab import RulesTable_Creator
 from .UI_Ports_Tab import Table_Creator
+from .UI_Scan_Tab import Ports_Range
 from .UI_Error import PopUp_Messages
-from .UI_about import Ui_Dialog
+from .UI_About import Ui_Dialog
 
 class Ui_MainWindow(object):     
     def setupUi(self, MainWindow):     
@@ -110,7 +110,7 @@ class Ui_MainWindow(object):
         self.tabWidget.addTab(self.tab_Rules, "")
         self.getRules = Firewall_Rules()
         self.initNewRule = RulesTable_Creator()
-        self.ruleWindow = QtWidgets.QWidget()
+        self.ruleWindow = QtWidgets.QDialog()
 
         #************************** Header ***************************"
         self.searchRuleBtn = QtWidgets.QToolButton(self.tab_Rules)
@@ -504,17 +504,17 @@ class Ui_MainWindow(object):
 
     # Method to initialize the change of range window
     def showPortsRangeWindow(self):
-        self.initRangeWindow = QtWidgets.QMainWindow()
+        self.initRangeWindow = QtWidgets.QDialog()
         self.RangeWindow = Ports_Range()
         self.RangeWindow.setUpWindow(self.initRangeWindow)
-        self.initRangeWindow.show()
+        self.initRangeWindow.exec_()
 
     def showSearchRuleTable(self):
         icon = QtWidgets.QMessageBox.Information
         name = self.lineEditSearchRule.text()
         profile = self.comboBoxProfileRule.currentText()
         direction = self.comboBoxDirectionRule.currentText()
-        self.InitSearchTable = QtWidgets.QMainWindow()
+        self.InitSearchTable = QtWidgets.QDialog()
 
         translations = {
         "Cualquiera": "any",
@@ -538,7 +538,7 @@ class Ui_MainWindow(object):
             error = 'La búsqueda no arrojo ningún dato coincidente con los parámetros ingresados'
             self.errorMessage.showMessage(code, error, icon)
         else: 
-            self.InitSearchTable.show()
+            self.InitSearchTable.exec_()
         self.lineEditSearchRule.clear()
         self.comboBoxProfileRule.setCurrentText('Cualquiera')
         self.comboBoxDirectionRule.setCurrentText('Cualquiera')
@@ -554,7 +554,7 @@ class Ui_MainWindow(object):
         protocol = self.comboBoxProtocol.currentText()
 
         #initialize new table with Table_Creator
-        self.InitSearchTable = QtWidgets.QMainWindow()
+        self.InitSearchTable = QtWidgets.QDialog()
         self.TableApp = Table_Creator(port, protocol, service)
         self.TableApp.setupTable(self.InitSearchTable)
 
@@ -576,7 +576,7 @@ class Ui_MainWindow(object):
             self.errorMessage.showMessage(code, error, icon)
         else:
             #show the results
-            self.InitSearchTable.show()
+            self.InitSearchTable.exec_()
         self.lineEditSearch.clear()
         self.spinBoxPort.setValue(0)
         self.comboBoxProtocol.setCurrentText('Ambos')

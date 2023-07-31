@@ -32,18 +32,13 @@ class RulesTable_Creator(object):
         MainWindow.setWindowTitle("Búsqueda")
         MainWindow.setWindowIcon(QtGui.QIcon("Resources/icon.ico"))
 
-        #initialize a new widget and a layout
-        self.centralWidget = QtWidgets.QWidget(MainWindow)
-        self.centralWidget.setObjectName("centralWidget")
-        self.layOut = QtWidgets.QVBoxLayout(self.centralWidget)
-
         # get the data 
         dataList = self.rulesConnection.searchRules(self.name, self.profile, self.direction)
 
         # check if data has information
         if dataList:
             self.Form = QtWidgets.QWidget()
-            self.newTable = QtWidgets.QTableWidget(self.centralWidget)
+            self.newTable = QtWidgets.QTableWidget(MainWindow)
             header = ['Regla', 'Habilitada', 'Perfil', 'Acción', 'Dirección', 'Protocolo' ]
             self.newTable.setColumnCount(6)
             self.newTable.setRowCount(len(dataList))
@@ -53,7 +48,6 @@ class RulesTable_Creator(object):
             self.newTable.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.ResizeToContents)
             self.newTable.horizontalHeader().setSectionResizeMode(0, QtWidgets.QHeaderView.Stretch)
             self.newTable.cellDoubleClicked.connect(self.getSelectedRule)
-            # REVISAR BUG AL ELIMINAR UNA REGLA Y QUERER ELIMINAR OTRA
 
             # add information on the table
             for i, row in enumerate(dataList):
@@ -70,16 +64,8 @@ class RulesTable_Creator(object):
                 item = QtWidgets.QTableWidgetItem(str(row["Protocolo"]))
                 self.newTable.setItem(i, 5, item)
 
-                #add the table to the layout    
-                self.layOut.addWidget(self.newTable)
-                self.scrollArea = QtWidgets.QScrollArea()
-                self.scrollArea.setWidgetResizable(True)
-                self.scrollArea.setWidget(self.centralWidget)
-                # set the scroll Area on the MainWindow
-                MainWindow.setCentralWidget(self.scrollArea)
-
         # if there is'n data, initialize an empty table
-        else: self.newTable = QtWidgets.QTableWidget(self.centralWidget)
+        else: self.newTable = QtWidgets.QTableWidget(MainWindow)
 
     def initRuleWindow(self, Form, protocol=None, rule=None, action=False):
         Form.setObjectName("Form")
@@ -91,7 +77,7 @@ class RulesTable_Creator(object):
         self.tabWidget.setGeometry(QtCore.QRect(0, 0, 401, 471))
         self.tabWidget.setObjectName("tabWidget")
 
-        self.tabPort = QtWidgets.QWidget()
+        self.tabPort = QtWidgets.QWidget(self.tabWidget)
         self.tabPort.setObjectName("tabPort")
 
         self.labelName = QtWidgets.QLabel(self.tabPort)
@@ -237,7 +223,7 @@ class RulesTable_Creator(object):
                 self.btnDelete.setText("Eliminar")
                 self.btnDelete.clicked.connect(self.deleteSelectedRule)
                 self.btnDelete.clicked.connect(Form.close)
-                Form.show()
+                Form.exec_()
             except Exception as exception:
                 code = 'No se pudo acceder a la regla seleccionada'
                 self.message.showMessage(code, exception, self.icon)
@@ -248,7 +234,7 @@ class RulesTable_Creator(object):
             self.btnEdit.clicked.connect(Form.close)
             self.btnDelete.setText("Cancelar")
             self.btnDelete.clicked.connect(Form.close)
-            Form.show()
+            Form.exec_()
 
         self.tabWidget.addTab(self.tabPort, "Puerto")
         # self.tab_2 = QtWidgets.QWidget()
@@ -373,6 +359,7 @@ class RulesTable_Creator(object):
             self.message.showMessage(code, error, self.icon)
 
     def getSelectedRule(self, row):
+        newForm = QtWidgets.QDialog()
         translations = {
         "Pública": "public",
         "Privada": "private",
@@ -391,4 +378,4 @@ class RulesTable_Creator(object):
         profile = translated_value
 
         search = self.rulesConnection.searchRules(name, profile, direction)
-        self.initRuleWindow(self.Form, protocol, search, True)
+        self.initRuleWindow(newForm, protocol, search, True)

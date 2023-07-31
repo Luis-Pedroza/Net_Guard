@@ -26,33 +26,29 @@ class Ports_Range(object):
         MainWindow.setWindowTitle("Rango de Puertos")
         MainWindow.setWindowIcon(QtGui.QIcon("Resources/icon.ico"))
 
-        # initialize a new widget
-        self.centralWidget = QtWidgets.QWidget(MainWindow)
-        self.centralWidget.setObjectName("centralWidget") 
-
         # initialize  the options
-        self.checkTCP = QtWidgets.QCheckBox(self.centralWidget)
+        self.checkTCP = QtWidgets.QCheckBox(MainWindow)
         self.checkTCP.setGeometry(QtCore.QRect(80, 50, 121, 17))
         self.checkTCP.setObjectName("checkTCP")
         self.checkTCP.setText("Cambiar rango TCP")
-        self.rangeTCP = QtWidgets.QSpinBox(self.centralWidget)
+        self.rangeTCP = QtWidgets.QSpinBox(MainWindow)
         self.rangeTCP.setGeometry(QtCore.QRect(220, 50, 60, 22))
         self.rangeTCP.setObjectName("rangeTCP")
         self.rangeTCP.setMaximum(16384)
         self.rangeTCP.setMinimum(255)
 
-        self.checkUDP = QtWidgets.QCheckBox(self.centralWidget)
+        self.checkUDP = QtWidgets.QCheckBox(MainWindow)
         self.checkUDP.setGeometry(QtCore.QRect(80, 95, 121, 17))
         self.checkUDP.setObjectName("checkUDP")
         self.checkUDP.setText("Cambiar rango UDP")
-        self.rangeUDP = QtWidgets.QSpinBox(self.centralWidget)
+        self.rangeUDP = QtWidgets.QSpinBox(MainWindow)
         self.rangeUDP.setGeometry(QtCore.QRect(220, 90, 60, 22))
         self.rangeUDP.setObjectName("rangeUDP")
         self.rangeUDP.setMaximum(16384)
         self.rangeUDP.setMinimum(255)
         
         # Button to change the range
-        self.changeRangeBtn = QtWidgets.QToolButton(self.centralWidget)
+        self.changeRangeBtn = QtWidgets.QToolButton(MainWindow)
         self.changeRangeBtn.setGeometry(QtCore.QRect(20, 200, 101, 26))
         self.changeRangeBtn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.changeRangeBtn.setObjectName("changeRangeBtn")
@@ -62,7 +58,7 @@ class Ports_Range(object):
 
         # Button to reset the values
         # IANA recommendation 16384 ports
-        self.resetValuesBtn = QtWidgets.QToolButton(self.centralWidget)
+        self.resetValuesBtn = QtWidgets.QToolButton(MainWindow)
         self.resetValuesBtn.setGeometry(QtCore.QRect(140, 200, 101, 26))
         self.resetValuesBtn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.resetValuesBtn.setObjectName("resetValuesBtn")
@@ -71,14 +67,12 @@ class Ports_Range(object):
         self.resetValuesBtn.clicked.connect(MainWindow.close)
 
         # Button to close the window
-        self.cancelBtn = QtWidgets.QToolButton(self.centralWidget)
+        self.cancelBtn = QtWidgets.QToolButton(MainWindow)
         self.cancelBtn.setGeometry(QtCore.QRect(260, 200, 101, 26))
         self.cancelBtn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.cancelBtn.setObjectName("cancelBtn")
         self.cancelBtn.setText("Cancelar")
         self.cancelBtn.clicked.connect(MainWindow.close)
-
-        MainWindow.setCentralWidget(self.centralWidget)
 
     # Method to change range values
     def change(self):
