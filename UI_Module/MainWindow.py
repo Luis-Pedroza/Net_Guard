@@ -22,6 +22,7 @@ from .UI_Scan_Tab import Ports_Range
 from .UI_Rules_Tab import RulesTable_Creator
 from .UI_Ports_Tab import Table_Creator
 from .UI_Error import PopUp_Messages
+from .UI_about import Ui_Dialog
 
 class Ui_MainWindow(object):     
     def setupUi(self, MainWindow):     
@@ -313,6 +314,7 @@ class Ui_MainWindow(object):
         self.helpSearchPort.setObjectName("helpSearchPort")
         self.action_About = QtWidgets.QAction(MainWindow)
         self.action_About.setObjectName("action_About")
+        self.action_About.triggered.connect(lambda: self.openAbout())
 
         self.actionLanguage = QtWidgets.QAction(MainWindow)
         self.actionLanguage.setObjectName("actionLanguage")
@@ -615,7 +617,6 @@ class Ui_MainWindow(object):
         icon = QtWidgets.QMessageBox.Information
         self.errorMessage.showMessage(code, message, icon)
 
-
     # counter to show the next 14 values on the table in the tab ports
     def nextValue(self, mainTable):
         self.counter.next()
@@ -625,3 +626,8 @@ class Ui_MainWindow(object):
         self.counter.previous()
         self.updatePortsTable(mainTable)
     
+    def openAbout(self):
+        about_dialog = QtWidgets.QDialog()
+        ui_about = Ui_Dialog()
+        ui_about.setupUi(about_dialog)
+        about_dialog.exec_()
