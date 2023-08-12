@@ -283,6 +283,8 @@ class Ui_MainWindow(object):
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 755, 22))
         self.menubar.setObjectName("menubar")
+        self.menuFile = QtWidgets.QMenu(self.menubar)
+        self.menuFile.setObjectName("menuFile")
         self.menuEdit = QtWidgets.QMenu(self.menubar)
         self.menuEdit.setObjectName("menuEdit")
         self.menuConfig = QtWidgets.QMenu(self.menubar)
@@ -293,15 +295,39 @@ class Ui_MainWindow(object):
         MainWindow.setMenuBar(self.menubar)
         self.statusbar = QtWidgets.QStatusBar(MainWindow)
         self.statusbar.setObjectName("statusbar")
-        
         MainWindow.setStatusBar(self.statusbar)
+        
+        #************************** FILE **************************"
+        self.action_Save_Scan = QtWidgets.QAction(MainWindow)
+        self.action_Save_Scan.setShortcut('Ctrl+S')
+        self.action_Save_Scan.setObjectName("action_Save_Scan")
+        self.action_Save_Rules = QtWidgets.QAction(MainWindow)
+        self.action_Save_Rules.setShortcut('Ctrl+R')
+        self.action_Save_Rules.setObjectName("action_Save_Rules")
+
+        #************************** EDIT **************************"
         self.action_New_Rule = QtWidgets.QAction(MainWindow)
+        self.action_New_Rule.setShortcut('Ctrl+N')
         self.action_New_Rule.setObjectName("action_New_Rule")
         self.action_New_Rule.triggered.connect(lambda: self.initNewRule.initRuleWindow(self.ruleWindow))
         self.action_Change_Range = QtWidgets.QAction(MainWindow)
+        self.action_Change_Range.setShortcut('Ctrl+C')
         self.action_Change_Range.setObjectName("action_Change_Range")
         self.action_Change_Range.triggered.connect(lambda: self.showPortsRangeWindow())
+        self.action_Refresh_Scan = QtWidgets.QAction(MainWindow)
+        self.action_Refresh_Scan.setShortcut('Ctrl+E')
+        self.action_Refresh_Scan.setObjectName("action_Refresh_Scan")
+        self.action_Refresh_Scan.triggered.connect(lambda: self.updateScanTable(self.TableScan))
 
+        #************************** CONFIG **************************"
+        self.actionLanguage = QtWidgets.QAction(MainWindow)
+        self.actionLanguage.setObjectName("actionLanguage")
+        self.actionLanguage.setShortcut('Ctrl+L')
+        self.actionTheme = QtWidgets.QAction(MainWindow)
+        self.actionTheme.setObjectName("actionTheme")
+        self.actionTheme.setShortcut('Ctrl+T')
+
+        #************************** HELP **************************"
         self.helpChangeRange = QtWidgets.QAction(MainWindow)
         self.helpChangeRange.setObjectName("helpChangeRange")
         self.helpNewRule = QtWidgets.QAction(MainWindow)
@@ -316,14 +342,16 @@ class Ui_MainWindow(object):
         self.action_About.setObjectName("action_About")
         self.action_About.triggered.connect(lambda: self.openAbout())
 
-        self.actionLanguage = QtWidgets.QAction(MainWindow)
-        self.actionLanguage.setObjectName("actionLanguage")
+        self.menuFile.addAction(self.action_Save_Scan)
+        self.menuFile.addAction(self.action_Save_Rules)
 
         self.menuEdit.addAction(self.action_New_Rule)
-        self.menuEdit.addSeparator()
         self.menuEdit.addAction(self.action_Change_Range)
+        self.menuEdit.addAction(self.action_Refresh_Scan)
         
         self.menuConfig.addAction(self.actionLanguage)
+        self.menuConfig.addAction(self.actionTheme)
+
         self.menuHelp.addAction(self.helpChangeRange)
         self.menuHelp.addAction(self.helpNewRule)
         self.menuHelp.addAction(self.helpChangeRule)
@@ -332,6 +360,7 @@ class Ui_MainWindow(object):
         self.menuHelp.addSeparator()
         self.menuHelp.addAction(self.action_About)
 
+        self.menubar.addAction(self.menuFile.menuAction())
         self.menubar.addAction(self.menuEdit.menuAction())
         self.menubar.addAction(self.menuConfig.menuAction())
         self.menubar.addAction(self.menuHelp.menuAction())
@@ -422,14 +451,20 @@ class Ui_MainWindow(object):
         #************************* MENU BAR **************************"
         #*************************************************************"
         
+        self.menuFile.setTitle(_translate("MainWindow", "Archivo"))
         self.menuEdit.setTitle(_translate("MainWindow", "Editar"))
         self.menuConfig.setTitle(_translate("MainWindow", "Configuración"))
         self.menuHelp.setTitle(_translate("MainWindow", "Ayuda"))
+
+        self.action_Save_Scan.setText(_translate("MainWindow", "Guardar Escaneo"))
+        self.action_Save_Rules.setText(_translate("MainWindow", "Guardar Reglas"))
         
         self.action_New_Rule.setText(_translate("MainWindow", "Nueva Regla"))
-        self.action_Change_Range.setText(_translate("MainWindow", "Cambiar rango de puertos"))
+        self.action_Change_Range.setText(_translate("MainWindow", "Cambiar Rango de Puertos"))
+        self.action_Refresh_Scan.setText(_translate("MainWindow", "Actualizar Escaneo"))
 
         self.actionLanguage.setText(_translate("MainWindow", "Idioma"))
+        self.actionTheme.setText(_translate("MainWindow", "Tema"))
         
         self.helpChangeRange.setText(_translate("MainWindow", "Cambiar rango de puertos"))
         self.helpNewRule.setText(_translate("MainWindow", "Crear nuevas reglas"))
@@ -442,6 +477,7 @@ class Ui_MainWindow(object):
     def updateScanTable(self, mainTable):
         #clear the table and get new values
         mainTable.clearContents()
+        mainTable.setRowCount(0)
         getData = self.getList.scanAll()
         #insert new values in table
         mainTable.setRowCount(len(getData))
