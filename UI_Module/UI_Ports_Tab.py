@@ -2,7 +2,8 @@
 # FILE: UI_Ports_Tab.py
 #
 # DESCRIPTION: 
-# This code creates a table with the data of the ports received 
+# Table_Creator is a class that facilitates the creation and setup of a Qt-based table for displaying data.
+# It interacts with a database to retrieve relevant information and populates the table with that data.
 #
 # AUTHOR:  Luis Pedroza
 # CREATED: 16/03/2023 (dd/mm/yy)
@@ -34,7 +35,6 @@ class Table_Creator(object):
         flags = MainWindow.windowFlags()
         MainWindow.setWindowFlags(flags & ~QtCore.Qt.WindowContextHelpButtonHint)
 
-
         # get the data from the DB through the function get_search
         dataList = self.data_table_ports.get_search(self.port, self.protocol, self.service)
 
@@ -61,7 +61,7 @@ class Table_Creator(object):
                     self.newTable.setItem(row_num, col_num, item)
             
         # if there is´nt data initialize an empty widget
-        else: self.newTable = QtWidgets.QTableWidget(self.MainWindow)
+        else: self.newTable = QtWidgets.QTableWidget(MainWindow)
 
     def showRowInfo(self):
         code = 'Función en construcción'
