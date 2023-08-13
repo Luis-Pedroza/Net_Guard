@@ -69,7 +69,6 @@ class RulesTable_Creator(object):
 
     def initRuleWindow(self, Form, protocol=None, rule=None, action=False):
         Form.setObjectName("Form")
-        Form.setWindowTitle("Regla")
         Form.setFixedSize(400, 476)
         Form.setWindowIcon(QtGui.QIcon("Resources/icon.ico"))
 
@@ -77,7 +76,7 @@ class RulesTable_Creator(object):
         self.tabWidget.setGeometry(QtCore.QRect(0, 0, 401, 471))
         self.tabWidget.setObjectName("tabWidget")
 
-        self.tabPort = QtWidgets.QWidget(self.tabWidget)
+        self.tabPort = QtWidgets.QWidget()
         self.tabPort.setObjectName("tabPort")
 
         self.labelName = QtWidgets.QLabel(self.tabPort)
@@ -219,30 +218,41 @@ class RulesTable_Creator(object):
 
                 self.btnEdit.setText("Editar")
                 self.btnEdit.clicked.connect(self.editSelectedRule)
-                self.btnEdit.clicked.connect(Form.close)
                 self.btnDelete.setText("Eliminar")
                 self.btnDelete.clicked.connect(self.deleteSelectedRule)
-                self.btnDelete.clicked.connect(Form.close)
-                Form.exec_()
+                
+
             except Exception as exception:
                 code = 'No se pudo acceder a la regla seleccionada'
                 self.message.showMessage(code, exception, self.icon)
         # If action == False, the windows is for adding a rule
+            pass
         else: 
             self.btnEdit.setText("Agregar")
             self.btnEdit.clicked.connect(self.addNewRule)
-            self.btnEdit.clicked.connect(Form.close)
             self.btnDelete.setText("Cancelar")
             self.btnDelete.clicked.connect(Form.close)
-            Form.exec_()
+            pass
+        self.tabWidget.addTab(self.tabPort, "")        
 
-        self.tabWidget.addTab(self.tabPort, "Puerto")
-        # self.tab_2 = QtWidgets.QWidget()
-        # self.tab_2.setObjectName("tab_2")
-        # self.tabWidget.addTab(self.tab_2, "Programa")
-        # self.tab_5 = QtWidgets.QWidget()
-        # self.tab_5.setObjectName("tab_5")
-        # self.tabWidget.addTab(self.tab_5, "IP")
+        self.tabProgram = QtWidgets.QWidget()
+        self.tabProgram.setObjectName("tabProgram")
+        self.tabWidget.addTab(self.tabProgram, "Programa")
+
+        self.tabIP = QtWidgets.QWidget()
+        self.tabIP.setObjectName("tabIP")
+        self.tabWidget.addTab(self.tabIP, "IP")
+        
+        self.retranslateUi(Form)
+        self.tabWidget.setCurrentIndex(0)
+        QtCore.QMetaObject.connectSlotsByName(Form)
+        Form.exec_()
+
+
+    def retranslateUi(self, Form):
+        _translate = QtCore.QCoreApplication.translate
+        Form.setWindowTitle(_translate("Form", "Regla"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabPort), _translate("Form", "Puerto"))
         
     # Method to alow or block the lineEditPort
     def selectedPort(self, text):
@@ -300,28 +310,34 @@ class RulesTable_Creator(object):
         "Privada": "private",
         "Dominio": "domain",
         }
-        # Get the rule data
-        name = self.getRule[0]['Nombre de regla']
-        direction = 'in' if self.getRule[0]['Dirección'] == 'Dentro' else 'out'
-        protocol = self.getRule[0]['Protocolo']
-        profile = self.getRule[0]['Perfiles']
-        values = profile.split(",")
-        translated_values = [translations[value.strip()] if value.strip() in translations else value.strip() for value in values]
-        translated_value = ",".join(translated_values)
-        profile = translated_value
+        # try for when the rule is'nt a port rule
+        try:
+            # Get the rule data
+            name = self.getRule[0]['Nombre de regla']
+            direction = 'in' if self.getRule[0]['Dirección'] == 'Dentro' else 'out'
+            protocol = self.getRule[0]['Protocolo']
+            profile = self.getRule[0]['Perfiles']
+            values = profile.split(",")
+            translated_values = [translations[value.strip()] if value.strip() in translations else value.strip() for value in values]
+            translated_value = ",".join(translated_values)
+            profile = translated_value
 
-        # Get the port, it could be local, remote or any
-        if 'LocalPort' in self.getRule[0] or 'RemotePort' in self.getRule[0]:
-            if self.getRule[0]['LocalPort'] != 'Cualquiera':
-                port = f"LocalPort={self.getRule[0]['LocalPort']}"
-            elif self.getRule[0]['RemotePort'] != 'Cualquiera':
-                port = f"RemotePort={self.getRule[0]['RemotePort']}"
-            else:
-                port = None
-        result=mainMessage.exec_()
-        # Confirm the action and delete the rule
-        if result == QtWidgets.QMessageBox.Yes:
-            self.rulesConnection.deleteRule(name, direction, profile, protocol.lower(), port)
+            # Get the port, it could be local, remote or any
+            print(self.getRule)
+            if 'LocalPort' in self.getRule[0] or 'RemotePort' in self.getRule[0]:
+                if self.getRule[0]['LocalPort'] != 'Cualquiera':
+                    port = f"LocalPort={self.getRule[0]['LocalPort']}"
+                elif self.getRule[0]['RemotePort'] != 'Cualquiera':
+                    port = f"RemotePort={self.getRule[0]['RemotePort']}"
+                else:
+                    port = None
+            result=mainMessage.exec_()
+            # Confirm the action and delete the rule
+            if result == QtWidgets.QMessageBox.Yes:
+                self.rulesConnection.deleteRule(name, direction, profile, protocol.lower(), port)
+        except Exception as exception:
+                code = 'Ocurrió un error'
+                self.message.showMessage(code, exception, self.icon)
 
     # Edit the selected rule
     def editSelectedRule(self):
