@@ -27,15 +27,16 @@ from .UI_About import Ui_Dialog
 class Ui_MainWindow(object):     
     def setupUi(self, MainWindow):     
         MainWindow.setObjectName("MainWindow")
-        MainWindow.setFixedSize(755, 616)
+        MainWindow.resize(755, 616)
         MainWindow.setWindowIcon(QtGui.QIcon("Resources/icon.ico"))
         
         self.centralWidget = QtWidgets.QWidget(MainWindow)
         self.centralWidget.setObjectName("centralWidget")
         
+        self.mainLayout = QtWidgets.QVBoxLayout(self.centralWidget)
+
         self.tabWidget = QtWidgets.QTabWidget(self.centralWidget)
         self.tabWidget.setEnabled(True)
-        self.tabWidget.setGeometry(QtCore.QRect(0, 0, 751, 571))
         self.tabWidget.setCursor(QtGui.QCursor(QtCore.Qt.ArrowCursor))
         self.tabWidget.setObjectName("tabWidget")
 
@@ -49,7 +50,6 @@ class Ui_MainWindow(object):
 
         #************************** Table ***************************"
         self.TableScan = QtWidgets.QTableWidget(self.tab_Scan)
-        self.TableScan.setGeometry(QtCore.QRect(5, 0, 740, 445))
         self.TableScan.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
         self.TableScan.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.ResizeToContents)
         self.TableScan.setObjectName("TableScan")
@@ -72,35 +72,40 @@ class Ui_MainWindow(object):
         self.TableScan.setHorizontalHeaderItem(5, item)
 
         #************************** Footer **************************"
-        self.ScanPortsBtn = QtWidgets.QToolButton(self.tab_Scan)
-        self.ScanPortsBtn.setGeometry(QtCore.QRect(20, 500, 101, 26))
-        self.ScanPortsBtn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-        self.ScanPortsBtn.setObjectName("ScanPortsBtn")
-        self.ScanPortsBtn.clicked.connect(lambda: self.updateScanTable(self.TableScan))
-        
-        self.labelRangeValueTCP = QtWidgets.QLabel(self.tab_Scan)
-        self.labelRangeValueTCP.setGeometry(QtCore.QRect(190, 450, 58, 21))
-        self.labelRangeValueTCP.setObjectName("labelRangeValueTCP")
         
         self.labelRangeTCP = QtWidgets.QLabel(self.tab_Scan)
-        self.labelRangeTCP.setGeometry(QtCore.QRect(20, 450, 221, 21))
         self.labelRangeTCP.setObjectName("labelRangeTCP")
-        
-        self.EditRangeBtn = QtWidgets.QToolButton(self.tab_Scan)
-        self.EditRangeBtn.setGeometry(QtCore.QRect(140, 500, 101, 26))
-        self.EditRangeBtn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-        self.EditRangeBtn.setObjectName("EditRangeBtn")
-        self.EditRangeBtn.clicked.connect(lambda: self.showPortsRangeWindow())
+        self.labelRangeValueTCP = QtWidgets.QLabel(self.tab_Scan)
+        self.labelRangeValueTCP.setObjectName("labelRangeValueTCP")
         
         self.labelRangeUDP = QtWidgets.QLabel(self.tab_Scan)
-        self.labelRangeUDP.setGeometry(QtCore.QRect(20, 470, 221, 21))
         self.labelRangeUDP.setObjectName("labelRangeUDP")
-        
         self.labelRangeValueUDP = QtWidgets.QLabel(self.tab_Scan)
-        self.labelRangeValueUDP.setGeometry(QtCore.QRect(190, 470, 58, 21))
         self.labelRangeValueUDP.setObjectName("labelRangeValueUDP")
 
         self.updateScanTable(self.TableScan)
+
+        self.ScanPortsBtn = QtWidgets.QToolButton(self.tab_Scan)
+        self.ScanPortsBtn.setFixedSize(101, 26)
+        self.ScanPortsBtn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.ScanPortsBtn.setObjectName("ScanPortsBtn")
+        self.ScanPortsBtn.clicked.connect(lambda: self.updateScanTable(self.TableScan))
+
+        self.EditRangeBtn = QtWidgets.QToolButton(self.tab_Scan)
+        self.EditRangeBtn.setFixedSize(101, 26)
+        self.EditRangeBtn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.EditRangeBtn.setObjectName("EditRangeBtn")
+        self.EditRangeBtn.clicked.connect(lambda: self.showPortsRangeWindow())
+
+        self.TableScanLayout = QtWidgets.QGridLayout(self.tab_Scan)
+        self.TableScanLayout.addWidget(self.TableScan, 0, 0, 1, 3)
+        self.TableScanLayout.addWidget(self.labelRangeTCP, 1, 0)
+        self.TableScanLayout.addWidget(self.labelRangeValueTCP, 1, 1)
+        self.TableScanLayout.addWidget(self.labelRangeUDP, 2, 0)
+        self.TableScanLayout.addWidget(self.labelRangeValueUDP, 2, 1)
+        self.TableScanLayout.addWidget(self.ScanPortsBtn, 3, 0)
+        self.TableScanLayout.addWidget(self.EditRangeBtn, 3, 1)
+
 
         #*************************************************************"
         #************************* TAB RULES *************************"
@@ -116,18 +121,14 @@ class Ui_MainWindow(object):
         self.searchRuleBtn = QtWidgets.QToolButton(self.tab_Rules)
 
         self.labelRule = QtWidgets.QLabel(self.tab_Rules)
-        self.labelRule.setGeometry(QtCore.QRect(30, 3, 58, 26))
         self.labelRule.setObjectName("labelRule")
         self.lineEditSearchRule = QtWidgets.QLineEdit(self.tab_Rules)
-        self.lineEditSearchRule.setGeometry(QtCore.QRect(80, 4, 230, 20))
         self.lineEditSearchRule.setObjectName("lineEditSearchRule")
         self.lineEditSearchRule.returnPressed.connect(self.searchRuleBtn.click)
 
         self.labelProfile = QtWidgets.QLabel(self.tab_Rules)
-        self.labelProfile.setGeometry(QtCore.QRect(350, 3, 80, 26))
         self.labelProfile.setObjectName("labelProfile")
         self.comboBoxProfileRule = QtWidgets.QComboBox(self.tab_Rules)
-        self.comboBoxProfileRule.setGeometry(QtCore.QRect(380, 4, 80, 26))
         self.comboBoxProfileRule.setObjectName("comboBoxProfileRule")
         self.comboBoxProfileRule.addItem('Cualquiera')
         self.comboBoxProfileRule.addItem('Publico')
@@ -136,17 +137,15 @@ class Ui_MainWindow(object):
         self.comboBoxProfileRule.setCurrentText('Cualquiera')
         
         self.labelDirection = QtWidgets.QLabel(self.tab_Rules)
-        self.labelDirection.setGeometry(QtCore.QRect(475, 3, 80, 26))
         self.labelDirection.setObjectName("labelDirection")
         self.comboBoxDirectionRule = QtWidgets.QComboBox(self.tab_Rules)
-        self.comboBoxDirectionRule.setGeometry(QtCore.QRect(525, 4, 76, 26))
         self.comboBoxDirectionRule.setObjectName("comboBoxDirectionRule")
         self.comboBoxDirectionRule.addItem('Cualquiera')
         self.comboBoxDirectionRule.addItem('Entrada')
         self.comboBoxDirectionRule.addItem('Salida')
         self.comboBoxDirectionRule.setCurrentText('Cualquiera')
         
-        self.searchRuleBtn.setGeometry(QtCore.QRect(620, 4, 101, 26))
+        self.searchRuleBtn.setFixedSize(101, 26)
         self.searchRuleBtn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.searchRuleBtn.setObjectName("searchRuleBtn")
         self.searchRuleBtn.clicked.connect(self.showSearchRuleTable)
@@ -154,7 +153,6 @@ class Ui_MainWindow(object):
 
         #************************** Table ***************************"
         self.tableRules = QtWidgets.QTableWidget(self.tab_Rules)
-        self.tableRules.setGeometry(QtCore.QRect(5, 35, 740, 447))
         self.tableRules.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
         self.tableRules.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.ResizeToContents)
         self.tableRules.setObjectName("tableRules")
@@ -182,16 +180,28 @@ class Ui_MainWindow(object):
         #************************** Buttons ***************************"
 
         self.RefreshRuleBtn = QtWidgets.QToolButton(self.tab_Rules)
-        self.RefreshRuleBtn.setGeometry(QtCore.QRect(150, 495, 101, 26))
+        self.RefreshRuleBtn.setFixedSize(101, 26)
         self.RefreshRuleBtn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.RefreshRuleBtn.setObjectName("RefreshRuleBtn")
         self.RefreshRuleBtn.clicked.connect(lambda: self.updateRulesTable(self.tableRules))
 
         self.NewRuleBtn = QtWidgets.QToolButton(self.tab_Rules)
-        self.NewRuleBtn.setGeometry(QtCore.QRect(490, 495, 101, 26))
+        self.NewRuleBtn.setFixedSize(101, 26)
         self.NewRuleBtn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.NewRuleBtn.setObjectName("NewRuleBtn")
         self.NewRuleBtn.clicked.connect(lambda: self.initNewRule.initRuleWindow(self.ruleWindow))
+
+        self.TableRulesLayout = QtWidgets.QGridLayout(self.tab_Rules)
+        self.TableRulesLayout.addWidget(self.labelRule, 0,0)
+        self.TableRulesLayout.addWidget(self.lineEditSearchRule, 0,1)
+        self.TableRulesLayout.addWidget(self.labelProfile, 0,2)
+        self.TableRulesLayout.addWidget(self.comboBoxProfileRule, 0,3)
+        self.TableRulesLayout.addWidget(self.labelDirection, 0,4)
+        self.TableRulesLayout.addWidget(self.comboBoxDirectionRule, 0,5)
+        self.TableRulesLayout.addWidget(self.searchRuleBtn, 0,6)
+        self.TableRulesLayout.addWidget(self.tableRules, 1, 0, 1, 7)
+        self.TableRulesLayout.addWidget(self.RefreshRuleBtn, 2,0)
+        self.TableRulesLayout.addWidget(self.NewRuleBtn, 2,1)
 
         #*************************************************************"
         #************************* TAB PORTS *************************"
@@ -208,39 +218,32 @@ class Ui_MainWindow(object):
         self.SearchPortBtn = QtWidgets.QToolButton(self.tab_Ports)
         
         self.labelPort = QtWidgets.QLabel(self.tab_Ports)
-        self.labelPort.setGeometry(QtCore.QRect(30, 4, 58, 26))
         self.labelPort.setObjectName("labelPort")
         self.spinBoxPort = QtWidgets.QSpinBox(self.tab_Ports)
-        self.spinBoxPort.setGeometry(QtCore.QRect(77, 4, 75, 26))
         self.spinBoxPort.setMaximum(65535)
         self.spinBoxPort.setObjectName("spinBoxPort")
 
         self.labelService = QtWidgets.QLabel(self.tab_Ports)
-        self.labelService.setGeometry(QtCore.QRect(170, 4, 51, 26))
         self.labelService.setObjectName("labelService")
         self.lineEditSearch = QtWidgets.QLineEdit(self.tab_Ports)
-        self.lineEditSearch.setGeometry(QtCore.QRect(230, 4, 211, 26))
         self.lineEditSearch.setObjectName("lineEditSearch")
         self.lineEditSearch.returnPressed.connect(self.SearchPortBtn.click)
 
         self.labelProtocol = QtWidgets.QLabel(self.tab_Ports)
-        self.labelProtocol.setGeometry(QtCore.QRect(460, 4, 58, 26))
         self.labelProtocol.setObjectName("labelProtocol")
         self.comboBoxProtocol = QtWidgets.QComboBox(self.tab_Ports)
-        self.comboBoxProtocol.setGeometry(QtCore.QRect(520, 4, 76, 26))
         self.comboBoxProtocol.setObjectName("comboBoxProtocol")
         self.comboBoxProtocol.addItem('Ambos')
         self.comboBoxProtocol.addItem('TCP')
         self.comboBoxProtocol.addItem('UDP')
 
-        self.SearchPortBtn.setGeometry(QtCore.QRect(620, 4, 101, 26))
+        self.SearchPortBtn.setFixedSize(101, 26)
         self.SearchPortBtn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.SearchPortBtn.setObjectName("SearchPortBtn")
         self.SearchPortBtn.clicked.connect(self.showSearchPortsTable)
 
         #*************************** TABLE ***************************"
         self.TablePorts = QtWidgets.QTableWidget(self.tab_Ports)
-        self.TablePorts.setGeometry(QtCore.QRect(5, 35, 740, 447))
         self.TablePorts.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
         self.TablePorts.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.ResizeToContents)
         self.TablePorts.setObjectName("TablePorts")
@@ -264,17 +267,28 @@ class Ui_MainWindow(object):
         
         #************************** BUTTONS **************************"
         self.PreviousTableBtn = QtWidgets.QToolButton(self.tab_Ports)
-        self.PreviousTableBtn.setGeometry(QtCore.QRect(150, 495, 101, 26))
+        self.PreviousTableBtn.setFixedSize(101, 26)
         self.PreviousTableBtn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.PreviousTableBtn.setObjectName("PreviousTableBtn")
         self.PreviousTableBtn.clicked.connect(lambda: self.previousValue(self.TablePorts))
         
         self.NextTableBtn = QtWidgets.QToolButton(self.tab_Ports)
-        self.NextTableBtn.setGeometry(QtCore.QRect(490, 495, 101, 26))
+        self.NextTableBtn.setFixedSize(101, 26)
         self.NextTableBtn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.NextTableBtn.setObjectName("NextTableBtn")
         self.NextTableBtn.clicked.connect(lambda: self.nextValue(self.TablePorts))
       
+        self.TablePortsLayout = QtWidgets.QGridLayout(self.tab_Ports)
+        self.TablePortsLayout.addWidget(self.labelPort, 0, 0)
+        self.TablePortsLayout.addWidget(self.spinBoxPort, 0, 1)
+        self.TablePortsLayout.addWidget(self.labelService, 0, 2)
+        self.TablePortsLayout.addWidget(self.lineEditSearch, 0, 3)
+        self.TablePortsLayout.addWidget(self.labelProtocol, 0, 4)
+        self.TablePortsLayout.addWidget(self.comboBoxProtocol, 0, 5)
+        self.TablePortsLayout.addWidget(self.SearchPortBtn, 0, 6)
+        self.TablePortsLayout.addWidget(self.TablePorts, 1, 0, 1, 7)
+        self.TablePortsLayout.addWidget(self.PreviousTableBtn, 2, 0)
+        self.TablePortsLayout.addWidget(self.NextTableBtn, 2, 1)
         
         #*************************************************************"
         #************************* MENU BAR **************************"
@@ -367,6 +381,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
         self.tabWidget.setCurrentIndex(0)
+        self.mainLayout.addWidget(self.tabWidget)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -391,8 +406,8 @@ class Ui_MainWindow(object):
         item = self.TableScan.horizontalHeaderItem(5)
         item.setText(_translate("MainWindow", "Programa"))
             
-        self.labelRangeTCP.setText(_translate("MainWindow", "Rango dinámico  de puertos TCP:"))
-        self.labelRangeUDP.setText(_translate("MainWindow", "Rango dinámico  de puertos UDP:"))
+        self.labelRangeTCP.setText(_translate("MainWindow", "Rango TCP:"))
+        self.labelRangeUDP.setText(_translate("MainWindow", "Rango UDP:"))
         
         self.ScanPortsBtn.setText(_translate("MainWindow", "Actualizar"))
         self.EditRangeBtn.setText(_translate("MainWindow", "Modificar"))
