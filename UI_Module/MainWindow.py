@@ -387,12 +387,15 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.menuConfig.menuAction())
         self.menubar.addAction(self.menuHelp.menuAction())
 
-        self.retranslateUi(MainWindow)
         self.tabWidget.setCurrentIndex(0)
         self.mainLayout.addWidget(self.tabWidget)
+        self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
+        self.translator = QtCore.QTranslator()
+        self.translator.load("UI_Module/language_en.qm")
+        QtCore.QCoreApplication.installTranslator(self.translator)
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "Net Guard"))
 
