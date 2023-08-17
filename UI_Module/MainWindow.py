@@ -17,6 +17,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from Controller_Module.Ports import Get_Data, Table_Counter
 from Controller_Module.Rules import Firewall_Rules
+from Controller_Module.Report import Report_PDF
 from Controller_Module.Scan import Scan_Ports
 from .UI_Rules_Tab import RulesTable_Creator
 from .UI_Ports_Tab import Table_Creator
@@ -25,7 +26,10 @@ from .UI_Error import PopUp_Messages
 from .UI_About import Ui_Dialog
 
 class Ui_MainWindow(object):     
-    def setupUi(self, MainWindow):     
+    def setupUi(self, MainWindow):  
+        self.saveReport = Report_PDF()
+        path = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.DocumentsLocation) + "/Reporte.pdf"
+   
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(755, 616)
         MainWindow.setWindowIcon(QtGui.QIcon("Resources/icon.ico"))
@@ -178,7 +182,6 @@ class Ui_MainWindow(object):
         self.updateRulesTable(self.tableRules)
         
         #************************** Buttons ***************************"
-
         self.RefreshRuleBtn = QtWidgets.QToolButton(self.tab_Rules)
         self.RefreshRuleBtn.setFixedSize(101, 26)
         self.RefreshRuleBtn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
@@ -315,9 +318,12 @@ class Ui_MainWindow(object):
         self.action_Save_Scan = QtWidgets.QAction(MainWindow)
         self.action_Save_Scan.setShortcut('Ctrl+S')
         self.action_Save_Scan.setObjectName("action_Save_Scan")
+        self.action_Save_Scan.triggered.connect(lambda: self.saveReport.saveToPDF(path, self.TableScan, True))
         self.action_Save_Rules = QtWidgets.QAction(MainWindow)
         self.action_Save_Rules.setShortcut('Ctrl+R')
         self.action_Save_Rules.setObjectName("action_Save_Rules")
+        self.action_Save_Rules.triggered.connect(lambda: self.saveReport.saveToPDF(path, self.tableRules, False))
+        
 
         #************************** EDIT **************************"
         self.action_New_Rule = QtWidgets.QAction(MainWindow)
