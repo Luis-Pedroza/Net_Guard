@@ -59,6 +59,7 @@ class Ui_MainWindow(object):
         self.TableScan.setObjectName("TableScan")
         self.TableScan.setColumnCount(6)
         self.TableScan.cellDoubleClicked.connect(self.showScanTableInfo)
+        self.TableScan.horizontalHeader().sectionClicked.connect(lambda col: self.sort_table(self.TableScan, col))
         
         item = QtWidgets.QTableWidgetItem()
         self.TableScan.setHorizontalHeaderItem(0, item)
@@ -162,6 +163,7 @@ class Ui_MainWindow(object):
         self.tableRules.setObjectName("tableRules")
         self.tableRules.setColumnCount(6)
         self.tableRules.cellDoubleClicked.connect(self.showRulesWindowInfo)
+        self.tableRules.horizontalHeader().sectionClicked.connect(lambda col: self.sort_table(self.tableRules, col))
         
         item = QtWidgets.QTableWidgetItem()
         self.tableRules.setVerticalHeaderItem(0, item)
@@ -558,6 +560,9 @@ class Ui_MainWindow(object):
                     mainTable.setItem(row, col, item)
             #update table
             mainTable.repaint()
+        # Method to sort table
+    def sort_table(self, table, column):
+        table.sortItems(column, QtCore.Qt.AscendingOrder)
 
     # Method to initialize the change of range window
     def showPortsRangeWindow(self):
