@@ -394,7 +394,7 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         self.translator = QtCore.QTranslator()
-        self.translator.load("UI_Module/language_en.qm")
+        self.translator.load("Resources/lan/language_en.qm")
         QtCore.QCoreApplication.installTranslator(self.translator)
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "Net Guard"))
