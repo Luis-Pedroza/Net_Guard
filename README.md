@@ -13,16 +13,6 @@
 
 ### Net Guard is an open source software distributed by [GNU GENERAL PUBLIC LICENSE](./LICENSE)
 
-### Developed with
-- PyQt5 5.15.4
-- Sqlite3 3.37.2
-- Psutil 5.9.4.
-- Subprocess 
-- QtDesigner
-- DB Browser for SQLite Version
-- Visual Studio Code 1.80.0 (user setup)
-- Windows 11
-
 ### Releases 
 - [v1.0.0-rc-w7](https://github.com/Luis-Pedroza/Net_Guard/releases/tag/v1.0.0-rc-W7)
 - [v1.0.0-rc](https://github.com/Luis-Pedroza/Net_Guard/releases/tag/v1.0.0-rc)

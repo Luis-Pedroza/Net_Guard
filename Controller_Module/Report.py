@@ -1,11 +1,11 @@
-from reportlab.lib.pagesizes import letter
-from reportlab.lib import colors
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Image
 from reportlab.lib.styles import getSampleStyleSheet
-from UI_Module.UI_Error  import PopUp_Messages
+from reportlab.lib.pagesizes import letter
+from reportlab.lib import colors
 from PyQt5.QtWidgets import QMessageBox
 import datetime
 import os
+from UI_Module.UI_Error  import PopUp_Messages
 
 class Report_PDF():
     def saveToPDF(self, path, table, value):
