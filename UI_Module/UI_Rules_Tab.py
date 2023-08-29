@@ -176,7 +176,7 @@ class RulesTable_Creator(object):
         self.getRule  = rule
         # Two types of initialization 
         # If action == True, the windows is for edit and delete the rule
-        if action == True:
+        if action:
             try:
                 self.lineEditName.setText(rule[0]['Nombre de regla'])
                 self.comboBoxDirection.setCurrentText(rule[0]['Dirección'])
@@ -220,8 +220,6 @@ class RulesTable_Creator(object):
                 self.btnEdit.clicked.connect(self.editSelectedRule)
                 self.btnDelete.setText("Eliminar")
                 self.btnDelete.clicked.connect(self.deleteSelectedRule)
-                
-
             except Exception as exception:
                 code = 'No se pudo acceder a la regla seleccionada'
                 self.message.showMessage(code, exception, self.icon)
@@ -232,7 +230,6 @@ class RulesTable_Creator(object):
             self.btnEdit.clicked.connect(self.addNewRule)
             self.btnDelete.setText("Cancelar")
             self.btnDelete.clicked.connect(Form.close)
-            pass
         self.tabWidget.addTab(self.tabPort, "")        
 
         self.tabProgram = QtWidgets.QWidget()
@@ -263,7 +260,6 @@ class RulesTable_Creator(object):
     
     # Method to add a new rule
     def addNewRule(self):
-        # NOTE: CHECK IF THE lineEditPort HAS AN ACCEPTABLE VALUE
         name = self.lineEditName.text()
         # Check if the name is'nt empty
         if name != '':
@@ -272,20 +268,19 @@ class RulesTable_Creator(object):
             selectedPort = self.comboBoxPort.currentText()
             direction = 'in' if self.comboBoxDirection.currentText() == 'Dentro' else 'out'
             enable = 'yes' if self.checkBoxEnable.isChecked() else 'no'
-            action = 'allow' if self.comboBoxAction.currentText() == 'Permitir' else \
-            'block' if self.comboBoxAction.currentText() == 'Bloquear' else ''
-            profile = ','.join([profile for profile, check_box in {'private': self.checkBoxPrivate, 'public': self.checkBoxPublic, 'domain': self.checkBoxDomain}.items() if check_box.isChecked()]) or 'any'
+            action = 'allow' if self.comboBoxAction.currentText() == 'Permitir' else 'block'
+            profile = ','.join([profile for profile, check_box in {'Domain': self.checkBoxDomain, 'Private' : self.checkBoxPrivate, 'Public': self.checkBoxPublic}.items() if check_box.isChecked()]) or 'any'
             # check the direction and select the port
             if direction == 'in':
                 if selectedPort == 'Todos':
-                    port = 'localport=any'
+                    port = 'any'
                 else:
-                    port = f'localport={self.lineEditPort.text()}'
+                    port = self.lineEditPort.text()
             elif direction == 'out':
                 if selectedPort == 'Todos':
-                    port = 'remoteport=any'
+                    port = 'any'
                 else:
-                    port = f'remoteport={self.lineEditPort.text()}'
+                    port = self.lineEditPort.text()
             self.rulesConnection.addRule(name, direction, action, protocol, port, profile, description, enable)
         # exception if name is empty
         else:
@@ -323,7 +318,6 @@ class RulesTable_Creator(object):
             profile = translated_value
 
             # Get the port, it could be local, remote or any
-            print(self.getRule)
             if 'LocalPort' in self.getRule[0] or 'RemotePort' in self.getRule[0]:
                 if self.getRule[0]['LocalPort'] != 'Cualquiera':
                     port = f"LocalPort={self.getRule[0]['LocalPort']}"
