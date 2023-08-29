@@ -8,6 +8,7 @@
 # CREATED: 11/04/2023 (dd/mm/yy)
 # ***************************************************
 import subprocess
+import win32com.client
 from PyQt5.QtWidgets import QMessageBox
 from UI_Module.UI_Error import PopUp_Messages
 
@@ -16,31 +17,45 @@ class Firewall_Rules():
         self.message = PopUp_Messages()
         self.iconFail = QMessageBox.Critical
         self.iconCorrect = QMessageBox.Information
-    # arreglar linea if line.startswith('Nombre de regla:'): obtener el nombre
-    # según la configuración del equipo
 
     # Method to get all the rules
     def showRules(self):
-        # Initialize a list and the command
-        rule_data = []
-        command = 'netsh advfirewall firewall show rule name= "all"'
-        try:
-            # execute the command and get the output
-            output = subprocess.run(command, shell=True, capture_output=True, encoding='cp850')
-            lines = output.stdout.splitlines()
-            rule_dict = {}
-            # iteration to get all the rules on a dictionary
-            for line in lines:
-                if line.startswith('Nombre de regla:'):
-                    rule_dict = {'Nombre de regla': line.split(':', 1)[1].strip()}
-                    rule_data.append(rule_dict)
-                elif rule_data and ':' in line:
-                    key, value = [x.strip() for x in line.split(':', 1)]
-                    rule_dict[key] = value
-        # Exception control
-        except Exception as exception:
-            self.message.showMessage('UNABLE_TO_EXECUTE_showRules', exception, self.iconFail)
-        finally: return rule_data
+        firewall = win32com.client.Dispatch("HNetCfg.FwPolicy2")
+        rules = firewall.Rules
+        firewall_rules = []
+
+        for rule in rules:
+            rule_info = {
+                "Name": rule.Name,
+                "Enabled": rule.Enabled,
+                "Profiles": self.get_profiles(rule.Profiles),
+                "Action": "Allow" if rule.Action == 1 else "Block",
+                "Direction": "Inbound" if rule.Direction == 1 else "Outbound",
+                "Protocol": self.get_protocol_name(rule.Protocol),
+            }
+            firewall_rules.append(rule_info)
+
+        return firewall_rules
+
+    def get_protocol_name(self, protocol):
+        if protocol == 6:
+            return "TCP"
+        elif protocol == 17:
+            return "UDP"
+        elif protocol == 256:
+            return "ANY"
+        else:
+            return "Unknown"
+        
+    def get_profiles(self, profile):
+        profiles = []
+        if profile & 1:
+            profiles.append("Domain")
+        if profile & 2:
+            profiles.append("Private")
+        if profile & 4:
+            profiles.append("Public")
+        return profiles
 
     # Method to search rules
     def searchRules(self, name, profile, direction):

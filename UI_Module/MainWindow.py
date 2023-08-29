@@ -532,17 +532,17 @@ class Ui_MainWindow(object):
         # Insert new values on table
         mainTable.setRowCount(len(rules))
         for i, row in enumerate(rules):
-            item = QtWidgets.QTableWidgetItem(str(row["Nombre de regla"]))
+            item = QtWidgets.QTableWidgetItem(str(row["Name"]))
             mainTable.setItem(i, 0, item)
-            item = QtWidgets.QTableWidgetItem(str(row["Habilitada"]))
+            item = QtWidgets.QTableWidgetItem(str(row["Enabled"]))
             mainTable.setItem(i, 1, item)
-            item = QtWidgets.QTableWidgetItem(str(row["Perfiles"]))
+            item = QtWidgets.QTableWidgetItem(", ".join(row["Profiles"]))
             mainTable.setItem(i, 2, item)
-            item = QtWidgets.QTableWidgetItem(str(row["Acción"]))
+            item = QtWidgets.QTableWidgetItem(str(row["Action"]))
             mainTable.setItem(i, 3, item)
-            item = QtWidgets.QTableWidgetItem(str(row["Dirección"]))
+            item = QtWidgets.QTableWidgetItem(str(row["Direction"]))
             mainTable.setItem(i, 4, item)
-            item = QtWidgets.QTableWidgetItem(str(row["Protocolo"]))
+            item = QtWidgets.QTableWidgetItem(str(row["Protocol"]))
             mainTable.setItem(i, 5, item)
         # update table
         mainTable.repaint()
