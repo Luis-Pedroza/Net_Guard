@@ -1,3 +1,4 @@
+pywin32==306
 PyQt5==5.15.4
 PyQt5_sip==12.11.1
 reportlab==4.0.4
