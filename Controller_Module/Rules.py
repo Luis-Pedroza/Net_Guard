@@ -9,7 +9,6 @@
 # ***************************************************
 import subprocess
 import win32com.client
-import win32api
 from PyQt5.QtWidgets import QMessageBox
 from UI_Module.UI_Error import PopUp_Messages
 
