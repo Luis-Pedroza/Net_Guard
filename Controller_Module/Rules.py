@@ -9,6 +9,7 @@
 # ***************************************************
 import subprocess
 import win32com.client
+import win32api
 from PyQt5.QtWidgets import QMessageBox
 from UI_Module.UI_Error import PopUp_Messages
 
@@ -20,27 +21,43 @@ class Firewall_Rules():
         self.firewall = win32com.client.Dispatch("HNetCfg.FwPolicy2")
 
     # Method to add rule
-    def addRule(self, name:str, direction:str, action:str, protocol:str, port:str, profile:str, description:str, enable:str):
+    def addRule(self, name:str, direction:str, action:str, protocol:str, description:str, enable:str, port:str=None, program:str=None, ip:str=None):
         new_rule = win32com.client.Dispatch("HNetCfg.FWRule")
         try:
             new_rule.Name = name
             new_rule.Description = 'None' if description == '' else description
             new_rule.Action = 1 if action == 'allow' else 0
-            new_rule.Protocol = 6 if  protocol == 'TCP' else 17
-            new_rule.Enabled = True if enable == 'yes' else False  # Habilitar la regla
+            new_rule.Enabled = True if enable == 'yes' else False
             new_rule.Direction = 1 if direction == 'in' else 2
-            if port == 'any':
-                new_rule.LocalPorts = ''
-                new_rule.RemotePorts = ''
-            elif direction == 'in':
+
+            if protocol == 'TCP':
+                new_rule.Protocol = 6
+            elif protocol == 'UDP':
+                new_rule.Protocol = 17
+            else:
+                new_rule.Protocol = 256
+
+            if program != None:
+                new_rule.ApplicationName = program
+
+            if port != None and direction == 'in':
                 new_rule.LocalPorts = port
-            elif direction == "out":
+            elif port != None and direction == 'out':
                 new_rule.RemotePorts = port
 
             self.firewall.Rules.Add(new_rule)
             self.message.showMessage('Se agregó la regla','',self.iconCorrect)
-        except Exception as exception: 
-            self.message.showMessage('UNABLE_TO_EXECUTE_addRule', exception, self.iconFail)
+        except Exception as exception:
+            com_error_info = exception.excepinfo
+            if com_error_info and len(com_error_info) > 5:
+                error_code = com_error_info[5]
+                error_message = win32api.FormatMessage(error_code)
+                self.message.showMessage('UNABLE_TO_EXECUTE_addRule', error_message, self.iconFail)
+            else:
+                self.message.showMessage('UNABLE_TO_EXECUTE_addRule_1', exception.args[1], self.iconFail)
+
+
+
     # Method to get all the rules
     def showRules(self):
         rules = self.firewall.Rules
@@ -49,7 +66,7 @@ class Firewall_Rules():
             for rule in rules:
                 rule_info = {
                     "Name": rule.Name,
-                    "Enabled": rule.Enabled,
+                    "Enabled": "Yes" if rule.Enabled else "No",
                     "Profiles": self.get_profiles(rule.Profiles),
                     "Action": "Allow" if rule.Action == 1 else "Block",
                     "Direction": "Inbound" if rule.Direction == 1 else "Outbound",
