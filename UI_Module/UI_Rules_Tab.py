@@ -302,6 +302,7 @@ class RulesTable_Creator(object):
         else:
             self.btnEdit.setText("Agregar")
             self.btnEdit.clicked.connect(self.addNewRule)
+            self.btnEdit.clicked.connect(Form.close)
             self.btnDelete.setText("Cancelar")
             self.btnDelete.clicked.connect(Form.close)
             self.retranslateUi(Form)
@@ -314,6 +315,66 @@ class RulesTable_Creator(object):
         Form.setWindowTitle(_translate("Form", "Regla"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabPort), _translate("Form", "Puerto"))
     
+    def enableSelected(self, text, line_edit_widget):
+        if text == 'Todos':
+            line_edit_widget.setEnabled(False)
+        else:
+            line_edit_widget.setEnabled(True)
+
+    def addNewRule(self):
+        currentTab = self.tabWidget.currentIndex()
+        if currentTab == 0:
+            self.addPortRule()
+        elif currentTab == 1:
+            self.addProgramRule()
+        elif currentTab == 2:
+            self.addIpRule()
+
+    # def addIpRule(self):
+    def addPortRule(self):
+        name = self.lineEditNamePort.text()
+        # Check if the name is'nt empty
+        if name != '':
+            description = self.textEditDescriptionPort.toPlainText()
+            protocol = self.comboBoxProtocol.currentText()
+            port = self.comboBoxPort.currentText()
+            direction = 'in' if self.comboBoxDirectionPort.currentText() == 'Dentro' else 'out'
+            enable = 'yes' if self.checkBoxEnablePort.isChecked() else 'no'
+            action = 'allow' if self.comboBoxActionPort.currentText() == 'Permitir' else 'block'
+            if direction == 'in':
+                if port == 'Todos':
+                    selectedPort = None
+                else:
+                    selectedPort = self.lineEditPort.text()
+            elif direction == 'out':
+                if port == 'Todos':
+                    selectedPort = None
+                else:
+                    selectedPort = self.lineEditPort.text()
+            self.rulesConnection.addRule(name, direction, action, protocol, description, enable, port=selectedPort)
+        # exception if name is empty
+        else:
+            code = 'No ingresó el nombre de la regla'
+            error = 'Debe ingresar el nombre de la regla.\nRevise la ayuda para crear nuevas reglas'
+            self.message.showMessage(code, error, self.icon)
+
+    def addProgramRule(self):
+        name = self.lineEditNameProgram.text()
+        # Check if the name is'nt empty
+        if name != '':
+            description = self.textEditDescriptionProgram.toPlainText()
+            direction = 'in' if self.comboBoxDirectionProgram.currentText() == 'Dentro' else 'out'
+            enable = 'yes' if self.checkBoxEnableProgram.isChecked() else 'no'
+            action = 'allow' if self.comboBoxActionProgram.currentText() == 'Permitir' else 'block'
+            selectedProgram = None if self.comboBoxProgram.currentText() == 'Todos' else self.lineEditProgram.text()
+            protocol = None
+            self.rulesConnection.addRule(name, direction, action, protocol, description, enable, program=selectedProgram)
+        else:
+            code = 'No ingresó el nombre de la regla'
+            error = 'Debe ingresar el nombre de la regla.\nRevise la ayuda para crear nuevas reglas'
+            self.message.showMessage(code, error, self.icon)
+
+
     def setUpFilledWindow(self, protocol):
         self.labelProfile = QtWidgets.QLabel(self.tabPort)
         self.labelProfile.setGeometry(QtCore.QRect(30, 280, 47, 13))
@@ -381,43 +442,12 @@ class RulesTable_Creator(object):
             self.message.showMessage(code, exception, self.icon)
             return False
 
-    def enableSelected(self, text, line_edit_widget):
-        if text == 'Todos':
-            line_edit_widget.setEnabled(False)
-        else:
-            line_edit_widget.setEnabled(True)
 
-    # Method to add a new rule
-    def addNewRule(self):
-        current_tab_index = self.tabWidget.currentIndex()
-        print(current_tab_index)
-        name = self.lineEditName.text()
-        # Check if the name is'nt empty
-        if name != '':
-            description = self.textEditDescription.toPlainText()
-            protocol = self.comboBoxProtocol.currentText()
-            selectedPort = self.comboBoxPort.currentText()
-            direction = 'in' if self.comboBoxDirection.currentText() == 'Dentro' else 'out'
-            enable = 'yes' if self.checkBoxEnable.isChecked() else 'no'
-            action = 'allow' if self.comboBoxAction.currentText() == 'Permitir' else 'block'
-            profile = ','.join([profile for profile, check_box in {'Domain': self.checkBoxDomain, 'Private' : self.checkBoxPrivate, 'Public': self.checkBoxPublic}.items() if check_box.isChecked()]) or 'any'
-            # check the direction and select the port
-            if direction == 'in':
-                if selectedPort == 'Todos':
-                    port = 'any'
-                else:
-                    port = self.lineEditPort.text()
-            elif direction == 'out':
-                if selectedPort == 'Todos':
-                    port = 'any'
-                else:
-                    port = self.lineEditPort.text()
-            self.rulesConnection.addRule(name, direction, action, protocol, port, profile, description, enable)
-        # exception if name is empty
-        else:
-            code = 'No ingresó el nombre de la regla'
-            error = 'Debe ingresar el nombre de la regla.\nRevise la ayuda para crear nuevas reglas'
-            self.message.showMessage(code, error, self.icon)
+
+
+
+
+
 
     # Method to delete the selected rule
     def deleteSelectedRule(self):
