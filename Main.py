@@ -8,7 +8,7 @@
 # CREATED: 16/03/2023 (dd/mm/yy)
 # ******************* ********************************
 
-# Command to create an exe.
+# Command to create the package
 # pyinstaller --onedir --noconsole \
 # --icon=Resources\icon.ico --uac-admin \
 #     --add-data "Resources;Resources" -n "Net Guard" Main.py

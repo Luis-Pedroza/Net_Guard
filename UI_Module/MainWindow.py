@@ -1,8 +1,8 @@
 # ***************************************************
 # FILE: MainWindow.py
 #
-# DESCRIPTION: 
 # -*- coding: utf-8 -*-
+# DESCRIPTION: 
 #
 # Form implementation generated from reading ui file 'MainWindow.ui'
 #
