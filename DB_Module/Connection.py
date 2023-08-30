@@ -64,7 +64,6 @@ class Database:
         except sqlite3.Error as exception:
             self.popUpMessage.showMessage('ERROR_CONNECT_DB', exception, self.icon)
 
-    # disconnect to DB
     def disconnect(self):
         try:
             self.connection.close()

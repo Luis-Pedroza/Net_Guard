@@ -55,7 +55,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.ui.setupUi(self)
 
 
-# Initialize de mainWindow until program is closed
 if __name__ == '__main__':
     """
     Application entry point.
