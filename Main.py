@@ -16,12 +16,11 @@
 # AUTHOR:  Luis Pedroza
 # CREATED: 16/03/2023 (dd/mm/yy)
 # ******************* ********************************
-
+#
 # Command to create the package
 # pyinstaller --onedir --noconsole \
 # --icon=Resources\icon.ico --uac-admin \
 #     --add-data "Resources;Resources" -n "Net Guard" Main.py
-
 
 import sys
 from PyQt5 import QtWidgets
@@ -49,6 +48,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def __init__(self):
         """
         Initializes the MainWindow class and sets up the user interface.
+
         """
         super(MainWindow, self).__init__()
         self.ui = Ui_MainWindow()
@@ -59,6 +59,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 if __name__ == '__main__':
     """
     Application entry point.
+
     """
     InitMainWindow = QtWidgets.QApplication([])
     MainApp = MainWindow()
