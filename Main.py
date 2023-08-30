@@ -2,7 +2,16 @@
 # FILE: Main.py
 #
 # DESCRIPTION:
-# This code imports the main UI and initialize it
+# Application Entry Point and Main Window Initialization
+#
+# This script serves as the entry point for the application
+# and initializes the main application window using PyQt5.
+# The 'MainWindow' class is defined,
+# which inherits from 'QtWidgets.QMainWindow'
+# and 'Ui_MainWindow',
+# enabling the integration of the UI design from the 'UI_Module'.
+# The script creates an instance of the 'MainWindow' class,
+# displays the main window, and starts the event loop for the application.
 #
 # AUTHOR:  Luis Pedroza
 # CREATED: 16/03/2023 (dd/mm/yy)
