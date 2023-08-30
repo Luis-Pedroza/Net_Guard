@@ -19,9 +19,28 @@ from PyQt5 import QtWidgets
 from UI_Module.MainWindow import Ui_MainWindow
 
 
-# Initialize the Ui_MainWindow as a QMainWindow type
 class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
+    """
+    Main application window class.
+
+    This class initializes the main application window
+    using the Ui_MainWindow class from UI_Module.
+    It creates an instance of the QMainWindow and sets up the user interface.
+
+    Attributes:
+        ui (Ui_MainWindow): An instance of the Ui_MainWindow class
+        for setting up the user interface.
+
+    Methods:
+        __init__(self)
+            Initializes the MainWindow class and sets up the user interface.
+
+    """
+
     def __init__(self):
+        """
+        Initializes the MainWindow class and sets up the user interface.
+        """
         super(MainWindow, self).__init__()
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
@@ -29,6 +48,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
 # Initialize de mainWindow until program is closed
 if __name__ == '__main__':
+    """
+    Application entry point.
+    """
     InitMainWindow = QtWidgets.QApplication([])
     MainApp = MainWindow()
     MainApp.show()
