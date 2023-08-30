@@ -330,7 +330,6 @@ class RulesTable_Creator(object):
         elif currentTab == 2:
             self.addIpRule()
 
-    # def addIpRule(self):
     def addPortRule(self):
         name = self.lineEditNamePort.text()
         # Check if the name is'nt empty
@@ -374,6 +373,8 @@ class RulesTable_Creator(object):
             error = 'Debe ingresar el nombre de la regla.\nRevise la ayuda para crear nuevas reglas'
             self.message.showMessage(code, error, self.icon)
 
+    def addIpRule(self):
+        pass
 
     def setUpFilledWindow(self, protocol):
         self.labelProfile = QtWidgets.QLabel(self.tabPort)
