@@ -22,7 +22,7 @@ class Firewall_Rules():
         self.firewall = win32com.client.Dispatch("HNetCfg.FwPolicy2")
 
     # Method to add rule
-    def addRule(self, name:str, direction:str, action:str, protocol:str, description:str, enable:str, port:str=None, program:str=None, ip:str=None):
+    def addRule(self, name:str, description:str, enable:str, direction:str, action:str, protocol:str,  port:str, program:str, ip:str):
         new_rule = win32com.client.Dispatch("HNetCfg.FWRule")
         try:
             new_rule.Name = name
@@ -38,15 +38,14 @@ class Firewall_Rules():
             else:
                 new_rule.Protocol = 256
 
-            if port != None and direction == 'in':
+            if port is not None and direction == 'in':
                 new_rule.LocalPorts = port
-            elif port != None and direction == 'out':
+            elif port is not None and direction == 'out':
                 new_rule.RemotePorts = port
             
-            if program != None:
+            if program is not None:
                 new_rule.ApplicationName = program
-                
-            if ip != None:
+            if ip is not None:
                 new_rule.RemoteAddresses = ip
 
             self.firewall.Rules.Add(new_rule)
