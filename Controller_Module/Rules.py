@@ -7,6 +7,7 @@
 # AUTHOR:  Luis Pedroza
 # CREATED: 11/04/2023 (dd/mm/yy)
 # ***************************************************
+
 import subprocess
 import win32com.client
 import win32api
@@ -37,13 +38,16 @@ class Firewall_Rules():
             else:
                 new_rule.Protocol = 256
 
-            if program != None:
-                new_rule.ApplicationName = program
-
             if port != None and direction == 'in':
                 new_rule.LocalPorts = port
             elif port != None and direction == 'out':
                 new_rule.RemotePorts = port
+            
+            if program != None:
+                new_rule.ApplicationName = program
+                
+            if ip != None:
+                new_rule.RemoteAddresses = ip
 
             self.firewall.Rules.Add(new_rule)
             self.message.showMessage('Se agregó la regla','',self.iconCorrect)
