@@ -14,15 +14,15 @@
 
 from PyQt5.QtWidgets import QMessageBox
 from DB_Module.Connection import Database
-from UI_Module.UI_Error  import PopUp_Messages
+from UI_Module.UI_Message  import PopUpMessage
 
 class Get_Data():
     # initialize the class
     def __init__(self):
         # name and location of the DB
         self.db = Database('Resources/ports.db')
-        # use of PopUp_Messages for exceptions
-        self.popUpMessage = PopUp_Messages()
+        # use of PopUpMessage for exceptions
+        self.popUpMessage = PopUpMessage()
 
     # Function to get the 14 rows between the maximum and minimum values given
     def get_all_ports(self, minimum, maximum):
@@ -36,7 +36,7 @@ class Get_Data():
             self.db.disconnect()
             return table
         except Exception as exception:
-            self.popUpMessage.showMessage('UNABLE_TO_USE_get_all_ports', exception, QMessageBox.Critical)
+            self.popUpMessage.show_message('UNABLE_TO_USE_get_all_ports', exception, QMessageBox.Critical)
             return None
 
     # Function to get the values given for a search
@@ -52,7 +52,7 @@ class Get_Data():
                 self.db.disconnect()
                 return table
             except Exception as exception:
-                self.popUpMessage.showMessage('UNABLE_TO_SEARCH_Both_Service', exception, QMessageBox.Critical)
+                self.popUpMessage.show_message('UNABLE_TO_SEARCH_Both_Service', exception, QMessageBox.Critical)
                 return None
         #if port is´nt 0 then search by port and show both protocols (TCP & UDP)         
         elif protocol == 'ambos' and port != 0:
@@ -64,7 +64,7 @@ class Get_Data():
                 self.db.disconnect()
                 return table
             except Exception as exception:
-                self.popUpMessage.showMessage('UNABLE_TO_SEARCH_Both_Ports', exception, QMessageBox.Critical)
+                self.popUpMessage.show_message('UNABLE_TO_SEARCH_Both_Ports', exception, QMessageBox.Critical)
                 return None
             
         # if protocol is´nt ambos specify the protocol
@@ -79,7 +79,7 @@ class Get_Data():
                     self.db.disconnect()
                     return table
                 except Exception as exception:
-                    self.popUpMessage.showMessage('UNABLE_TO_SEARCH_Service', exception, QMessageBox.Critical)
+                    self.popUpMessage.show_message('UNABLE_TO_SEARCH_Service', exception, QMessageBox.Critical)
                     return None
             #if port is´nt 0 then search by port and specify the protocol
             else:
@@ -91,7 +91,7 @@ class Get_Data():
                     self.db.disconnect()
                     return table
                 except Exception as exception:
-                    self.popUpMessage.showMessage('UNABLE_TO_SEARCH_Both_Port', exception, QMessageBox.Critical)
+                    self.popUpMessage.show_message('UNABLE_TO_SEARCH_Both_Port', exception, QMessageBox.Critical)
                     return None
                 
 # Counter of 14 by 14                

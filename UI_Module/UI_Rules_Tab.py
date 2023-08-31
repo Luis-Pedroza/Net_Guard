@@ -12,12 +12,12 @@
 
 from PyQt5 import QtCore, QtWidgets, QtGui
 from Controller_Module.Rules import Firewall_Rules
-from UI_Module.UI_Error import PopUp_Messages
+from UI_Module.UI_Message import PopUpMessage
 
 class RulesTableCreator(object):
     #Initialize the class
     def __init__(self, name='', profile='', direction=''):
-        self.message = PopUp_Messages()
+        self.message = PopUpMessage()
         self.rulesConnection = Firewall_Rules()
         self.icon = QtWidgets.QMessageBox.Information
         self.name = name
@@ -217,7 +217,7 @@ class RulesTableCreator(object):
         else:
             code = 'No ingresó el nombre de la regla'
             error = 'Debe ingresar el nombre de la regla.\nRevise la ayuda para crear nuevas reglas'
-            self.message.showMessage(code, error, self.icon)
+            self.message.show_message(code, error, self.icon)
 
 
 
@@ -291,7 +291,7 @@ class RulesTableCreator(object):
             return True
         except Exception as exception:
             code = 'No se pudo acceder a la regla seleccionada'
-            self.message.showMessage(code, exception, self.icon)
+            self.message.show_message(code, exception, self.icon)
             return False
 
     # Method to delete the selected rule
@@ -338,7 +338,7 @@ class RulesTableCreator(object):
                 self.rulesConnection.deleteRule(name, direction, profile, protocol.lower(), port)
         except Exception as exception:
                 code = 'Ocurrió un error'
-                self.message.showMessage(code, exception, self.icon)
+                self.message.show_message(code, exception, self.icon)
 
     # Edit the selected rule
     def editSelectedRule(self):
@@ -374,7 +374,7 @@ class RulesTableCreator(object):
         else:
             code = 'Debe especificar un nombre'
             error = 'Debe especificar el nombre de la regla.\nRevise la ayuda para modificar nuevas reglas'
-            self.message.showMessage(code, error, self.icon)
+            self.message.show_message(code, error, self.icon)
 
     def getSelectedRule(self, row):
         pass

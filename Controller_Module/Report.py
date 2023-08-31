@@ -5,7 +5,7 @@ from reportlab.lib import colors
 from PyQt5.QtWidgets import QMessageBox
 import datetime
 import os
-from UI_Module.UI_Error  import PopUp_Messages
+from UI_Module.UI_Message  import PopUpMessage
 
 class Report_PDF():
     def saveToPDF(self, path, table, value):
@@ -22,7 +22,7 @@ class Report_PDF():
                 path = os.path.join(directory, f"{new_base_name}{extension}")
                 count += 1
 
-        self.popUpMessage = PopUp_Messages()
+        self.popUpMessage = PopUpMessage()
         report = SimpleDocTemplate(path, pagesize=letter, topMargin=30)
         data = []
         newTable = []
@@ -73,4 +73,4 @@ class Report_PDF():
 
         data.append(table)
         report.build(data)
-        self.popUpMessage.showMessage('Se guardo el reporte', 'Se guardo el reporte en la carpeta de documentos', QMessageBox.Information)
+        self.popUpMessage.show_message('Se guardo el reporte', 'Se guardo el reporte en la carpeta de documentos', QMessageBox.Information)

@@ -12,11 +12,11 @@ import subprocess
 import win32com.client
 import win32api
 from PyQt5.QtWidgets import QMessageBox
-from UI_Module.UI_Error import PopUp_Messages
+from UI_Module.UI_Message import PopUpMessage
 
 class Firewall_Rules():
     def __init__(self):
-        self.message = PopUp_Messages()
+        self.message = PopUpMessage()
         self.iconFail = QMessageBox.Critical
         self.iconCorrect = QMessageBox.Information
         self.firewall = win32com.client.Dispatch("HNetCfg.FwPolicy2")
@@ -49,15 +49,15 @@ class Firewall_Rules():
                 new_rule.RemoteAddresses = ip
 
             self.firewall.Rules.Add(new_rule)
-            self.message.showMessage('Se agregó la regla','',self.iconCorrect)
+            self.message.show_message('Se agregó la regla','',self.iconCorrect)
         except Exception as exception:
             com_error_info = exception.excepinfo
             if com_error_info and len(com_error_info) > 5:
                 error_code = com_error_info[5]
                 error_message = win32api.FormatMessage(error_code)
-                self.message.showMessage('UNABLE_TO_EXECUTE_addRule', error_message, self.iconFail)
+                self.message.show_message('UNABLE_TO_EXECUTE_addRule', error_message, self.iconFail)
             else:
-                self.message.showMessage('UNABLE_TO_EXECUTE_addRule_1', exception.args[1], self.iconFail)
+                self.message.show_message('UNABLE_TO_EXECUTE_addRule_1', exception.args[1], self.iconFail)
 
 
 
@@ -78,7 +78,7 @@ class Firewall_Rules():
                 firewall_rules.append(rule_info)
             return firewall_rules
         except Exception as exception: 
-            self.message.showMessage('UNABLE_TO_EXECUTE_showRules', exception, self.iconFail)
+            self.message.show_message('UNABLE_TO_EXECUTE_showRules', exception, self.iconFail)
 
     def get_protocol_name(self, protocol):
         if protocol == 1:
@@ -138,7 +138,7 @@ class Firewall_Rules():
                         rule_dict[key] = value
             # Exception control
             except Exception as exception:
-                self.message.showMessage('UNABLE_TO_EXECUTE_searchRules', exception, self.iconFail)
+                self.message.show_message('UNABLE_TO_EXECUTE_searchRules', exception, self.iconFail)
             finally: return rule_data
         # if Therese's a problem with the profile, search without it  
         else:
@@ -156,7 +156,7 @@ class Firewall_Rules():
                         rule_dict[key] = value
             # Exception control
             except Exception as exception:
-                self.message.showMessage('UNABLE_TO_EXECUTE_searchRules', exception, self.iconFail)
+                self.message.show_message('UNABLE_TO_EXECUTE_searchRules', exception, self.iconFail)
             finally: return rule_data
 
 
@@ -173,15 +173,15 @@ class Firewall_Rules():
             if output.returncode != 0:
                 # check if stdout has an error of use or elevation
                 if output.stdout.splitlines()[1] != "":
-                    self.message.showMessage('UNABLE_To_deleteRule',output.stdout.splitlines()[1], self.iconFail)
+                    self.message.show_message('UNABLE_To_deleteRule',output.stdout.splitlines()[1], self.iconFail)
                 else: 
-                    self.message.showMessage('UNABLE_To_deleteRule',output.stdout, self.iconFail)
+                    self.message.show_message('UNABLE_To_deleteRule',output.stdout, self.iconFail)
             else: 
                 # Show confirmation
-                self.message.showMessage('Se eliminó la regla', '', self.iconCorrect)
+                self.message.show_message('Se eliminó la regla', '', self.iconCorrect)
         # exception control
         except subprocess.CalledProcessError as exception:
-            self.message.showMessage('UNABLE_TO_EXECUTE_deleteRule', exception, self.iconFail)
+            self.message.show_message('UNABLE_TO_EXECUTE_deleteRule', exception, self.iconFail)
 
     # Method to edit rule
     def editRule(self, oldName, oldDirection,oldProtocol,name,direction, action, protocol, port, profile, description, enable):
@@ -198,12 +198,12 @@ class Firewall_Rules():
             output = subprocess.run(command, shell=True, capture_output=True, encoding='cp850')
             if output.returncode != 0:
                 if output.stdout.splitlines()[1] != "":
-                    self.message.showMessage('UNABLE_To_editRule',output.stdout.splitlines()[1], self.iconFail)
+                    self.message.show_message('UNABLE_To_editRule',output.stdout.splitlines()[1], self.iconFail)
                 else: 
-                    self.message.showMessage('UNABLE_To_editRule',output.stdout, self.iconFail)
+                    self.message.show_message('UNABLE_To_editRule',output.stdout, self.iconFail)
             else: 
                 # Show confirmation
-                self.message.showMessage('Se editó la regla','',self.iconCorrect)
+                self.message.show_message('Se editó la regla','',self.iconCorrect)
         except subprocess.CalledProcessError as exception:
             # Exception control
-            self.message.showMessage('UNABLE_TO_EXECUTE_addRule', exception, self.iconFail)
+            self.message.show_message('UNABLE_TO_EXECUTE_addRule', exception, self.iconFail)

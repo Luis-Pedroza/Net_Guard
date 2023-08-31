@@ -10,13 +10,13 @@
 
 from PyQt5 import QtCore, QtWidgets, QtGui
 from Controller_Module.Scan import Scan_Ports
-from UI_Module.UI_Error import PopUp_Messages
+from UI_Module.UI_Message import PopUpMessage
 
-class Ports_Range(object):
+class PortsRangeWindow(object):
     def __init__(self):
         super().__init__()
         self.range = Scan_Ports()
-        self.message=PopUp_Messages()
+        self.message=PopUpMessage()
         self.icon = QtWidgets.QMessageBox.Information
 
     def setUpWindow(self, MainWindow):
@@ -83,21 +83,21 @@ class Ports_Range(object):
             statusTCP = self.range.changeRange('tcp', self.rangeTCP.value())
             statusUDP = self.range.changeRange('udp', self.rangeUDP.value())
             if statusTCP != False or statusUDP != False:
-                self.message.showMessage(code,'',self.icon)
+                self.message.show_message(code,'',self.icon)
         # change UDP
         elif self.checkUDP.isChecked():
             statusUDP = self.range.changeRange('udp', self.rangeUDP.value())
             if statusUDP != False:
-                self.message.showMessage(code,'',self.icon)
+                self.message.show_message(code,'',self.icon)
         # change TCP
         elif self.checkTCP.isChecked():
             statusTCP = self.range.changeRange('tcp', self.rangeTCP.value())
             if statusTCP != False:
-                self.message.showMessage(code,'',self.icon)
+                self.message.show_message(code,'',self.icon)
         # None checked
         else:
             code = 'No seleccionó una opción'
-            self.message.showMessage(code,'',self.icon)
+            self.message.show_message(code,'',self.icon)
             
     # method to reste default values
     def reset(self):
@@ -108,5 +108,5 @@ class Ports_Range(object):
         
         # Error control, status False means an error
         if statusTCP != False or statusUDP != False:
-            self.message.showMessage(code,'',self.icon)
+            self.message.show_message(code,'',self.icon)
         else: pass

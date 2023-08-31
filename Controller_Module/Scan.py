@@ -12,12 +12,12 @@
 import psutil
 import subprocess
 from PyQt5.QtWidgets import QMessageBox
-from UI_Module.UI_Error import PopUp_Messages
+from UI_Module.UI_Message import PopUpMessage
 
 
 class Scan_Ports():
     def __init__(self):
-        self.message = PopUp_Messages()
+        self.message = PopUpMessage()
         self.icon = QMessageBox.Critical
     # static method to get all the ports in use
     @staticmethod
@@ -64,13 +64,13 @@ class Scan_Ports():
             outputUDP = subprocess.run(commandUDP, shell=True, capture_output=True, encoding='cp850')
             # if output has an error show an error window
             if outputTCP.returncode != 0 or outputUDP.returncode != 0:
-                self.message.showMessage('UNABLE_To_getRange',outputTCP.stdout.splitlines()[1], self.icon)
+                self.message.show_message('UNABLE_To_getRange',outputTCP.stdout.splitlines()[1], self.icon)
             # else return the output
             else:
                 return str(outputTCP.stdout), str(outputUDP.stdout)
         # exception control
         except subprocess.CalledProcessError as exception:
-            self.message.showMessage('UNABLE_To_Execute_Command_in_getRange', exception, self.icon)
+            self.message.show_message('UNABLE_To_Execute_Command_in_getRange', exception, self.icon)
 
     # Method to change the range of the ports
     def changeRange(self, protocol, range):
@@ -82,14 +82,14 @@ class Scan_Ports():
             outputRange = subprocess.run(commandRange, shell=True, capture_output=True, encoding='cp850')
             # if output has an error show a popUp message and return status false
             if outputRange.returncode != 0:
-                self.message.showMessage('UNABLE_To_changeRange', outputRange.stdout, self.icon)
+                self.message.show_message('UNABLE_To_changeRange', outputRange.stdout, self.icon)
                 status = False
             # if output does'nt has an error return status true
             else:
                 status = True
         # if there's an exception return code False
         except subprocess.CalledProcessError as exception:
-            self.message.showMessage('UNABLE_To_Execute_Command_in_changeRange', exception, self.icon)
+            self.message.show_message('UNABLE_To_Execute_Command_in_changeRange', exception, self.icon)
             status = False
         finally: return status
 

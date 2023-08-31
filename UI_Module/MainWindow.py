@@ -20,9 +20,9 @@ from Controller_Module.Rules import Firewall_Rules
 from Controller_Module.Report import Report_PDF
 from Controller_Module.Scan import Scan_Ports
 from .UI_Rules_Tab import RulesTableCreator
-from .UI_Ports_Tab import Table_Creator
-from .UI_Scan_Tab import Ports_Range
-from .UI_Error import PopUp_Messages
+from .UI_Ports_Tab import TablePortsCreator
+from .UI_Scan_Tab import PortsRangeWindow
+from .UI_Message import PopUpMessage
 from .UI_About import Ui_Dialog
 
 class Ui_MainWindow(object):     
@@ -217,7 +217,7 @@ class Ui_MainWindow(object):
 
         self.counter = Table_Counter(1,65535)
         self.updatedTable = Get_Data()
-        self.errorMessage = PopUp_Messages()
+        self.errorMessage = PopUpMessage()
         
         #************************** HEADER ***************************"
         self.SearchPortBtn = QtWidgets.QToolButton(self.tab_Ports)
@@ -570,7 +570,7 @@ class Ui_MainWindow(object):
     # Method to initialize the change of range window
     def showPortsRangeWindow(self):
         self.initRangeWindow = QtWidgets.QDialog()
-        self.RangeWindow = Ports_Range()
+        self.RangeWindow = PortsRangeWindow()
         self.RangeWindow.setUpWindow(self.initRangeWindow)
         self.initRangeWindow.exec_()
 
@@ -597,11 +597,11 @@ class Ui_MainWindow(object):
         if self.lineEditSearchRule.text() == '':
             code = 'Ingrese el nombre de la regla'
             error = 'Debe ingresar el nombre de la regla para poder realizar una búsqueda'
-            self.errorMessage.showMessage(code, error, icon)
+            self.errorMessage.show_message(code, error, icon)
         elif self.searchRule.newTable.rowCount() == 0:
             code = 'No se encontraron datos coincidentes'
             error = 'La búsqueda no arrojo ningún dato coincidente con los parámetros ingresados'
-            self.errorMessage.showMessage(code, error, icon)
+            self.errorMessage.show_message(code, error, icon)
         else: 
             self.InitSearchTable.exec_()
         self.lineEditSearchRule.clear()
@@ -618,9 +618,9 @@ class Ui_MainWindow(object):
         service = self.lineEditSearch.text()
         protocol = self.comboBoxProtocol.currentText()
 
-        #initialize new table with Table_Creator
+        #initialize new table with TablePortsCreator
         self.InitSearchTable = QtWidgets.QDialog()
-        self.TableApp = Table_Creator(port, protocol, service)
+        self.TableApp = TablePortsCreator(port, protocol, service)
         self.TableApp.setup_rules_table(self.InitSearchTable)
 
         #exceptions of the search
@@ -628,17 +628,17 @@ class Ui_MainWindow(object):
             #port value is´nt registered 
             code = 'Puerto no registrado'
             error = 'El puerto que intenta buscar no se encuentra registrado por la IANA'
-            self.errorMessage.showMessage(code, error, icon)
+            self.errorMessage.show_message(code, error, icon)
         elif service == '' and port == 0:
             #empty values of search
             code = 'No se puede realizar la búsqueda'
             error = 'La búsqueda no se puede procesar como la especifico, revise la ayuda para realizar búsquedas'
-            self.errorMessage.showMessage(code, error, icon)
+            self.errorMessage.show_message(code, error, icon)
         elif self.TableApp.newTable.rowCount() == 0:
             #data is´nt on the DB
             code = 'No se encontraron datos coincidentes'
             error = 'La búsqueda no arrojó ningún dato coincidente con los parámetros ingresados'
-            self.errorMessage.showMessage(code, error, icon)
+            self.errorMessage.show_message(code, error, icon)
         else:
             #show the results
             self.InitSearchTable.exec_()
@@ -651,7 +651,7 @@ class Ui_MainWindow(object):
         code = 'Función en construcción'
         message = 'Función showScanTableInfo en construcción'
         icon = QtWidgets.QMessageBox.Information
-        self.errorMessage.showMessage(code, message, icon)
+        self.errorMessage.show_message(code, message, icon)
 
     def showRulesWindowInfo(self, row):
         translations = {
@@ -687,7 +687,7 @@ class Ui_MainWindow(object):
         code = 'Función en construcción'
         message = 'Función showPortsTableInfo en construcción'
         icon = QtWidgets.QMessageBox.Information
-        self.errorMessage.showMessage(code, message, icon)
+        self.errorMessage.show_message(code, message, icon)
 
     # counter to show the next 14 values on the table in the tab ports
     def nextValue(self, mainTable):
