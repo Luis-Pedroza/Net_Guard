@@ -19,7 +19,7 @@ from Controller_Module.Ports import Get_Data, Table_Counter
 from Controller_Module.Rules import Firewall_Rules
 from Controller_Module.Report import Report_PDF
 from Controller_Module.Scan import Scan_Ports
-from .UI_Rules_Tab import RulesTable_Creator
+from .UI_Rules_Tab import RulesTableCreator
 from .UI_Ports_Tab import Table_Creator
 from .UI_Scan_Tab import Ports_Range
 from .UI_Error import PopUp_Messages
@@ -119,7 +119,7 @@ class Ui_MainWindow(object):
         self.tab_Rules.setObjectName("tab_Rules")
         self.tabWidget.addTab(self.tab_Rules, "")
         self.getRules = Firewall_Rules()
-        self.initNewRule = RulesTable_Creator()
+        self.initNewRule = RulesTableCreator()
         self.ruleWindow = QtWidgets.QDialog()
 
         #************************** Header ***************************"
@@ -194,7 +194,7 @@ class Ui_MainWindow(object):
         self.NewRuleBtn.setFixedSize(101, 26)
         self.NewRuleBtn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.NewRuleBtn.setObjectName("NewRuleBtn")
-        self.NewRuleBtn.clicked.connect(lambda: self.initNewRule.initRuleWindow(self.ruleWindow))
+        self.NewRuleBtn.clicked.connect(lambda: self.initNewRule.init_rule_window(self.ruleWindow))
 
         self.TableRulesLayout = QtWidgets.QGridLayout(self.tab_Rules)
         self.TableRulesLayout.addWidget(self.labelRule, 0,0)
@@ -331,7 +331,7 @@ class Ui_MainWindow(object):
         self.action_New_Rule = QtWidgets.QAction(MainWindow)
         self.action_New_Rule.setShortcut('Ctrl+N')
         self.action_New_Rule.setObjectName("action_New_Rule")
-        self.action_New_Rule.triggered.connect(lambda: self.initNewRule.initRuleWindow(self.ruleWindow))
+        self.action_New_Rule.triggered.connect(lambda: self.initNewRule.init_rule_window(self.ruleWindow))
         self.action_Change_Range = QtWidgets.QAction(MainWindow)
         self.action_Change_Range.setShortcut('Ctrl+C')
         self.action_Change_Range.setObjectName("action_Change_Range")
@@ -591,8 +591,8 @@ class Ui_MainWindow(object):
         }
         translateProfile = translations.get(profile, profile)
         translateDirection = translations.get(direction, direction)
-        self.searchRule = RulesTable_Creator(name, translateProfile, translateDirection)
-        self.searchRule.setupTable(self.InitSearchTable)
+        self.searchRule = RulesTableCreator(name, translateProfile, translateDirection)
+        self.searchRule.setup_rules_table(self.InitSearchTable)
 
         if self.lineEditSearchRule.text() == '':
             code = 'Ingrese el nombre de la regla'
@@ -621,7 +621,7 @@ class Ui_MainWindow(object):
         #initialize new table with Table_Creator
         self.InitSearchTable = QtWidgets.QDialog()
         self.TableApp = Table_Creator(port, protocol, service)
-        self.TableApp.setupTable(self.InitSearchTable)
+        self.TableApp.setup_rules_table(self.InitSearchTable)
 
         #exceptions of the search
         if port >= 49152:
@@ -673,7 +673,7 @@ class Ui_MainWindow(object):
         # Asignar el valor traducido a la variable profile
         profile = translated_value
         search = self.getRules.searchRules(name, profile, direction)
-        self.initNewRule.initRuleWindow(self.ruleWindow, protocol, search, True)
+        self.initNewRule.init_rule_window(self.ruleWindow, protocol, search, True)
 
     # Method to show a windows with more information
     def showPortsTableInfo(self):

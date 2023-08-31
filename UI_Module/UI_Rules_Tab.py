@@ -14,7 +14,7 @@ from PyQt5 import QtCore, QtWidgets, QtGui
 from Controller_Module.Rules import Firewall_Rules
 from UI_Module.UI_Error import PopUp_Messages
 
-class RulesTable_Creator(object):
+class RulesTableCreator(object):
     #Initialize the class
     def __init__(self, name='', profile='', direction=''):
         self.message = PopUp_Messages()
@@ -25,7 +25,7 @@ class RulesTable_Creator(object):
         self.direction= direction
         
     # setup of the table    
-    def setupTable(self, MainWindow):
+    def setup_rules_table(self, MainWindow):
         #initialize the main window with the specifications
         MainWindow.setObjectName("MainWindow")
         MainWindow.setFixedSize(760, 350)
@@ -67,7 +67,7 @@ class RulesTable_Creator(object):
         # if there is'n data, initialize an empty table
         else: self.newTable = QtWidgets.QTableWidget(MainWindow)
 
-    def initRuleWindow(self, Form, protocol=None, rule=None, action=False):
+    def init_rule_window(self, Form, protocol=None, rule=None, action=False):
         '''
         if action == True the window is for edit and delete
         '''
@@ -142,8 +142,8 @@ class RulesTable_Creator(object):
         self.lineEditPort = QtWidgets.QLineEdit(self.centralWidget)
         self.lineEditPort.setGeometry(QtCore.QRect(210, 240, 150, 22))
         self.lineEditPort.setObjectName("lineEditPort")
-        self.comboBoxPort.currentTextChanged.connect(lambda text: self.enableSelected(text, self.lineEditPort))
-        self.enableSelected(self.comboBoxPort.currentText(), self.lineEditPort)
+        self.comboBoxPort.currentTextChanged.connect(lambda text: self.enable_selected(text, self.lineEditPort))
+        self.enable_selected(self.comboBoxPort.currentText(), self.lineEditPort)
 
         self.labelProgram = QtWidgets.QLabel(self.centralWidget)
         self.labelProgram.setGeometry(QtCore.QRect(210, 280, 51, 16))
@@ -157,8 +157,8 @@ class RulesTable_Creator(object):
         self.lineEditProgram = QtWidgets.QLineEdit(self.centralWidget)
         self.lineEditProgram.setGeometry(QtCore.QRect(210, 320, 151, 20))
         self.lineEditProgram.setObjectName("lineEditProgram")
-        self.comboBoxProgram.currentTextChanged.connect(lambda text: self.enableSelected(text, self.lineEditProgram))
-        self.enableSelected(self.comboBoxProgram.currentText(), self.lineEditProgram)
+        self.comboBoxProgram.currentTextChanged.connect(lambda text: self.enable_selected(text, self.lineEditProgram))
+        self.enable_selected(self.comboBoxProgram.currentText(), self.lineEditProgram)
 
         self.labelIP = QtWidgets.QLabel(self.centralWidget)
         self.labelIP.setGeometry(QtCore.QRect(30, 340, 100, 20))
@@ -200,7 +200,7 @@ class RulesTable_Creator(object):
         _translate = QtCore.QCoreApplication.translate
         Form.setWindowTitle(_translate("Form", "Regla"))
     
-    def enableSelected(self, text, line_edit_widget):
+    def enable_selected(self, text, line_edit_widget):
         if text == 'Todos':
             line_edit_widget.setEnabled(False)
         else:
@@ -340,13 +340,6 @@ class RulesTable_Creator(object):
             self.message.showMessage(code, exception, self.icon)
             return False
 
-
-
-
-
-
-
-
     # Method to delete the selected rule
     def deleteSelectedRule(self):
         mainMessage = QtWidgets.QMessageBox()
@@ -447,4 +440,4 @@ class RulesTable_Creator(object):
         profile = translated_value
 
         search = self.rulesConnection.searchRules(name, profile, direction)
-        self.initRuleWindow(newForm, protocol, search, True)
+        self.init_rule_window(newForm, protocol, search, True)
