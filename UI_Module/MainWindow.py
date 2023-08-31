@@ -119,8 +119,8 @@ class Ui_MainWindow(object):
         self.tab_Rules.setObjectName("tab_Rules")
         self.tabWidget.addTab(self.tab_Rules, "")
         self.getRules = Firewall_Rules()
+        self.initRuleWindow = QtWidgets.QDialog()
         self.initNewRule = RulesTableCreator()
-        self.ruleWindow = QtWidgets.QDialog()
 
         #************************** Header ***************************"
         self.searchRuleBtn = QtWidgets.QToolButton(self.tab_Rules)
@@ -194,7 +194,7 @@ class Ui_MainWindow(object):
         self.NewRuleBtn.setFixedSize(101, 26)
         self.NewRuleBtn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.NewRuleBtn.setObjectName("NewRuleBtn")
-        self.NewRuleBtn.clicked.connect(lambda: self.initNewRule.init_rule_window(self.ruleWindow))
+        self.NewRuleBtn.clicked.connect(lambda: self.show_new_rule_window())
 
         self.TableRulesLayout = QtWidgets.QGridLayout(self.tab_Rules)
         self.TableRulesLayout.addWidget(self.labelRule, 0,0)
@@ -331,7 +331,7 @@ class Ui_MainWindow(object):
         self.action_New_Rule = QtWidgets.QAction(MainWindow)
         self.action_New_Rule.setShortcut('Ctrl+N')
         self.action_New_Rule.setObjectName("action_New_Rule")
-        self.action_New_Rule.triggered.connect(lambda: self.initNewRule.init_rule_window(self.ruleWindow))
+        self.action_New_Rule.triggered.connect(lambda: self.show_new_rule_window())
         self.action_Change_Range = QtWidgets.QAction(MainWindow)
         self.action_Change_Range.setShortcut('Ctrl+C')
         self.action_Change_Range.setObjectName("action_Change_Range")
@@ -673,7 +673,14 @@ class Ui_MainWindow(object):
         # Asignar el valor traducido a la variable profile
         profile = translated_value
         search = self.getRules.searchRules(name, profile, direction)
-        self.initNewRule.init_rule_window(self.ruleWindow, protocol, search, True)
+        self.initNewRule.init_rule_window(self.initRuleWindow, protocol, search, True)
+        self.initRuleWindow.exec_()
+
+    def show_new_rule_window(self):
+        self.init_rules_dialog = QtWidgets.QDialog()
+        self.RuleWindow = RulesTableCreator()
+        self.RuleWindow.init_rule_window(self.init_rules_dialog)
+        self.init_rules_dialog.exec_()
 
     # Method to show a windows with more information
     def showPortsTableInfo(self):
