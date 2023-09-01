@@ -3,11 +3,10 @@ Net Guard es un software desarrollado para monitorear y controlar las conexiones
 Net Guard es una interfaz gráfica intuitiva, permite al usuario visualizar y controlar las conexiones hechas mediante puertos TCP y UDP.
 Ofrece funciones como el escaneo de puertos, modificación del rango dinámico de puertos, control de reglas del firewall y mostrar información acerca de las confecciones establecidas, ademas, tiene implementada una base de datos con información sobre los puertos.
 
-"El objetivo principal de Net Guard es proveer al usuario mayor control y seguridad sobre su equipo, permitiéndole poder realizar decisiones mejor informadas sobre las conexiones realizadas por su equipo.
+El objetivo principal de Net Guard es proveer al usuario mayor control y seguridad sobre su equipo, permitiéndole poder realizar decisiones mejor informadas sobre las conexiones realizadas por su equipo.
 
 Net Guard es un software open source distribuido con GNU GENERAL PUBLIC LICENSE
 
 Net Guard fue desarrollado por Luis Pedroza como proyecto de titulación.
 
 Para conocer más visita:
-https://luis-pedroza.github.io/Net_Guard_Web/

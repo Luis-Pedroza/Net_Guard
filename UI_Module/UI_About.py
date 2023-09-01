@@ -60,24 +60,30 @@ class Ui_Dialog(object):
         flags = Dialog.windowFlags()
         Dialog.setWindowFlags(flags & ~QtCore.Qt.WindowContextHelpButtonHint)
 
-        self.imageIcon = QtWidgets.QLabel(Dialog)
-        self.imageIcon.setGeometry(QtCore.QRect(5, 0, 71, 71))
-        self.imageIcon.setObjectName("imageIcon")
+        self.image_icon = QtWidgets.QLabel(Dialog)
+        self.image_icon.setGeometry(QtCore.QRect(5, 0, 71, 71))
+        self.image_icon.setObjectName("imageIcon")
         image = QtGui.QPixmap("Resources/icon.ico")
-        self.imageIcon.setPixmap(image.scaled(60, 60, QtCore.Qt.KeepAspectRatio, QtCore.Qt.SmoothTransformation))
+        self.image_icon.setPixmap(image.scaled(60, 60, QtCore.Qt.KeepAspectRatio, QtCore.Qt.SmoothTransformation))
 
-        self.aboutText = QtWidgets.QPlainTextEdit(Dialog)
-        self.aboutText.setGeometry(QtCore.QRect(70, 0, 471, 471))
-        self.aboutText.setObjectName("plainTextEdit")
-        self.aboutText.setReadOnly(True)
+        self.about_text = QtWidgets.QPlainTextEdit(Dialog)
+        self.about_text.setGeometry(QtCore.QRect(70, 0, 471, 471))
+        self.about_text.setObjectName("plainTextEdit")
+        self.about_text.setReadOnly(True)
         with open("Resources/about.txt", "r", encoding="utf-8") as archivo:
             self.text_about = archivo.read()
+        
+        self.label_link = QtWidgets.QLabel(Dialog)
+        self.label_link.setGeometry(QtCore.QRect(75, 230, 300, 20))
+        self.label_link.setObjectName("label_link")
+        self.label_link.setText('<a href="https://luis-pedroza.github.io/Net_Guard_Web/">luis-pedroza.github.io/Net_Guard_Web</a>')
+        self.label_link.setOpenExternalLinks(True)
 
-        self.closeWindow = QtWidgets.QPushButton(Dialog)
-        self.closeWindow.setGeometry(QtCore.QRect(430, 360, 75, 23))
-        self.closeWindow.setObjectName("closeWindow")
-        self.closeWindow.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-        self.closeWindow.clicked.connect(Dialog.close)
+        self.close_window = QtWidgets.QPushButton(Dialog)
+        self.close_window.setGeometry(QtCore.QRect(430, 360, 75, 23))
+        self.close_window.setObjectName("closeWindow")
+        self.close_window.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.close_window.clicked.connect(Dialog.close)
 
         self.retranslateUi(Dialog)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
@@ -95,5 +101,5 @@ class Ui_Dialog(object):
         """
         _translate = QtCore.QCoreApplication.translate
         Dialog.setWindowTitle(_translate("Dialog", "Net Guard"))
-        self.aboutText.setPlainText(_translate("Dialog", self.text_about))
-        self.closeWindow.setText(_translate("Dialog", "Aceptar"))
+        self.about_text.setPlainText(_translate("Dialog", self.text_about))
+        self.close_window.setText(_translate("Dialog", "Aceptar"))
