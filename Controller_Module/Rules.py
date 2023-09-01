@@ -80,6 +80,38 @@ class Firewall_Rules():
         except Exception as exception: 
             self.message.show_message('UNABLE_TO_EXECUTE_showRules', exception, self.iconFail)
 
+    # Method to search rules
+    def searchRules(self, name: str, profile: str = None, direction: str = None):
+        # check the direction, profile and initialize the command
+        '''
+        direction and profile = any
+        only direction = any
+        only profile = any
+        todo lo de mas
+        '''
+        rules = self.firewall.Rules
+        rules_list= []
+        try:
+            for rule in rules:
+                if rule.Name.lower() == name.lower():
+                    one_rule_list = []
+                    enable = 'Yes' if rule.Enabled == True else 'No'
+                    profile = self.get_profiles(rule.Profiles)
+                    profile = ', '.join(profile)
+                    action = 'Allow' if rule.Action == 1 else 'Block'
+                    direction = 'Inbound' if rule.Direction == 1 else 'Outbound'
+                    protocol = self.get_protocol_name(rule.Protocol)
+                    one_rule_list.append(rule.Name)
+                    one_rule_list.append(enable)
+                    one_rule_list.append(profile)
+                    one_rule_list.append(action)
+                    one_rule_list.append(direction)
+                    one_rule_list.append(protocol)
+                    rules_list.append(one_rule_list)
+        except Exception as exception:
+            self.message.show_message('UNABLE_TO_EXECUTE_searchRules', exception, self.iconFail)
+        finally: return rules_list
+
     def get_protocol_name(self, protocol):
         if protocol == 1:
             return "ICMP"
@@ -96,7 +128,7 @@ class Firewall_Rules():
         elif protocol == 58:
             return "ICMPv6"
         elif protocol == 256:
-            return "ANY"
+            return "Any"
         else:
             return protocol
         
@@ -109,56 +141,6 @@ class Firewall_Rules():
         if profile & 4:
             profiles.append("Public")
         return profiles
-
-    # Method to search rules
-    def searchRules(self, name, profile, direction):
-        # check the direction, profile and initialize the command
-        if direction == 'any' and profile == 'any':
-            command = f'netsh advfirewall firewall show rule name="{name}" verbose'
-        elif direction == 'any':
-            command = f'netsh advfirewall firewall show rule name="{name}" profile="{profile}" verbose'
-        elif profile == 'any':
-            command = f'netsh advfirewall firewall show rule name="{name}" dir={direction} verbose'
-        else:
-            command = f'netsh advfirewall firewall show rule name="{name}" profile="{profile}" dir={direction} verbose'
-        rule_data = []
-        # Execute command and get output
-        output = subprocess.run(command, shell=True, capture_output=True, encoding='cp850')
-        lines = output.stdout.splitlines()
-        # Check if rule is'nt showing because of the profile
-        if lines[1] != 'Ninguna regla coincide con los criterios especificados.':
-            try:
-                rule_dict = {}
-                for line in lines:
-                    if line.startswith('Nombre de regla:'):
-                        rule_dict = {'Nombre de regla': line.split(':', 1)[1].strip()}
-                        rule_data.append(rule_dict)
-                    elif rule_data and ':' in line:
-                        key, value = [x.strip() for x in line.split(':', 1)]
-                        rule_dict[key] = value
-            # Exception control
-            except Exception as exception:
-                self.message.show_message('UNABLE_TO_EXECUTE_searchRules', exception, self.iconFail)
-            finally: return rule_data
-        # if Therese's a problem with the profile, search without it  
-        else:
-            command = f'netsh advfirewall firewall show rule name="{name}" dir={direction} verbose'
-            output = subprocess.run(command, shell=True, capture_output=True, encoding='cp850')
-            lines = output.stdout.splitlines()
-            try:
-                rule_dict = {}
-                for line in lines:
-                    if line.startswith('Nombre de regla:'):
-                        rule_dict = {'Nombre de regla': line.split(':', 1)[1].strip()}
-                        rule_data.append(rule_dict)
-                    elif rule_data and ':' in line:
-                        key, value = [x.strip() for x in line.split(':', 1)]
-                        rule_dict[key] = value
-            # Exception control
-            except Exception as exception:
-                self.message.show_message('UNABLE_TO_EXECUTE_searchRules', exception, self.iconFail)
-            finally: return rule_data
-
 
     # Method to add rule
     def deleteRule(self, name, direction, profile, protocol, port):

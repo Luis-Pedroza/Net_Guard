@@ -119,8 +119,7 @@ class Ui_MainWindow(object):
         self.tab_Rules.setObjectName("tab_Rules")
         self.tabWidget.addTab(self.tab_Rules, "")
         self.getRules = Firewall_Rules()
-        self.initRuleWindow = QtWidgets.QDialog()
-        self.initNewRule = RulesTableCreator()
+        self.get_searched_rules = RulesTableCreator()
 
         #************************** Header ***************************"
         self.searchRuleBtn = QtWidgets.QToolButton(self.tab_Rules)
@@ -162,7 +161,7 @@ class Ui_MainWindow(object):
         self.tableRules.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.ResizeToContents)
         self.tableRules.setObjectName("tableRules")
         self.tableRules.setColumnCount(6)
-        self.tableRules.cellDoubleClicked.connect(self.showRulesWindowInfo)
+        self.tableRules.cellDoubleClicked.connect(lambda row: self.get_searched_rules.get_selected_rule(self.tableRules, row))
         self.tableRules.horizontalHeader().sectionClicked.connect(lambda col: self.sort_table(self.tableRules, col))
         
         item = QtWidgets.QTableWidgetItem()
@@ -591,14 +590,14 @@ class Ui_MainWindow(object):
         }
         translateProfile = translations.get(profile, profile)
         translateDirection = translations.get(direction, direction)
-        self.searchRule = RulesTableCreator(name, translateProfile, translateDirection)
-        self.searchRule.setup_rules_table(self.InitSearchTable)
+        self.searchRule = RulesTableCreator()
+        self.searchRule.setup_rules_table(self.InitSearchTable, name, translateProfile, translateDirection)
 
         if self.lineEditSearchRule.text() == '':
             code = 'Ingrese el nombre de la regla'
             error = 'Debe ingresar el nombre de la regla para poder realizar una búsqueda'
             self.errorMessage.show_message(code, error, icon)
-        elif self.searchRule.newTable.rowCount() == 0:
+        elif self.searchRule.new_table.rowCount() == 0:
             code = 'No se encontraron datos coincidentes'
             error = 'La búsqueda no arrojo ningún dato coincidente con los parámetros ingresados'
             self.errorMessage.show_message(code, error, icon)
@@ -652,29 +651,6 @@ class Ui_MainWindow(object):
         message = 'Función showScanTableInfo en construcción'
         icon = QtWidgets.QMessageBox.Information
         self.errorMessage.show_message(code, message, icon)
-
-    def showRulesWindowInfo(self, row):
-        translations = {
-        "Pública": "public",
-        "Privada": "private",
-        "Dominio": "domain",
-        }
-        name = self.tableRules.item(row, 0).text()
-        profile = self.tableRules.item(row,2).text()
-        direction = self.tableRules.item(row,4).text()
-        protocol = self.tableRules.item(row,5).text()
-        
-        direction = 'in' if direction == 'Dentro' else 'out'
-
-        values = profile.split(",")
-        # Traducir cada valor individualmente y unirlos en una cadena
-        translated_values = [translations[value.strip()] if value.strip() in translations else value.strip() for value in values]
-        translated_value = ",".join(translated_values)
-        # Asignar el valor traducido a la variable profile
-        profile = translated_value
-        search = self.getRules.searchRules(name, profile, direction)
-        self.initNewRule.init_rule_window(self.initRuleWindow, protocol, search, True)
-        self.initRuleWindow.exec_()
 
     def show_new_rule_window(self):
         self.init_rules_dialog = QtWidgets.QDialog()

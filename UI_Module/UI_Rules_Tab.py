@@ -1,4 +1,3 @@
-
 # ***************************************************
 # FILE: UI_Rules_Tab.py
 #
@@ -16,16 +15,13 @@ from UI_Module.UI_Message import PopUpMessage
 
 class RulesTableCreator(object):
     #Initialize the class
-    def __init__(self, name='', profile='', direction=''):
+    def __init__(self):
         self.message = PopUpMessage()
         self.rulesConnection = Firewall_Rules()
         self.icon = QtWidgets.QMessageBox.Information
-        self.name = name
-        self.profile = profile
-        self.direction= direction
         
     # setup of the table    
-    def setup_rules_table(self, main_window):
+    def setup_rules_table(self, main_window, name, profile, direction):
         #initialize the main window with the specifications
         main_window.setObjectName("main_window")
         main_window.setFixedSize(760, 350)
@@ -33,13 +29,13 @@ class RulesTableCreator(object):
         main_window.setWindowIcon(QtGui.QIcon("Resources/icon.ico"))
 
         # get the data 
-        rules_data_list = self.rulesConnection.searchRules(self.name, self.profile, self.direction)
+        rules_data_list = self.rulesConnection.searchRules(name, profile, direction)
 
         # check if data has information
         if rules_data_list:
             self.Form = QtWidgets.QWidget()
             self.new_table = QtWidgets.QTableWidget(main_window)
-            header = ['Regla', 'Habilitada', 'Perfil', 'Acción', 'Dirección', 'Protocolo' ]
+            header = ['Rule', 'Enable', 'Profile', 'Action', 'Direction', 'Protocol' ]
             self.new_table.setColumnCount(6)
             self.new_table.setRowCount(len(rules_data_list))
             self.new_table.setHorizontalHeaderLabels(header)
@@ -47,31 +43,30 @@ class RulesTableCreator(object):
             self.new_table.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
             self.new_table.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.ResizeToContents)
             self.new_table.horizontalHeader().setSectionResizeMode(0, QtWidgets.QHeaderView.Stretch)
-            self.new_table.cellDoubleClicked.connect(self.getSelectedRule)
+            self.new_table.cellDoubleClicked.connect(lambda row: self.get_selected_rule(self.new_table, row))
 
             # add information on the table
             for i, row in enumerate(rules_data_list):
-                item = QtWidgets.QTableWidgetItem(str(row["Nombre de regla"]))
-                self.newTable.setItem(i, 0, item)
-                item = QtWidgets.QTableWidgetItem(str(row["Habilitada"]))
-                self.newTable.setItem(i, 1, item)
-                item = QtWidgets.QTableWidgetItem(str(row["Perfiles"]))
-                self.newTable.setItem(i, 2, item)
-                item = QtWidgets.QTableWidgetItem(str(row["Acción"]))
-                self.newTable.setItem(i, 3, item)
-                item = QtWidgets.QTableWidgetItem(str(row["Dirección"]))
-                self.newTable.setItem(i, 4, item)
-                item = QtWidgets.QTableWidgetItem(str(row["Protocolo"]))
-                self.newTable.setItem(i, 5, item)
+                item = QtWidgets.QTableWidgetItem(str(row[0]))
+                self.new_table.setItem(i, 0, item)
+                item = QtWidgets.QTableWidgetItem(str(row[1]))
+                self.new_table.setItem(i, 1, item)
+                item = QtWidgets.QTableWidgetItem(str(row[2]))
+                self.new_table.setItem(i, 2, item)
+                item = QtWidgets.QTableWidgetItem(str(row[3]))
+                self.new_table.setItem(i, 3, item)
+                item = QtWidgets.QTableWidgetItem(str(row[4]))
+                self.new_table.setItem(i, 4, item)
+                item = QtWidgets.QTableWidgetItem(str(row[5]))
+                self.new_table.setItem(i, 5, item)
 
         # if there is'n data, initialize an empty table
         else: self.new_table = QtWidgets.QTableWidget(main_window)
 
-    def init_rule_window(self, Form, protocol=None, rule=None, action=False):
+    def init_rule_window(self, Form:QtWidgets.QDialog, action:bool=False):
         '''
         if action == True the window is for edit and delete
         '''
-        self.get_rule_list  = rule
         Form.setObjectName("Form")
         Form.setFixedSize(400, 500)
         Form.setWindowIcon(QtGui.QIcon("Resources/icon.ico"))
@@ -178,7 +173,7 @@ class RulesTableCreator(object):
         self.btn_delete_rule.setText("Eliminar")
         
         if action:
-            self.setUpFilledWindow(protocol, Form)
+            self.setUp_filled_window(Form)
         else:
             self.btn_edit_rule.setText("Agregar")
             self.btn_edit_rule.clicked.connect(self.add_new_rule)
@@ -219,12 +214,21 @@ class RulesTableCreator(object):
             error = 'Debe ingresar el nombre de la regla.\nRevise la ayuda para crear nuevas reglas'
             self.message.show_message(code, error, self.icon)
 
+    def get_selected_rule(self, table: QtWidgets.QTableWidget, row: int):
+            newForm = QtWidgets.QDialog()
+            name = table.item(row, 0)
+            profile = table.item(row, 2)
+            direction = table.item(row, 4)
+            protocol = table.item(row, 5)
+            print(name.text())
+            print(profile.text())
+            print(direction.text())
+            print(protocol.text())
 
+            #search = self.rulesConnection.searchRules(name, profile, direction)
+            #self.setUp_filled_window(newForm, True)
 
-
-
-    def setUpFilledWindow(self, protocol, form):
-        pass
+    def setUp_filled_window(self, protocol, form):
         self.labelProfile = QtWidgets.QLabel(self.tabPort)
         self.labelProfile.setGeometry(QtCore.QRect(30, 280, 47, 13))
         self.labelProfile.setObjectName("labelProfile")
@@ -376,25 +380,4 @@ class RulesTableCreator(object):
             error = 'Debe especificar el nombre de la regla.\nRevise la ayuda para modificar nuevas reglas'
             self.message.show_message(code, error, self.icon)
 
-    def getSelectedRule(self, row):
-        pass
-        newForm = QtWidgets.QDialog()
-        translations = {
-        "Pública": "public",
-        "Privada": "private",
-        "Dominio": "domain",
-        }
-        name = self.newTable.item(row, 0).text()
-        profile = self.newTable.item(row,2).text()
-        direction = self.newTable.item(row,4).text()
-        protocol = self.newTable.item(row,5).text()
-        
-        direction = 'in' if direction == 'Dentro' else 'out'
-
-        values = profile.split(",")
-        translated_values = [translations[value.strip()] if value.strip() in translations else value.strip() for value in values]
-        translated_value = ",".join(translated_values)
-        profile = translated_value
-
-        search = self.rulesConnection.searchRules(name, profile, direction)
-        self.init_rule_window(newForm, protocol, search, True)
+    
