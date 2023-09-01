@@ -82,37 +82,22 @@ class Firewall_Rules():
 
     # Method to search rules
     def searchRules(self, name: str, profile: str = None, direction: str = None):
-        # check the direction, profile and initialize the command
-        '''
-        direction and profile = any
-        only direction = any
-        only profile = any
-        todo lo de mas
-        '''
         rules = self.firewall.Rules
         rules_list= []
+        if direction == 'any': direction = None
+        else: direction = 1 if direction == 'in' else 2
+        profile = None if profile == 'any' else self.get_profiles(profile)
         try:
             for rule in rules:
-                if rule.Name.lower() == name.lower():
-                    one_rule_list = []
-                    enable = 'Yes' if rule.Enabled == True else 'No'
-                    profile = self.get_profiles(rule.Profiles)
-                    profile = ', '.join(profile)
-                    action = 'Allow' if rule.Action == 1 else 'Block'
-                    direction = 'Inbound' if rule.Direction == 1 else 'Outbound'
-                    protocol = self.get_protocol_name(rule.Protocol)
-                    one_rule_list.append(rule.Name)
-                    one_rule_list.append(enable)
-                    one_rule_list.append(profile)
-                    one_rule_list.append(action)
-                    one_rule_list.append(direction)
-                    one_rule_list.append(protocol)
-                    rules_list.append(one_rule_list)
+                if rule.Name.lower() == name.lower() and \
+                    (profile is None or rule.Profiles == profile) and \
+                    (direction is None or rule.Direction == direction):
+                    rules_list = self.get_searched_rule(rule, rules_list)
         except Exception as exception:
             self.message.show_message('UNABLE_TO_EXECUTE_searchRules', exception, self.iconFail)
         finally: return rules_list
 
-    def get_protocol_name(self, protocol):
+    def get_protocol_name(self, protocol: str):
         if protocol == 1:
             return "ICMP"
         elif protocol == 2:
@@ -133,14 +118,42 @@ class Firewall_Rules():
             return protocol
         
     def get_profiles(self, profile):
-        profiles = []
-        if profile & 1:
-            profiles.append("Domain")
-        if profile & 2:
-            profiles.append("Private")
-        if profile & 4:
-            profiles.append("Public")
-        return profiles
+        if isinstance(profile, str):
+            profile = profile.lower()
+            if profile == "domain":
+                return 1
+            elif profile == "private":
+                return 2
+            elif profile == "public":
+                return 4
+
+        elif isinstance(profile, int):
+            profiles = []
+            if profile & 1:
+                profiles.append("Domain")
+            if profile & 2:
+                profiles.append("Private")
+            if profile & 4:
+                profiles.append("Public")
+            return profiles
+        
+    def get_searched_rule(self, rule: win32com.client.CDispatch, rules_list: list) -> list:
+        one_rule_list = []
+        enable = 'Yes' if rule.Enabled == True else 'No'
+        profile = self.get_profiles(rule.Profiles)
+        profile = ', '.join(profile)
+        action = 'Allow' if rule.Action == 1 else 'Block'
+        direction = 'Inbound' if rule.Direction == 1 else 'Outbound'
+        protocol = self.get_protocol_name(rule.Protocol)
+        one_rule_list.append(rule.Name)
+        one_rule_list.append(enable)
+        one_rule_list.append(profile)
+        one_rule_list.append(action)
+        one_rule_list.append(direction)
+        one_rule_list.append(protocol)
+        rules_list.append(one_rule_list)
+        return rules_list
+
 
     # Method to add rule
     def deleteRule(self, name, direction, profile, protocol, port):
