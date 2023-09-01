@@ -2,7 +2,21 @@
 # FILE: Rules.py
 # -*- coding: utf-8 -*-
 #
-# DESCRIPTION: 
+# DESCRIPTION:
+# This class encapsulates the functionality for managing firewall rules.
+#
+# Classes:
+#     Firewall_Rules
+#
+# Usage Example:
+#     firewall_rules = Firewall_Rules()
+#     firewall_rules.addRule("MyRule", "Allow incoming traffic", "yes", "in", "allow", "TCP", "80", "my_program.exe", "192.168.1.1")
+#     rules_info = firewall_rules.showRules()
+#     matching_rules = firewall_rules.searchRules("MyRule", profile="Domain", direction="in")
+#     protocol_name = firewall_rules.get_protocol_name(6)
+#     profile_value = firewall_rules.get_profiles("Private")
+#     rules_list = firewall_rules.get_searched_rule(rule, [])
+#
 #
 # AUTHOR:  Luis Pedroza
 # CREATED: 11/04/2023 (dd/mm/yy)
@@ -15,14 +29,53 @@ from PyQt5.QtWidgets import QMessageBox
 from UI_Module.UI_Message import PopUpMessage
 
 class Firewall_Rules():
+    """
+    A class for managing firewall rules.
+
+    Attributes:
+        message (PopUpMessage): An instance of PopUpMessage for displaying pop-up messages.
+        iconFail (QMessageBox.Icon): An icon for displaying error messages.
+        iconCorrect (QMessageBox.Icon): An icon for displaying success messages.
+        firewall: An instance of the Windows Firewall policy.
+
+    Methods:
+        addRule(name, description, enable, direction, action, protocol, port, program, ip)
+            Adds a new firewall rule with the specified parameters.
+
+    """
     def __init__(self):
         self.message = PopUpMessage()
         self.iconFail = QMessageBox.Critical
         self.iconCorrect = QMessageBox.Information
         self.firewall = win32com.client.Dispatch("HNetCfg.FwPolicy2")
 
-    # Method to add rule
     def addRule(self, name:str, description:str, enable:str, direction:str, action:str, protocol:str,  port:str, program:str, ip:str):
+        """
+        Adds a new firewall rule using the provided parameters.
+
+        Args:
+            name (str): The name of the firewall rule.
+            description (str): The description of the firewall rule. If empty, it defaults to 'None'.
+            enable (str): Whether the rule should be enabled ('yes') or disabled ('no').
+            direction (str): The direction of the rule, 'in' for incoming or 'out' for outgoing traffic.
+            action (str): The action to take for the rule, 'allow' or 'block'.
+            protocol (str): The protocol of the rule, 'TCP', 'UDP', or any other value (defaulting to 'Other').
+            port (str): The port to which the rule applies. If None, it does not specify a port.
+            program (str): The name of the program/application associated with the rule. If None, it does not specify a program.
+            ip (str): The IP address to which the rule applies. If None, it does not specify an IP address.
+
+        Returns:
+            None
+
+        Raises:
+            - Various exceptions if there is an issue while adding the rule.
+
+        Example Usage:
+            firewall_rules = Firewall_Rules()
+            new_rule = firewall_rules.addRule( \
+            "MyRule", "Allow incoming traffic", "yes", "in", "allow", "TCP", "80", "my_program.exe", "192.168.1.1")
+
+        """
         new_rule = win32com.client.Dispatch("HNetCfg.FWRule")
         try:
             new_rule.Name = name
@@ -59,10 +112,30 @@ class Firewall_Rules():
             else:
                 self.message.show_message('UNABLE_TO_EXECUTE_addRule_1', exception.args[1], self.iconFail)
 
+    def showRules(self) -> list[dict]:
+        """
+        Retrieves and returns information about all the firewall rules.
+        
+        Returns:
+            list: A list of dictionaries, where each dictionary represents a firewall rule with its attributes.
+                Each dictionary contains the following keys:
+                - "Name": The name of the firewall rule.
+                - "Enabled": Whether the rule is enabled ("Yes") or disabled ("No").
+                - "Profiles": The profiles to which the rule applies (e.g., "Domain, Private").
+                - "Action": The action of the rule, either "Allow" or "Block".
+                - "Direction": The direction of the rule, either "Inbound" or "Outbound".
+                - "Protocol": The protocol used by the rule (e.g., "TCP", "UDP").
+                
+        Raises:
+            - Various exceptions if there is an issue while retrieving rules.
 
+        Example Usage:
+            firewall_rules = Firewall_Rules()
+            rules_info = firewall_rules.showRules()
+            for rule in rules_info:
+                print(rule)
 
-    # Method to get all the rules
-    def showRules(self):
+        """
         rules = self.firewall.Rules
         firewall_rules = []
         try:
@@ -82,6 +155,34 @@ class Firewall_Rules():
 
     # Method to search rules
     def searchRules(self, name: str, profile: str = None, direction: str = None):
+        """
+        Searches for firewall rules based on the provided parameters and returns a list of matching rules.
+        
+        Args:
+            name (str): The name of the firewall rule to search for.
+            profile (str, optional): The profile to filter rules by (e.g., "Domain", "Private"). Default is None.
+            direction (str, optional): The direction of the rule, either 'in' for inbound, 'out' for outbound, or 'any'. Default is None.
+        
+        Returns:
+            list: A list of dictionaries, where each dictionary represents a matching firewall rule with its attributes.
+                Each dictionary contains the following keys:
+                - "Name": The name of the firewall rule.
+                - "Enabled": Whether the rule is enabled ("Yes") or disabled ("No").
+                - "Profiles": The profiles to which the rule applies (e.g., "Domain, Private").
+                - "Action": The action of the rule, either "Allow" or "Block".
+                - "Direction": The direction of the rule, either "Inbound" or "Outbound".
+                - "Protocol": The protocol used by the rule (e.g., "TCP", "UDP").
+        
+        Raises:
+            - Various exceptions if there is an issue while searching for rules.
+
+        Example Usage:
+            firewall_rules = Firewall_Rules()
+            matching_rules = firewall_rules.searchRules("MyRule", profile="Domain", direction="in")
+            for rule in matching_rules:
+                print(rule)
+
+        """
         rules = self.firewall.Rules
         rules_list= []
         if direction == 'any': direction = None
@@ -97,7 +198,57 @@ class Firewall_Rules():
             self.message.show_message('UNABLE_TO_EXECUTE_searchRules', exception, self.iconFail)
         finally: return rules_list
 
-    def get_protocol_name(self, protocol: str):
+    def get_searched_rule(self, rule: win32com.client.CDispatch, rules_list: list) -> list:
+        """
+        Extracts information from a firewall rule and appends it to a list of rules.
+
+        Args:
+            rule (win32com.client.CDispatch): The firewall rule from which to extract information.
+            rules_list (list): The list of firewall rules to which the extracted information will be appended.
+
+        Returns:
+            list: The updated list of firewall rules with the extracted information.
+
+        Example Usage:
+            firewall_rules = Firewall_Rules()
+            rule = <some_firewall_rule>  # Replace with an actual firewall rule object
+            rules_list = firewall_rules.get_searched_rule(rule, [])
+            print(rules_list)  # Updated list of firewall rules
+
+        """
+        one_rule_list = []
+        enable = 'Yes' if rule.Enabled == True else 'No'
+        profile = self.get_profiles(rule.Profiles)
+        profile = ', '.join(profile)
+        action = 'Allow' if rule.Action == 1 else 'Block'
+        direction = 'Inbound' if rule.Direction == 1 else 'Outbound'
+        protocol = self.get_protocol_name(rule.Protocol)
+        one_rule_list.append(rule.Name)
+        one_rule_list.append(enable)
+        one_rule_list.append(profile)
+        one_rule_list.append(action)
+        one_rule_list.append(direction)
+        one_rule_list.append(protocol)
+        rules_list.append(one_rule_list)
+        return rules_list
+
+
+    def get_protocol_name(self, protocol: int) -> str:
+        """
+        Maps a protocol number to its corresponding name.
+
+        Args:
+            protocol (int): The protocol number to be mapped to a name.
+
+        Returns:
+            str: The name of the protocol or the input protocol number if no mapping is available.
+
+        Example Usage:
+            firewall_rules = Firewall_Rules()
+            protocol_name = firewall_rules.get_protocol_name(6)
+            print(protocol_name)  # Output: "TCP"
+
+        """
         if protocol == 1:
             return "ICMP"
         elif protocol == 2:
@@ -118,6 +269,22 @@ class Firewall_Rules():
             return protocol
         
     def get_profiles(self, profile):
+        """
+        Maps a profile name to its corresponding value.
+        
+        Args:
+            profile (str): The profile name to be mapped to a value.
+            profile (int): The profile value to be mapped to a name.
+        
+        Returns:
+            int: The numeric value representing the profile or None if no mapping is available.
+
+        Example Usage:
+            firewall_rules = Firewall_Rules()
+            profile_value = firewall_rules.get_profiles("Private")
+            print(profile_value)  # Output: 2
+
+        """
         if isinstance(profile, str):
             profile = profile.lower()
             if profile == "domain":
@@ -136,24 +303,6 @@ class Firewall_Rules():
             if profile & 4:
                 profiles.append("Public")
             return profiles
-        
-    def get_searched_rule(self, rule: win32com.client.CDispatch, rules_list: list) -> list:
-        one_rule_list = []
-        enable = 'Yes' if rule.Enabled == True else 'No'
-        profile = self.get_profiles(rule.Profiles)
-        profile = ', '.join(profile)
-        action = 'Allow' if rule.Action == 1 else 'Block'
-        direction = 'Inbound' if rule.Direction == 1 else 'Outbound'
-        protocol = self.get_protocol_name(rule.Protocol)
-        one_rule_list.append(rule.Name)
-        one_rule_list.append(enable)
-        one_rule_list.append(profile)
-        one_rule_list.append(action)
-        one_rule_list.append(direction)
-        one_rule_list.append(protocol)
-        rules_list.append(one_rule_list)
-        return rules_list
-
 
     # Method to add rule
     def deleteRule(self, name, direction, profile, protocol, port):
