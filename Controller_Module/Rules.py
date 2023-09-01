@@ -10,7 +10,8 @@
 #
 # Usage Example:
 #     firewall_rules = Firewall_Rules()
-#     firewall_rules.addRule("MyRule", "Allow incoming traffic", "yes", "in", "allow", "TCP", "80", "my_program.exe", "192.168.1.1")
+#     firewall_rules.addRule( /
+#        "MyRule", "Allow incoming traffic", "yes", "in", "allow", "TCP", "80", "my_program.exe", "192.168.1.1")
 #     rules_info = firewall_rules.showRules()
 #     matching_rules = firewall_rules.searchRules("MyRule", profile="Domain", direction="in")
 #     protocol_name = firewall_rules.get_protocol_name(6)
@@ -27,6 +28,7 @@ import win32com.client
 import win32api
 from PyQt5.QtWidgets import QMessageBox
 from UI_Module.UI_Message import PopUpMessage
+
 
 class Firewall_Rules():
     """
@@ -49,7 +51,7 @@ class Firewall_Rules():
         self.iconCorrect = QMessageBox.Information
         self.firewall = win32com.client.Dispatch("HNetCfg.FwPolicy2")
 
-    def addRule(self, name:str, description:str, enable:str, direction:str, action:str, protocol:str,  port:str, program:str, ip:str):
+    def addRule(self, name: str, description: str, enable: str, direction: str, action: str, protocol: str,  port: str, program: str, ip: str):
         """
         Adds a new firewall rule using the provided parameters.
 
@@ -95,14 +97,14 @@ class Firewall_Rules():
                 new_rule.LocalPorts = port
             elif port is not None and direction == 'out':
                 new_rule.RemotePorts = port
-            
+
             if program is not None:
                 new_rule.ApplicationName = program
             if ip is not None:
                 new_rule.RemoteAddresses = ip
 
             self.firewall.Rules.Add(new_rule)
-            self.message.show_message('Se agregó la regla','',self.iconCorrect)
+            self.message.show_message('Se agregó la regla', '', self.iconCorrect)
         except Exception as exception:
             com_error_info = exception.excepinfo
             if com_error_info and len(com_error_info) > 5:
@@ -115,7 +117,7 @@ class Firewall_Rules():
     def showRules(self) -> list[dict]:
         """
         Retrieves and returns information about all the firewall rules.
-        
+
         Returns:
             list: A list of dictionaries, where each dictionary represents a firewall rule with its attributes.
                 Each dictionary contains the following keys:
@@ -125,7 +127,7 @@ class Firewall_Rules():
                 - "Action": The action of the rule, either "Allow" or "Block".
                 - "Direction": The direction of the rule, either "Inbound" or "Outbound".
                 - "Protocol": The protocol used by the rule (e.g., "TCP", "UDP").
-                
+
         Raises:
             - Various exceptions if there is an issue while retrieving rules.
 
@@ -150,19 +152,19 @@ class Firewall_Rules():
                 }
                 firewall_rules.append(rule_info)
             return firewall_rules
-        except Exception as exception: 
+        except Exception as exception:
             self.message.show_message('UNABLE_TO_EXECUTE_showRules', exception, self.iconFail)
 
     # Method to search rules
     def searchRules(self, name: str, profile: str = None, direction: str = None):
         """
         Searches for firewall rules based on the provided parameters and returns a list of matching rules.
-        
+
         Args:
             name (str): The name of the firewall rule to search for.
             profile (str, optional): The profile to filter rules by (e.g., "Domain", "Private"). Default is None.
             direction (str, optional): The direction of the rule, either 'in' for inbound, 'out' for outbound, or 'any'. Default is None.
-        
+
         Returns:
             list: A list of dictionaries, where each dictionary represents a matching firewall rule with its attributes.
                 Each dictionary contains the following keys:
@@ -172,7 +174,7 @@ class Firewall_Rules():
                 - "Action": The action of the rule, either "Allow" or "Block".
                 - "Direction": The direction of the rule, either "Inbound" or "Outbound".
                 - "Protocol": The protocol used by the rule (e.g., "TCP", "UDP").
-        
+
         Raises:
             - Various exceptions if there is an issue while searching for rules.
 
@@ -184,19 +186,22 @@ class Firewall_Rules():
 
         """
         rules = self.firewall.Rules
-        rules_list= []
-        if direction == 'any': direction = None
-        else: direction = 1 if direction == 'in' else 2
+        rules_list = []
+        if direction == 'any':
+            direction = None
+        else:
+            direction = 1 if direction == 'in' else 2
         profile = None if profile == 'any' else self.get_profiles(profile)
         try:
             for rule in rules:
                 if rule.Name.lower() == name.lower() and \
                     (profile is None or rule.Profiles == profile) and \
-                    (direction is None or rule.Direction == direction):
+                        (direction is None or rule.Direction == direction):
                     rules_list = self.get_searched_rule(rule, rules_list)
         except Exception as exception:
             self.message.show_message('UNABLE_TO_EXECUTE_searchRules', exception, self.iconFail)
-        finally: return rules_list
+        finally:
+            return rules_list
 
     def get_searched_rule(self, rule: win32com.client.CDispatch, rules_list: list) -> list:
         """
@@ -232,7 +237,6 @@ class Firewall_Rules():
         rules_list.append(one_rule_list)
         return rules_list
 
-
     def get_protocol_name(self, protocol: int) -> str:
         """
         Maps a protocol number to its corresponding name.
@@ -267,15 +271,15 @@ class Firewall_Rules():
             return "Any"
         else:
             return protocol
-        
+
     def get_profiles(self, profile):
         """
         Maps a profile name to its corresponding value.
-        
+
         Args:
             profile (str): The profile name to be mapped to a value.
             profile (int): The profile value to be mapped to a name.
-        
+
         Returns:
             int: The numeric value representing the profile or None if no mapping is available.
 
