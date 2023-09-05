@@ -63,7 +63,7 @@ class RulesTableCreator(object):
         # if there is'n data, initialize an empty table
         else: self.new_table = QtWidgets.QTableWidget(main_window)
 
-    def init_rule_window(self, Form:QtWidgets.QDialog, action:bool=False):
+    def init_rule_window(self, Form: QtWidgets.QDialog, action: bool=False, rule: list = None):
         '''
         if action == True the window is for edit and delete
         '''
@@ -74,7 +74,7 @@ class RulesTableCreator(object):
         self.label_name = QtWidgets.QLabel(Form)
         self.label_name.setGeometry(QtCore.QRect(20, 20, 47, 13))
         self.label_name.setObjectName("label_name")
-        self.label_name.setText("Nombre")
+        self.label_name.setText("Name")
         self.line_edit_name = QtWidgets.QLineEdit(Form)
         self.line_edit_name.setGeometry(QtCore.QRect(70, 20, 291, 20))
         self.line_edit_name.setObjectName("line_edit_name")
@@ -82,25 +82,25 @@ class RulesTableCreator(object):
         self.label_description = QtWidgets.QLabel(Form)
         self.label_description.setGeometry(QtCore.QRect(20, 50, 61, 16))
         self.label_description.setObjectName("label_description")
-        self.label_description.setText("Descripción")
+        self.label_description.setText("Description")
         self.text_edit_description = QtWidgets.QTextEdit(Form)
         self.text_edit_description.setGeometry(QtCore.QRect(20, 70, 340, 70))
         self.text_edit_description.setObjectName("text_edit_description")
         
-        self.check_box_enable = QtWidgets.QCheckBox(Form)
-        self.check_box_enable.setGeometry(QtCore.QRect(30, 160, 70, 17))
-        self.check_box_enable.setObjectName("check_box_enable")
-        self.check_box_enable.setText("Habilitada")
+        self.checkBox_enable = QtWidgets.QCheckBox(Form)
+        self.checkBox_enable.setGeometry(QtCore.QRect(30, 160, 70, 17))
+        self.checkBox_enable.setObjectName("checkBox_enable")
+        self.checkBox_enable.setText("Enable")
 
         self.label_direction = QtWidgets.QLabel(Form)
         self.label_direction.setGeometry(QtCore.QRect(30, 200, 61, 16))
         self.label_direction.setObjectName("label_direction")
-        self.label_direction.setText("Dirección")
+        self.label_direction.setText("Direction")
         self.comboBox_direction = QtWidgets.QComboBox(Form)
         self.comboBox_direction.setGeometry(QtCore.QRect(80, 200, 110, 22))
         self.comboBox_direction.setObjectName("comboBox_direction")
-        self.comboBox_direction.addItem("Entrada")
-        self.comboBox_direction.addItem("Salida")
+        self.comboBox_direction.addItem("Inbound")
+        self.comboBox_direction.addItem("Outbound")
 
         self.label_action = QtWidgets.QLabel(Form)
         self.label_action.setGeometry(QtCore.QRect(30, 244, 47, 13))
@@ -109,29 +109,29 @@ class RulesTableCreator(object):
         self.comboBox_action = QtWidgets.QComboBox(Form)
         self.comboBox_action.setGeometry(QtCore.QRect(80, 240, 110, 22))
         self.comboBox_action.setObjectName("comboBoxActionPort")
-        self.comboBox_action.addItem("Bloquear")
-        self.comboBox_action.addItem("Permitir")
+        self.comboBox_action.addItem("Block")
+        self.comboBox_action.addItem("Allow")
 
         self.label_protocol = QtWidgets.QLabel(Form)
         self.label_protocol.setGeometry(QtCore.QRect(30, 284, 51, 16))
         self.label_protocol.setObjectName("label_protocol")
-        self.label_protocol.setText("Protocolo")
+        self.label_protocol.setText("Protocol")
         self.comboBox_protocol = QtWidgets.QComboBox(Form)
         self.comboBox_protocol.setGeometry(QtCore.QRect(80, 280, 110, 22))
         self.comboBox_protocol.setObjectName("comboBox_protocol")
-        self.comboBox_protocol.addItem("Todos")
+        self.comboBox_protocol.addItem("Any")
         self.comboBox_protocol.addItem("TCP")
         self.comboBox_protocol.addItem("UDP")
 
         self.label_port = QtWidgets.QLabel(Form)
         self.label_port.setGeometry(QtCore.QRect(210, 204, 47, 13))
         self.label_port.setObjectName("label_port")
-        self.label_port.setText("Puerto")
+        self.label_port.setText("Port")
         self.comboBox_port = QtWidgets.QComboBox(Form)
         self.comboBox_port.setGeometry(QtCore.QRect(260, 200, 100, 22))
         self.comboBox_port.setObjectName("comboBoxPort")
-        self.comboBox_port.addItem("Todos")
-        self.comboBox_port.addItem("Rango")
+        self.comboBox_port.addItem("Any")
+        self.comboBox_port.addItem("Range")
         self.line_edit_port = QtWidgets.QLineEdit(Form)
         self.line_edit_port.setGeometry(QtCore.QRect(210, 240, 150, 22))
         self.line_edit_port.setObjectName("lineEditPort")
@@ -141,12 +141,12 @@ class RulesTableCreator(object):
         self.label_program = QtWidgets.QLabel(Form)
         self.label_program.setGeometry(QtCore.QRect(210, 280, 51, 16))
         self.label_program.setObjectName("label_program")
-        self.label_program.setText("Programa")
+        self.label_program.setText("Program")
         self.comboBox_program = QtWidgets.QComboBox(Form)
         self.comboBox_program.setGeometry(QtCore.QRect(280, 280, 80, 22))
         self.comboBox_program.setObjectName("comboBox_program")
-        self.comboBox_program.addItem("Todos")
-        self.comboBox_program.addItem("Seleccionar")
+        self.comboBox_program.addItem("Any")
+        self.comboBox_program.addItem("Select")
         self.line_edit_program = QtWidgets.QLineEdit(Form)
         self.line_edit_program.setGeometry(QtCore.QRect(210, 320, 151, 20))
         self.line_edit_program.setObjectName("lineEditProgram")
@@ -156,39 +156,39 @@ class RulesTableCreator(object):
         self.label_IP = QtWidgets.QLabel(Form)
         self.label_IP.setGeometry(QtCore.QRect(30, 340, 100, 20))
         self.label_IP.setObjectName("label_IP")
-        self.label_IP.setText("Dirección IP")
+        self.label_IP.setText("IP Direction")
         self.text_edit_IP = QtWidgets.QTextEdit(Form)
         self.text_edit_IP.setGeometry(QtCore.QRect(30, 360, 340, 70))
         self.text_edit_IP.setObjectName("text_edit_IP")      
 
-        self.btn_edit_rule = QtWidgets.QPushButton(Form)
-        self.btn_edit_rule.setGeometry(QtCore.QRect(70, 450, 101, 26))
-        self.btn_edit_rule.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-        self.btn_edit_rule.setObjectName("btn_edit_rule")
-        self.btn_edit_rule.setText("Editar")
-        self.btn_delete_rule = QtWidgets.QPushButton(Form)
-        self.btn_delete_rule.setGeometry(QtCore.QRect(250, 450, 101, 26))
-        self.btn_delete_rule.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-        self.btn_delete_rule.setObjectName("btn_delete_rule")
-        self.btn_delete_rule.setText("Eliminar")
+        self.btn_left = QtWidgets.QPushButton(Form)
+        self.btn_left.setGeometry(QtCore.QRect(70, 450, 101, 26))
+        self.btn_left.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.btn_left.setObjectName("btn_left")
+  
+        self.btn_right = QtWidgets.QPushButton(Form)
+        self.btn_right.setGeometry(QtCore.QRect(250, 450, 101, 26))
+        self.btn_right.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.btn_right.setObjectName("btn_right")
         
         if action:
-            self.setUp_filled_window(Form)
+            self.setUp_filled_window(Form, rule)
         else:
-            self.btn_edit_rule.setText("Agregar")
-            self.btn_edit_rule.clicked.connect(self.add_new_rule)
-            self.btn_edit_rule.clicked.connect(Form.close)
-            self.btn_delete_rule.setText("Cancelar")
-            self.btn_delete_rule.clicked.connect(Form.close)
-            self.retranslateUi(Form)
-            QtCore.QMetaObject.connectSlotsByName(Form)
+            self.btn_left.setText("Add")
+            self.btn_left.clicked.connect(self.add_new_rule)
+            self.btn_left.clicked.connect(Form.close)
+            self.btn_right.setText("Cancel")
+            self.btn_right.clicked.connect(Form.close)
+
+        self.retranslateUi(Form)
+        QtCore.QMetaObject.connectSlotsByName(Form)
 
     def retranslateUi(self, Form):
         _translate = QtCore.QCoreApplication.translate
-        Form.setWindowTitle(_translate("Form", "Regla"))
+        Form.setWindowTitle(_translate("Form", "Rule"))
     
     def enable_selected(self, text, line_edit_widget):
-        if text == 'Todos':
+        if text == 'Any':
             line_edit_widget.setEnabled(False)
         else:
             line_edit_widget.setEnabled(True)
@@ -197,106 +197,80 @@ class RulesTableCreator(object):
         name = self.line_edit_name.text()
         if name != '':
             description = self.text_edit_description.toPlainText()
-            enable = 'yes' if self.check_box_enable.isChecked() else 'no'
-            direction = 'in' if self.comboBox_direction.currentText() == 'Entrada' else 'out'
-            action = 'allow' if self.comboBox_action.currentText() == 'Permitir' else 'block'
+            enable = self.checkBox_enable.isChecked()
+            direction = self.comboBox_direction.currentText()
+            action = self.comboBox_action.currentText()
             protocol = self.comboBox_protocol.currentText()
-            protocol = None if protocol == 'Todos' else protocol
+            protocol = None if protocol == 'Any' else protocol
             port = self.comboBox_port.currentText()
             program = self.comboBox_program.currentText()
             ip = self.text_edit_IP.toPlainText()
-            selected_port = None if port == 'Todos' else self.line_edit_port.text()
-            selected_program = None if program == 'Todos' else self.line_edit_program.text()
+            selected_port = None if port == 'Any' else self.line_edit_port.text()
+            selected_program = None if program == 'Any' else self.line_edit_program.text()
 
             self.rulesConnection.addRule(name, description, enable, direction, action, protocol, selected_port, selected_program, ip)
         else:
-            code = 'No ingresó el nombre de la regla'
-            error = 'Debe ingresar el nombre de la regla.\nRevise la ayuda para crear nuevas reglas'
+            code = 'specify the name of the rule'
+            error = 'To create a new rule you must specify at least the name of the rule.\n Check help to create a new rule'
             self.message.show_message(code, error, self.icon)
 
     def get_selected_rule(self, table: QtWidgets.QTableWidget, row: int):
-            newForm = QtWidgets.QDialog()
+            new_form = QtWidgets.QDialog()
             name = table.item(row, 0)
+            name = name.text()
             profile = table.item(row, 2)
+            profile = profile.text()
             direction = table.item(row, 4)
-            protocol = table.item(row, 5)
-            print(name.text())
-            print(profile.text())
-            print(direction.text())
-            print(protocol.text())
+            direction = direction.text()
 
-            #search = self.rulesConnection.searchRules(name, profile, direction)
-            #self.setUp_filled_window(newForm, True)
+            search = self.rulesConnection.searchRules(name, profile, direction)
+            self.init_rule_window(new_form, True, search)
+            new_form.exec_()
 
-    def setUp_filled_window(self, protocol, form):
-        self.labelProfile = QtWidgets.QLabel(self.tabPort)
-        self.labelProfile.setGeometry(QtCore.QRect(30, 280, 47, 13))
-        self.labelProfile.setObjectName("labelProfile")
-        self.labelProfile.setText("Perfil")
-
-        self.checkBoxPrivate = QtWidgets.QCheckBox(self.tabPort)
-        self.checkBoxPrivate.setGeometry(QtCore.QRect(30, 300, 70, 17))
-        self.checkBoxPrivate.setObjectName("checkBoxPrivate")
-        self.checkBoxPrivate.setText("Privada")
-        self.checkBoxPublic = QtWidgets.QCheckBox(self.tabPort)
-        self.checkBoxPublic.setGeometry(QtCore.QRect(30, 330, 70, 17))
-        self.checkBoxPublic.setObjectName("checkBoxPublic")
-        self.checkBoxPublic.setText("Pública")
-        self.checkBoxDomain = QtWidgets.QCheckBox(self.tabPort)
-        self.checkBoxDomain.setGeometry(QtCore.QRect(30, 360, 70, 17))
-        self.checkBoxDomain.setObjectName("checkBoxDomain")
-        self.checkBoxDomain.setText("Dominio")
+    def setUp_filled_window(self, form: QtWidgets.QDialog, rule: list):
         try:
-            self.lineEditName.setText(self.get_rule_list[0]['Nombre de regla'])
-            self.comboBoxDirection.setCurrentText(self.get_rule_list[0]['Dirección'])
-            self.comboBoxAction.setCurrentText(self.get_rule_list[0]['Acción'])
-            self.comboBoxProtocol.setCurrentText(protocol)
+            self.line_edit_name.setText(rule[0][0])
+            self.text_edit_description.setPlainText(rule[0][6])
+            if rule[0][1] == 'Yes': self.checkBox_enable.setChecked(True)
+            self.comboBox_direction.setCurrentText(rule[0][4])
+            self.comboBox_action.setCurrentText(rule[0][3])
+            if rule[0][5] == 'TCP' or rule[0][5] == 'UDP':
+                self.comboBox_protocol.setCurrentText(rule[0][5])
+            else:
+                self.comboBox_protocol.addItem(rule[0][5])
+                self.comboBox_protocol.setCurrentText(rule[0][5])
 
-            if 'Descripción' in self.get_rule_list[0]:
-                self.textEditDescription.setText(self.get_rule_list[0]['Descripción'])
-            else: self.textEditDescription.setText('None')
+            if rule[0][4] == 'Inbound':
+                port_value = rule[0][7]
+            else:
+                port_value = rule[0][8]
 
-            if 'LocalPort' in self.getRule[0] or 'RemotePort' in self.getRule[0]:
-                if self.getRule[0]['LocalPort'] != 'Cualquiera':
-                    self.comboBoxPort.setCurrentText('Rango')
-                    self.lineEditPort.setText(self.getRule[0]['LocalPort'])
-                elif self.getRule[0]['RemotePort'] != 'Cualquiera':
-                    self.comboBoxPort.setCurrentText('Rango')
-                    self.lineEditPort.setText(self.getRule[0]['RemotePort'])
-                else:
-                    self.comboBoxPort.setCurrentText('Todos')
-            else: 
-                self.comboBoxPort.setCurrentText('Todos')
-                self.comboBoxProtocol.addItem(self.getRule[0]['Protocolo'])
-                self.comboBoxProtocol.setCurrentText(self.getRule[0]['Protocolo'])
-                self.comboBoxProtocol.setEnabled(False)
-                self.comboBoxPort.setEnabled(False)
-                self.lineEditPort.setEnabled(False)
+            if port_value == '' or port_value == '*':
+                self.comboBox_port.setCurrentText('Any')
+            else:
+                self.comboBox_port.setCurrentText('Range')
+                self.line_edit_port.setText(port_value)
 
-            if self.getRule[0]['Habilitada'] == 'Sí':
-                self.checkBoxEnable.setChecked(True)
+            if rule[0][9] == '':
+                self.comboBox_program.setCurrentIndex(0)
+            else:
+                self.comboBox_program.setCurrentIndex(1)
+                self.line_edit_program.setText(rule[0][9])
 
-            valueProfile = self.getRule[0]['Perfiles'].split(',')
-            for profile in valueProfile:
-                if profile == "Public":
-                    self.checkBoxPublic.setChecked(True)
-                elif profile == "Private":
-                    self.checkBoxPrivate.setChecked(True)
-                elif profile == "Domain":
-                    self.checkBoxDomain.setChecked(True)
+            if rule[0][10] != '' and rule[0][10] != '*':
+                self.text_edit_IP.setPlainText(rule[0][10])
 
-            self.btnEdit.setText("Editar")
-            self.btnEdit.clicked.connect(self.editSelectedRule)
-            self.btnDelete.setText("Eliminar")
-            self.btnDelete.clicked.connect(self.deleteSelectedRule)
+            self.btn_left.setText("Edit")
+            self.btn_left.clicked.connect(self.editSelectedRule)
+            self.btn_right.setText("Delete")
+            self.btn_right.clicked.connect(self.deleteSelectedRule)
+            
 
             self.retranslateUi(form)
             QtCore.QMetaObject.connectSlotsByName(form)
-            return True
         except Exception as exception:
             code = 'No se pudo acceder a la regla seleccionada'
             self.message.show_message(code, exception, self.icon)
-            return False
 
     # Method to delete the selected rule
     def deleteSelectedRule(self):

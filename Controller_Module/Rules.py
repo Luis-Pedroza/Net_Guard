@@ -51,7 +51,7 @@ class Firewall_Rules():
         self.iconCorrect = QMessageBox.Information
         self.firewall = win32com.client.Dispatch("HNetCfg.FwPolicy2")
 
-    def addRule(self, name: str, description: str, enable: str, direction: str, action: str, protocol: str,  port: str, program: str, ip: str):
+    def addRule(self, name: str, description: str, enable: bool, direction: str, action: str, protocol: str,  port: str, program: str, ip: str):
         """
         Adds a new firewall rule using the provided parameters.
 
@@ -82,9 +82,9 @@ class Firewall_Rules():
         try:
             new_rule.Name = name
             new_rule.Description = 'None' if description == '' else description
-            new_rule.Action = 1 if action == 'allow' else 0
-            new_rule.Enabled = True if enable == 'yes' else False
-            new_rule.Direction = 1 if direction == 'in' else 2
+            new_rule.Action = 1 if action == 'Allow' else 0
+            new_rule.Enabled = enable
+            new_rule.Direction = 1 if direction == 'Inbound' else 2
 
             if protocol == 'TCP':
                 new_rule.Protocol = 6
@@ -155,7 +155,6 @@ class Firewall_Rules():
         except Exception as exception:
             self.message.show_message('UNABLE_TO_EXECUTE_showRules', exception, self.iconFail)
 
-    # Method to search rules
     def searchRules(self, name: str, profile: str = None, direction: str = None):
         """
         Searches for firewall rules based on the provided parameters and returns a list of matching rules.
@@ -187,10 +186,12 @@ class Firewall_Rules():
         """
         rules = self.firewall.Rules
         rules_list = []
+
         if direction == 'any':
             direction = None
         else:
-            direction = 1 if direction == 'in' else 2
+            direction = 1 if direction == 'Inbound' else 2
+
         profile = None if profile == 'any' else self.get_profiles(profile)
         try:
             for rule in rules:
@@ -228,12 +229,23 @@ class Firewall_Rules():
         action = 'Allow' if rule.Action == 1 else 'Block'
         direction = 'Inbound' if rule.Direction == 1 else 'Outbound'
         protocol = self.get_protocol_name(rule.Protocol)
+        description = rule.Description
+        local_port = rule.LocalPorts
+        remote_Ports = rule.RemotePorts
+        program = rule.ApplicationName
+        ip = rule.RemoteAddresses
+
         one_rule_list.append(rule.Name)
         one_rule_list.append(enable)
         one_rule_list.append(profile)
         one_rule_list.append(action)
         one_rule_list.append(direction)
         one_rule_list.append(protocol)
+        one_rule_list.append(description)
+        one_rule_list.append(local_port)
+        one_rule_list.append(remote_Ports)
+        one_rule_list.append(program)
+        one_rule_list.append(ip)
         rules_list.append(one_rule_list)
         return rules_list
 
@@ -310,6 +322,10 @@ class Firewall_Rules():
 
     # Method to add rule
     def deleteRule(self, name, direction, profile, protocol, port):
+        #
+        # REVISAR EL PROTOCOLO PARA ELIMINAR
+        # REVISAR TAMBIÉN EL PERFIL
+        #
         # check if rule has a port or a range of ports
         if port != None:
             command = f'netsh advfirewall firewall delete rule name= "{name}" dir={direction} profile = "{profile}" protocol={protocol} {port}'
