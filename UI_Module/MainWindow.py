@@ -527,7 +527,7 @@ class Ui_MainWindow(object):
         # Clear the table and get new values
         mainTable.clearContents()
         mainTable.setRowCount(0)
-        rules = self.getRules.showRules()
+        rules = self.getRules.get_all_rules()
         # Insert new values on table
         mainTable.setRowCount(len(rules))
         for i, row in enumerate(rules):

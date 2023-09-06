@@ -29,7 +29,7 @@ class RulesTableCreator(object):
         main_window.setWindowIcon(QtGui.QIcon("Resources/icon.ico"))
 
         # get the data 
-        rules_data_list = self.rulesConnection.searchRules(name, profile, direction)
+        rules_data_list = self.rulesConnection.get_searched_rule(name, profile, direction)
 
         # check if data has information
         if rules_data_list:
@@ -208,7 +208,7 @@ class RulesTableCreator(object):
             selected_port = None if port == 'Any' else self.line_edit_port.text()
             selected_program = None if program == 'Any' else self.line_edit_program.text()
 
-            self.rulesConnection.addRule(name, description, enable, direction, action, protocol, selected_port, selected_program, ip)
+            self.rulesConnection.add_new_rule(name, description, enable, direction, action, protocol, selected_port, selected_program, ip)
         else:
             code = 'specify the name of the rule'
             error = 'To create a new rule you must specify at least the name of the rule.\n Check help to create a new rule'
@@ -223,7 +223,7 @@ class RulesTableCreator(object):
             direction = table.item(row, 4)
             direction = direction.text()
 
-            search = self.rulesConnection.searchRules(name, profile, direction)
+            search = self.rulesConnection.get_searched_rule(name, profile, direction)
             self.init_rule_window(new_form, True, search)
             new_form.exec_()
 
@@ -261,7 +261,7 @@ class RulesTableCreator(object):
                 self.text_edit_IP.setPlainText(rule[0][10])
 
             self.btn_left.setText("Edit")
-            self.btn_left.clicked.connect(self.editSelectedRule)
+            self.btn_left.clicked.connect(self.edit_selected_rule(rule))
             self.btn_right.setText("Delete")
             self.btn_right.clicked.connect(self.deleteSelectedRule)
             
@@ -272,86 +272,9 @@ class RulesTableCreator(object):
             code = 'No se pudo acceder a la regla seleccionada'
             self.message.show_message(code, exception, self.icon)
 
+    def edit_selected_rule(self, rule: list):
+        pass
+
     # Method to delete the selected rule
     def deleteSelectedRule(self):
         pass
-        mainMessage = QtWidgets.QMessageBox()
-        mainMessage.setWindowTitle('AVISO')
-        mainMessage.setText('Se eliminará la regla seleccionada')
-        mainMessage.setInformativeText('¿Desea continuar?')
-        mainMessage.setIcon(QtWidgets.QMessageBox.Question)
-        mainMessage.setStandardButtons(QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
-        buttonYes = mainMessage.button(QtWidgets.QMessageBox.Yes)
-        buttonYes.setText("Sí")
-        mainMessage.setWindowIcon(QtGui.QIcon("Resources/icon.ico"))
-        # translations of the profile
-        translations = {
-        "Pública": "public",
-        "Privada": "private",
-        "Dominio": "domain",
-        }
-        # try for when the rule is'nt a port rule
-        try:
-            # Get the rule data
-            name = self.getRule[0]['Nombre de regla']
-            direction = 'in' if self.getRule[0]['Dirección'] == 'Dentro' else 'out'
-            protocol = self.getRule[0]['Protocolo']
-            profile = self.getRule[0]['Perfiles']
-            values = profile.split(",")
-            translated_values = [translations[value.strip()] if value.strip() in translations else value.strip() for value in values]
-            translated_value = ",".join(translated_values)
-            profile = translated_value
-
-            # Get the port, it could be local, remote or any
-            if 'LocalPort' in self.getRule[0] or 'RemotePort' in self.getRule[0]:
-                if self.getRule[0]['LocalPort'] != 'Cualquiera':
-                    port = f"LocalPort={self.getRule[0]['LocalPort']}"
-                elif self.getRule[0]['RemotePort'] != 'Cualquiera':
-                    port = f"RemotePort={self.getRule[0]['RemotePort']}"
-                else:
-                    port = None
-            result=mainMessage.exec_()
-            # Confirm the action and delete the rule
-            if result == QtWidgets.QMessageBox.Yes:
-                self.rulesConnection.deleteRule(name, direction, profile, protocol.lower(), port)
-        except Exception as exception:
-                code = 'Ocurrió un error'
-                self.message.show_message(code, exception, self.icon)
-
-    # Edit the selected rule
-    def editSelectedRule(self):
-        pass
-        # NOTE: CHECK IF THE lineEditPort HAS AN ACCEPTABLE VALUE
-        oldName = self.getRule[0]['Nombre de regla']
-        oldDirection = 'in' if self.getRule[0]['Dirección'] == 'Dentro' else 'out'
-        oldProtocol = 'any' if self.getRule[0]['Protocolo'] == 'Cualquiera' else self.getRule[0]['Protocolo']
-        name = self.lineEditName.text()
-        # Check if name has a value
-        if name != "":
-            description = self.textEditDescription.toPlainText()
-            protocol = 'any' if self.comboBoxProtocol.currentText() == 'Cualquiera' else self.comboBoxProtocol.currentText()
-            selectedPort = self.comboBoxPort.currentText()
-            direction = 'in' if self.comboBoxDirection.currentText() == 'Dentro' else 'out'
-            enable = 'yes' if self.checkBoxEnable.isChecked() else 'no'
-            action = 'allow' if self.comboBoxAction.currentText() == 'Permitir' else \
-            'block' if self.comboBoxAction.currentText() == 'Bloquear' else ''
-            profile = ','.join([profile for profile, check_box in {'private': self.checkBoxPrivate, 'public': self.checkBoxPublic, 'domain': self.checkBoxDomain}.items() if check_box.isChecked()]) or 'any'
-            # Check the port and the direction            
-            if direction == 'in':
-                if selectedPort == 'Todos':
-                    port = 'localport=any remoteport=any'
-                else:
-                    port = f'localport={self.lineEditPort.text()}'
-            elif direction == 'out':
-                if selectedPort == 'Todos':
-                    port = 'localport=any remoteport=any'
-                else:
-                    port = f'remoteport={self.lineEditPort.text()}'
-            self.rulesConnection.editRule(oldName, oldDirection, oldProtocol.lower() ,name, direction, action, protocol.lower(), port, profile, description, enable)
-        # Exception if name is empty
-        else:
-            code = 'Debe especificar un nombre'
-            error = 'Debe especificar el nombre de la regla.\nRevise la ayuda para modificar nuevas reglas'
-            self.message.show_message(code, error, self.icon)
-
-    

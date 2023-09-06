@@ -10,20 +10,19 @@
 #
 # Usage Example:
 #     firewall_rules = Firewall_Rules()
-#     firewall_rules.addRule( /
+#     firewall_rules.add_new_rule( /
 #        "MyRule", "Allow incoming traffic", "yes", "in", "allow", "TCP", "80", "my_program.exe", "192.168.1.1")
-#     rules_info = firewall_rules.showRules()
-#     matching_rules = firewall_rules.searchRules("MyRule", profile="Domain", direction="in")
+#     rules_info = firewall_rules.get_all_rules()
+#     matching_rules = firewall_rules.get_searched_rule("MyRule", profile="Domain", direction="in")
 #     protocol_name = firewall_rules.get_protocol_name(6)
 #     profile_value = firewall_rules.get_profiles("Private")
-#     rules_list = firewall_rules.get_searched_rule(rule, [])
+#     rules_list = firewall_rules.enlist_rules(rule, [])
 #
 #
 # AUTHOR:  Luis Pedroza
 # CREATED: 11/04/2023 (dd/mm/yy)
 # ***************************************************
 
-import subprocess
 import win32com.client
 import win32api
 from PyQt5.QtWidgets import QMessageBox
@@ -41,7 +40,7 @@ class Firewall_Rules():
         firewall: An instance of the Windows Firewall policy.
 
     Methods:
-        addRule(name, description, enable, direction, action, protocol, port, program, ip)
+        add_new_rule(name, description, enable, direction, action, protocol, port, program, ip)
             Adds a new firewall rule with the specified parameters.
 
     """
@@ -51,7 +50,7 @@ class Firewall_Rules():
         self.iconCorrect = QMessageBox.Information
         self.firewall = win32com.client.Dispatch("HNetCfg.FwPolicy2")
 
-    def addRule(self, name: str, description: str, enable: bool, direction: str, action: str, protocol: str,  port: str, program: str, ip: str):
+    def add_new_rule(self, name: str, description: str, enable: bool, direction: str, action: str, protocol: str,  port: str, program: str, ip: str):
         """
         Adds a new firewall rule using the provided parameters.
 
@@ -74,7 +73,7 @@ class Firewall_Rules():
 
         Example Usage:
             firewall_rules = Firewall_Rules()
-            new_rule = firewall_rules.addRule( \
+            new_rule = firewall_rules.add_new_rule( \
             "MyRule", "Allow incoming traffic", "yes", "in", "allow", "TCP", "80", "my_program.exe", "192.168.1.1")
 
         """
@@ -92,14 +91,15 @@ class Firewall_Rules():
                 new_rule.Protocol = 17
             else:
                 new_rule.Protocol = 256
-
+            # check value
             if port is not None and direction == 'in':
                 new_rule.LocalPorts = port
             elif port is not None and direction == 'out':
                 new_rule.RemotePorts = port
-
+            # check value
             if program is not None:
                 new_rule.ApplicationName = program
+            # check value    
             if ip is not None:
                 new_rule.RemoteAddresses = ip
 
@@ -110,11 +110,11 @@ class Firewall_Rules():
             if com_error_info and len(com_error_info) > 5:
                 error_code = com_error_info[5]
                 error_message = win32api.FormatMessage(error_code)
-                self.message.show_message('UNABLE_TO_EXECUTE_addRule', error_message, self.iconFail)
+                self.message.show_message('UNABLE_TO_EXECUTE_add_new_rule', error_message, self.iconFail)
             else:
-                self.message.show_message('UNABLE_TO_EXECUTE_addRule_1', exception.args[1], self.iconFail)
+                self.message.show_message('UNABLE_TO_EXECUTE_add_new_rule_1', exception.args[1], self.iconFail)
 
-    def showRules(self) -> list[dict]:
+    def get_all_rules(self) -> list[dict]:
         """
         Retrieves and returns information about all the firewall rules.
 
@@ -133,7 +133,7 @@ class Firewall_Rules():
 
         Example Usage:
             firewall_rules = Firewall_Rules()
-            rules_info = firewall_rules.showRules()
+            rules_info = firewall_rules.get_all_rules()
             for rule in rules_info:
                 print(rule)
 
@@ -153,9 +153,9 @@ class Firewall_Rules():
                 firewall_rules.append(rule_info)
             return firewall_rules
         except Exception as exception:
-            self.message.show_message('UNABLE_TO_EXECUTE_showRules', exception, self.iconFail)
+            self.message.show_message('UNABLE_TO_EXECUTE_get_all_rules', exception, self.iconFail)
 
-    def searchRules(self, name: str, profile: str = None, direction: str = None):
+    def get_searched_rule(self, name: str, profile: str = None, direction: str = None) -> list[list]:
         """
         Searches for firewall rules based on the provided parameters and returns a list of matching rules.
 
@@ -179,7 +179,7 @@ class Firewall_Rules():
 
         Example Usage:
             firewall_rules = Firewall_Rules()
-            matching_rules = firewall_rules.searchRules("MyRule", profile="Domain", direction="in")
+            matching_rules = firewall_rules.get_searched_rule("MyRule", profile="Domain", direction="in")
             for rule in matching_rules:
                 print(rule)
 
@@ -198,13 +198,13 @@ class Firewall_Rules():
                 if rule.Name.lower() == name.lower() and \
                     (profile is None or rule.Profiles == profile) and \
                         (direction is None or rule.Direction == direction):
-                    rules_list = self.get_searched_rule(rule, rules_list)
+                    rules_list = self.enlist_rules(rule, rules_list)
         except Exception as exception:
-            self.message.show_message('UNABLE_TO_EXECUTE_searchRules', exception, self.iconFail)
+            self.message.show_message('UNABLE_TO_EXECUTE_get_searched_rule', exception, self.iconFail)
         finally:
             return rules_list
 
-    def get_searched_rule(self, rule: win32com.client.CDispatch, rules_list: list) -> list:
+    def enlist_rules(self, rule: win32com.client.CDispatch, rules_list: list) -> list:
         """
         Extracts information from a firewall rule and appends it to a list of rules.
 
@@ -218,7 +218,7 @@ class Firewall_Rules():
         Example Usage:
             firewall_rules = Firewall_Rules()
             rule = <some_firewall_rule>  # Replace with an actual firewall rule object
-            rules_list = firewall_rules.get_searched_rule(rule, [])
+            rules_list = firewall_rules.enlist_rules(rule, [])
             print(rules_list)  # Updated list of firewall rules
 
         """
@@ -248,6 +248,10 @@ class Firewall_Rules():
         one_rule_list.append(ip)
         rules_list.append(one_rule_list)
         return rules_list
+    
+    def edit_selected_rule(self, oldName, oldDirection,oldProtocol,name,direction, action, protocol, port, profile, description, enable):
+        pass
+
 
     def get_protocol_name(self, protocol: int) -> str:
         """
@@ -320,54 +324,6 @@ class Firewall_Rules():
                 profiles.append("Public")
             return profiles
 
-    # Method to add rule
     def deleteRule(self, name, direction, profile, protocol, port):
-        #
-        # REVISAR EL PROTOCOLO PARA ELIMINAR
-        # REVISAR TAMBIÉN EL PERFIL
-        #
-        # check if rule has a port or a range of ports
-        if port != None:
-            command = f'netsh advfirewall firewall delete rule name= "{name}" dir={direction} profile = "{profile}" protocol={protocol} {port}'
-        else:
-            command = f'netsh advfirewall firewall delete rule name= "{name}" dir={direction} profile = "{profile}" protocol={protocol}'
-        try:
-            # Execute command and check if it has an error
-            output = subprocess.run(command, shell=True, capture_output=True, encoding='cp850')
-            if output.returncode != 0:
-                # check if stdout has an error of use or elevation
-                if output.stdout.splitlines()[1] != "":
-                    self.message.show_message('UNABLE_To_deleteRule',output.stdout.splitlines()[1], self.iconFail)
-                else: 
-                    self.message.show_message('UNABLE_To_deleteRule',output.stdout, self.iconFail)
-            else: 
-                # Show confirmation
-                self.message.show_message('Se eliminó la regla', '', self.iconCorrect)
-        # exception control
-        except subprocess.CalledProcessError as exception:
-            self.message.show_message('UNABLE_TO_EXECUTE_deleteRule', exception, self.iconFail)
-
-    # Method to edit rule
-    def editRule(self, oldName, oldDirection,oldProtocol,name,direction, action, protocol, port, profile, description, enable):
-        # Check if there is a description, if not then add None
-        if description == "":
-            description = "None"
-        if protocol != 'any':
-            command = f'netsh advfirewall firewall set rule name= "{oldName}" dir={oldDirection} protocol={oldProtocol} new name= "{name}" dir={direction} protocol={protocol} action={action} {port} profile={profile} description="{description}" enable={enable}'
-        else:
-            command = f'netsh advfirewall firewall set rule name= "{oldName}" dir={oldDirection} protocol={oldProtocol} new name= "{name}" dir={direction} protocol={protocol} action={action} profile={profile} description="{description}" enable={enable}'
-
-        try:
-            # Execute command and check if there's an error
-            output = subprocess.run(command, shell=True, capture_output=True, encoding='cp850')
-            if output.returncode != 0:
-                if output.stdout.splitlines()[1] != "":
-                    self.message.show_message('UNABLE_To_editRule',output.stdout.splitlines()[1], self.iconFail)
-                else: 
-                    self.message.show_message('UNABLE_To_editRule',output.stdout, self.iconFail)
-            else: 
-                # Show confirmation
-                self.message.show_message('Se editó la regla','',self.iconCorrect)
-        except subprocess.CalledProcessError as exception:
-            # Exception control
-            self.message.show_message('UNABLE_TO_EXECUTE_addRule', exception, self.iconFail)
+        pass
+    
