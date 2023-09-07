@@ -17,6 +17,9 @@
 #     protocol_name = firewall_rules.get_protocol_name(6)
 #     profile_value = firewall_rules.get_profiles("Private")
 #     rules_list = firewall_rules.enlist_rules(rule, [])
+#     firewall_rules.edit_selected_rule("OldRule", "Private", "Inbound", "NewRule", "Updated description", \
+#         True, "Outbound", "Block", "TCP", "80", "Range", "my_program.exe", "Select", "192.168.1.2")
+#
 #
 #
 # AUTHOR:  Luis Pedroza
@@ -49,6 +52,7 @@ class Firewall_Rules():
         self.iconFail = QMessageBox.Critical
         self.iconCorrect = QMessageBox.Information
         self.firewall = win32com.client.Dispatch("HNetCfg.FwPolicy2")
+        
 
     def add_new_rule(self, name: str, description: str, enable: bool, direction: str, action: str, protocol: str,  port: str, program: str, ip: str):
         """
@@ -248,8 +252,38 @@ class Firewall_Rules():
         rules_list.append(one_rule_list)
         return rules_list
     
-    def edit_selected_rule(self, old_name: str, profile: str, old_direction, name: str, description: str, enable: bool, direction: str, action: str, protocol: str,  port: str, election_port: str, program: str, election_program: str, ip: str):
-        # check exceptions of stupid users
+    def edit_selected_rule(self, old_name: str, profile: str, old_direction: str, name: str, description: str, enable: bool, direction: str, action: str, protocol: str,  port: str, election_port: str, program: str, election_program: str, ip: str):
+        """
+        Edits a selected firewall rule with the provided parameters.
+        
+        Args:
+            old_name (str): The name of the firewall rule to be edited.
+            profile (str): The profile of the firewall rule.
+            old_direction (str): The old direction of the firewall rule, either 'Inbound' or 'Outbound'.
+            name (str): The new name for the firewall rule.
+            description (str): The new description for the firewall rule.
+            enable (bool): Whether the firewall rule should be enabled.
+            direction (str): The new direction for the firewall rule, either 'Inbound' or 'Outbound'.
+            action (str): The new action for the firewall rule, either 'Allow' or 'Block'.
+            protocol (str): The new protocol for the firewall rule, either 'TCP', 'UDP', or 'Any'.
+            port (str): The new port for the firewall rule.
+            election_port (str): The port election option, either 'Range' or 'Select'.
+            program (str): The new program/application for the firewall rule.
+            election_program (str): The program election option, either 'Select' or 'Any'.
+            ip (str): The new IP address for the firewall rule.
+        
+        Returns:
+            None
+            
+        Raises:
+            Various exceptions if there is an issue while editing the rule.
+
+        Example Usage:
+            firewall_rules = Firewall_Rules()
+            firewall_rules.edit_selected_rule("OldRule", "Private", "Inbound", "NewRule", "Updated description", True, "Outbound", "Block", "TCP", "80", "Range", "my_program.exe", "Select", "192.168.1.2")
+            
+        """
+        # Check exceptions of invalid user inputs
         rules = self.firewall.Rules
         try:
             profile = None if self.get_profiles(profile) == 7 else self.get_profiles(profile)
@@ -292,19 +326,20 @@ class Firewall_Rules():
                     # check value 
                     if election_program == 'Select':
                         rule.ApplicationName = program
-                    else: rule.ApplicationName = '/'
+                    else: 
+                        # this line doesn't work
+                        rule.ApplicationName = ''
 
-
-                    self.message.show_message('Se modifico la regla seleccionada', '', self.iconCorrect)
+                    self.message.show_message('The rule has been modified', '', self.iconCorrect)
 
         except Exception as exception:
             com_error_info = exception.excepinfo
             if com_error_info and len(com_error_info) > 5:
                 error_code = com_error_info[5]
                 error_message = win32api.FormatMessage(error_code)
-                print('error 1: ', error_message)
+                self.message.show_message('UNABLE_TO_EXECUTE_edit_selected_rule', error_message, self.iconFail)
             else:
-                print('error 2: ', exception.args[1])
+                self.message.show_message('UNABLE_TO_EXECUTE_edit_selected_rule_1', exception.args[1], self.iconFail)
 
 
     def get_protocol_name(self, protocol: int) -> str:
