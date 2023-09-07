@@ -194,25 +194,27 @@ class RulesTableCreator(object):
             line_edit_widget.setEnabled(True)
 
     def add_new_rule(self):
-        name = self.line_edit_name.text()
-        if name != '':
-            description = self.text_edit_description.toPlainText()
-            enable = self.checkBox_enable.isChecked()
-            direction = self.comboBox_direction.currentText()
-            action = self.comboBox_action.currentText()
-            protocol = self.comboBox_protocol.currentText()
-            protocol = None if protocol == 'Any' else protocol
-            port = self.comboBox_port.currentText()
-            program = self.comboBox_program.currentText()
-            ip = self.text_edit_IP.toPlainText()
-            selected_port = None if port == 'Any' else self.line_edit_port.text()
-            selected_program = None if program == 'Any' else self.line_edit_program.text()
+        rule_data = {
+            "name": self.line_edit_name.text(),
+            "description": self.text_edit_description.toPlainText(),
+            "enable": self.checkBox_enable.isChecked(),
+            "direction": self.comboBox_direction.currentText(),
+            "action": self.comboBox_action.currentText(),
+            "protocol": self.comboBox_protocol.currentText(),
+            "port": None if self.comboBox_port.currentText() == 'Any' else self.line_edit_port.text(),
+            "selected_port": self.line_edit_port.text(),
+            "program": None if self.comboBox_program.currentText() == 'Any' else self.line_edit_program.text(),
+            "selected_program": self.line_edit_program.text(),
+            "ip": None if self.text_edit_IP.toPlainText() == '' else self.text_edit_IP.toPlainText()
+        }
 
-            self.rulesConnection.add_new_rule(name, description, enable, direction, action, protocol, selected_port, selected_program, ip)
+        if rule_data["name"] != '':
+            self.rulesConnection.add_new_rule(rule_data)
         else:
             code = 'specify the name of the rule'
             error = 'To create a new rule you must specify at least the name of the rule.\n Check help to create a new rule'
             self.message.show_message(code, error, self.icon)
+
 
     def get_selected_rule(self, table: QtWidgets.QTableWidget, row: int):
             new_form = QtWidgets.QDialog()
@@ -234,7 +236,7 @@ class RulesTableCreator(object):
             if rule[0][1] == 'Yes': self.checkBox_enable.setChecked(True)
             self.comboBox_direction.setCurrentText(rule[0][4])
             self.comboBox_action.setCurrentText(rule[0][3])
-            if rule[0][5] == 'TCP' or rule[0][5] == 'UDP':
+            if rule[0][5] == 'TCP' or rule[0][5] == 'UDP' or rule[0][5] == 'Any':
                 self.comboBox_protocol.setCurrentText(rule[0][5])
             else:
                 self.comboBox_protocol.addItem(rule[0][5])
@@ -273,22 +275,25 @@ class RulesTableCreator(object):
             self.message.show_message(code, exception, self.icon)
 
     def edit_selected_rule(self, rule: list):
-        old_name = rule[0][0]
-        profile = rule[0][2]
-        old_direction = rule[0][4]
+        rule_data = {
 
-        name = self.line_edit_name.text()
-        direction = self.comboBox_direction.currentText()
-        description = self.text_edit_description.toPlainText()
-        enable = self.checkBox_enable.isChecked()
-        action = self.comboBox_action.currentText()
-        protocol = self.comboBox_protocol.currentText()
-        election_port = self.comboBox_port.currentText()
-        port = self.line_edit_port.text()
-        election_program = self. comboBox_program.currentText()
-        program = self.line_edit_program.text()
-        ip = self.text_edit_IP.toPlainText()
-        self.rulesConnection.edit_selected_rule(old_name, profile, old_direction, name, description, enable, direction, action, protocol, port, election_port,  program, election_program, ip)
+        'old_name': rule[0][0],
+        'profile': rule[0][2],
+        'old_direction': rule[0][4],
+
+        'name':self.line_edit_name.text(),
+        'direction': self.comboBox_direction.currentText(),
+        'description': self.text_edit_description.toPlainText(),
+        'enable': self.checkBox_enable.isChecked(),
+        'action': self.comboBox_action.currentText(),
+        'protocol': self.comboBox_protocol.currentText(),
+        'election_port': self.comboBox_port.currentText(),
+        'port': self.line_edit_port.text(),
+        'election_program': self. comboBox_program.currentText(),
+        'program': self.line_edit_program.text(),
+        'ip': self.text_edit_IP.toPlainText()
+        }
+        self.rulesConnection.edit_selected_rule(rule_data)
 
     # Method to delete the selected rule
     def deleteSelectedRule(self):
