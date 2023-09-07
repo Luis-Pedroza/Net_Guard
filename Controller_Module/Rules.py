@@ -54,58 +54,73 @@ class Firewall_Rules():
         self.firewall = win32com.client.Dispatch("HNetCfg.FwPolicy2")
         
 
-    def add_new_rule(self, name: str, description: str, enable: bool, direction: str, action: str, protocol: str,  port: str, program: str, ip: str):
+    def add_new_rule(self, rule: dict):
         """
         Adds a new firewall rule using the provided parameters.
-
+        
         Args:
-            name (str): The name of the firewall rule.
-            description (str): The description of the firewall rule. If empty, it defaults to 'None'.
-            enable (str): Whether the rule should be enabled ('yes') or disabled ('no').
-            direction (str): The direction of the rule, 'in' for incoming or 'out' for outgoing traffic.
-            action (str): The action to take for the rule, 'allow' or 'block'.
-            protocol (str): The protocol of the rule, 'TCP', 'UDP', or any other value (defaulting to 'Other').
-            port (str): The port to which the rule applies. If None, it does not specify a port.
-            program (str): The name of the program/application associated with the rule. If None, it does not specify a program.
-            ip (str): The IP address to which the rule applies. If None, it does not specify an IP address.
-
+            rule (dict): A dictionary containing the following parameters for the new rule:
+            - 'name' (str): The name of the firewall rule.
+            - 'description' (str): The description of the firewall rule. If empty, it defaults to 'None'.
+            - 'enable' (bool): Whether the rule should be enabled (True) or disabled (False).
+            - 'direction' (str): The direction of the rule, 'Inbound' for incoming or 'Outbound' for outgoing traffic.
+            - 'action' (str): The action to take for the rule, 'allow' or 'block'.
+            - 'protocol' (str): The protocol of the rule, 'TCP', 'UDP', or any other value (defaulting to 'Any').
+            - 'port' (str): The selected port option, 'Range' or a specific port.
+            - 'selected_port' (str): The port to which the rule applies. If None, it does not specify a port.
+            - 'program' (str): The selected program option, 'Select' or None.
+            - 'selected_program' (str): The name of the program/application associated with the rule. If None, it does not specify a program.
+            - 'ip' (str): The IP address to which the rule applies. If None, it does not specify an IP address.
+    
         Returns:
             None
-
+            
         Raises:
-            - Various exceptions if there is an issue while adding the rule.
+            Various exceptions if there is an issue while adding the rule.
 
         Example Usage:
             firewall_rules = Firewall_Rules()
-            new_rule = firewall_rules.add_new_rule( \
-            "MyRule", "Allow incoming traffic", "yes", "in", "allow", "TCP", "80", "my_program.exe", "192.168.1.1")
+            new_rule = {
+                'name': "MyRule",
+                'description': "Allow incoming traffic",
+                'enable': "yes",
+                'direction': "in",
+                'action': "allow",
+                'protocol': "TCP",
+                'port': "80",
+                'selected_port': "Range",
+                'program': "my_program.exe",
+                'selected_program': "Select",
+                'ip': "192.168.1.1"
+            }
+            firewall_rules.add_new_rule(new_rule)
 
         """
         new_rule = win32com.client.Dispatch("HNetCfg.FWRule")
         try:
-            new_rule.Name = name
-            new_rule.Description = 'None' if description == '' else description
-            new_rule.Action = 1 if action == 'Allow' else 0
-            new_rule.Enabled = enable
-            new_rule.Direction = 1 if direction == 'Inbound' else 2
+            new_rule.Name = rule['name']
+            new_rule.Description = 'None' if rule['description'] == '' else rule['description']
+            new_rule.Action = 1 if rule['action'] == 'Allow' else 0
+            new_rule.Enabled = rule['enable']
+            new_rule.Direction = 1 if rule['direction'] == 'Inbound' else 2
 
-            if protocol == 'TCP':
+            if rule['protocol'] == 'TCP':
                 new_rule.Protocol = 6
-            elif protocol == 'UDP':
+            elif rule['protocol'] == 'UDP':
                 new_rule.Protocol = 17
             else:
                 new_rule.Protocol = 256
             # check value
-            if port is not None and direction == 'Inbound':
-                new_rule.LocalPorts = str(port)
-            elif port is not None and direction == 'Outbound':
-                new_rule.RemotePorts = str(port)
+            if rule['port'] is not None and rule['direction'] == 'Inbound':
+                new_rule.LocalPorts = str(rule['selected_port'])
+            elif rule['port'] is not None and rule['direction'] == 'Outbound':
+                new_rule.RemotePorts = str(rule['selected_port'])
             # check value
-            if program is not None:
-                new_rule.ApplicationName = program
+            if rule['program'] is not None:
+                new_rule.ApplicationName = rule['selected_program']
             # check value    
-            if ip is not None:
-                new_rule.RemoteAddresses = ip
+            if rule['ip'] is not None:
+                new_rule.RemoteAddresses = rule['ip']
 
             self.firewall.Rules.Add(new_rule)
             self.message.show_message('Se agregó la regla', '', self.iconCorrect)
@@ -252,7 +267,7 @@ class Firewall_Rules():
         rules_list.append(one_rule_list)
         return rules_list
     
-    def edit_selected_rule(self, old_name: str, profile: str, old_direction: str, name: str, description: str, enable: bool, direction: str, action: str, protocol: str,  port: str, election_port: str, program: str, election_program: str, ip: str):
+    def edit_selected_rule(self, rule_dict: dict):
         """
         Edits a selected firewall rule with the provided parameters.
         
@@ -286,49 +301,58 @@ class Firewall_Rules():
         # Check exceptions of invalid user inputs
         rules = self.firewall.Rules
         try:
-            profile = None if self.get_profiles(profile) == 7 else self.get_profiles(profile)
-            old_direction = 1 if old_direction == 'Inbound' else 2
-            port = None if port == '' else port
-            program = None if program == '' else program
+            profile = None if self.get_profiles(rule_dict['profile']) == 7 else self.get_profiles(rule['profile'])
+            old_direction = 1 if rule_dict['old_direction'] == 'Inbound' else 2
+            port = None if rule_dict['port'] == '' else rule_dict['port']
+            program = None if rule_dict['program'] == '' else rule_dict['program']
             for rule in rules:
-                if rule.Name.lower() == old_name.lower() and \
+                if rule.Name.lower() == rule_dict['old_name'].lower() and \
                     (profile is None or rule.Profiles == profile) and \
-                        (direction is None or rule.Direction == old_direction):
+                        (rule_dict['direction'] is None or rule.Direction == old_direction):
                     
-                    rule.Name = name
-                    rule.Description = 'None' if description == '' else description
-                    rule.Action = 1 if action == 'Allow' else 0
-                    rule.Enabled = enable
-                    rule.Direction = 1 if direction == 'Inbound' else 2
-
-                    if protocol == 'TCP':
+                    rule.Name = rule_dict['name']
+                    rule.Description = 'None' if rule_dict['description'] == '' else rule_dict['description']
+                    rule.Action = 1 if rule_dict['action'] == 'Allow' else 0
+                    rule.Enabled = rule_dict['enable']
+                    rule.Direction = 1 if rule_dict['direction'] == 'Inbound' else 2
+                    
+                    if rule_dict['protocol'] == 'TCP':
                         rule.Protocol = 6
-                    elif protocol == 'UDP':
+                    elif rule_dict['protocol'] == 'UDP':
                         rule.Protocol = 17
-                    else:
-                        rule.Protocol = 256
-                        
-                    if election_port == 'Range':
+                    elif rule_dict['protocol'] == 'Any':
+                        if rule.Protocol == 256:
+                            pass
+                        else:
+                            rule.LocalPorts = ''
+                            rule.RemotePorts = ''
+                            rule.Protocol = 256
+
+                    if rule_dict['protocol'] == 'Any' and rule_dict['election_port'] == 'Any':
+                        pass
+                    elif rule_dict['election_port'] == 'Range' and port is not None:
                         # check value
-                        if port is not None and direction == 'Inbound':
+                        if rule_dict['protocol'] == 'Any':
+                            pass
+                        elif rule_dict['direction'] == 'Inbound':
                             rule.LocalPorts = str(port)
-                        elif port is not None and direction == 'Outbound':
+                        elif rule_dict['direction'] == 'Outbound':
                             rule.RemotePorts = str(port)
-                    else: 
+                    else:
                         rule.LocalPorts = ''
                         rule.RemotePorts = ''
 
                     # check value    
-                    if ip:
-                        rule.RemoteAddresses = ip
+                    if rule_dict['ip']:
+                        rule.RemoteAddresses = rule_dict['ip']
                     else: rule.RemoteAddresses = '*'
 
                     # check value 
-                    if election_program == 'Select':
+                    if rule_dict['election_program'] == 'Select' :
                         rule.ApplicationName = program
-                    else: 
-                        # this line doesn't work
-                        rule.ApplicationName = ''
+                    # else: 
+                    #     # this line doesn't work
+                    #     rule.ApplicationName = ''
 
                     self.message.show_message('The rule has been modified', '', self.iconCorrect)
 
