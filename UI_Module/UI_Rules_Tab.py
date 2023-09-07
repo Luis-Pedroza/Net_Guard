@@ -266,7 +266,8 @@ class RulesTableCreator(object):
             self.btn_left.clicked.connect(lambda: self.edit_selected_rule(rule))
             self.btn_left.clicked.connect(form.close)
             self.btn_right.setText("Delete")
-            # self.btn_right.clicked.connect(self.deleteSelectedRule())
+            self.btn_right.clicked.connect(lambda: self.deleteSelectedRule(rule))
+            self.btn_right.clicked.connect(form.close)
 
             self.retranslateUi(form)
             QtCore.QMetaObject.connectSlotsByName(form)
@@ -295,6 +296,9 @@ class RulesTableCreator(object):
         }
         self.rulesConnection.edit_selected_rule(rule_data)
 
-    # Method to delete the selected rule
-    def deleteSelectedRule(self):
-        pass
+    def deleteSelectedRule(self, rule: list):
+        name = rule[0][0]
+        direction = rule[0][4]
+        profile= rule[0][2]
+        protocol = rule[0][5]
+        self.rulesConnection.delete_selected_rule(name, direction, profile, protocol)

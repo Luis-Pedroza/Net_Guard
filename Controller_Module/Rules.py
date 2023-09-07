@@ -458,6 +458,18 @@ class Firewall_Rules():
                 profiles.append("Public")
             return profiles
 
-    def deleteRule(self, name, direction, profile, protocol):
-        pass
-    
+    def delete_selected_rule(self, name: str, direction: str, profile: str, protocol: str):
+        rules = self.firewall.Rules
+        try:
+            for rule in rules:
+                if rule.Name.lower() == name.lower():
+                    rules.Remove(rule.Name)
+            self.message.show_message('The rule has been deleted', '', self.iconCorrect)
+        except Exception as exception:
+            com_error_info = exception.excepinfo
+            if com_error_info and len(com_error_info) > 5:
+                error_code = com_error_info[5]
+                error_message = win32api.FormatMessage(error_code)
+                self.message.show_message('UNABLE_TO_EXECUTE_edit_selected_rule', error_message, self.iconFail)
+            else:
+                self.message.show_message('UNABLE_TO_EXECUTE_edit_selected_rule_1', exception.args[1], self.iconFail)
