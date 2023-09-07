@@ -92,10 +92,10 @@ class Firewall_Rules():
             else:
                 new_rule.Protocol = 256
             # check value
-            if port is not None and direction == 'in':
-                new_rule.LocalPorts = port
-            elif port is not None and direction == 'out':
-                new_rule.RemotePorts = port
+            if port is not None and direction == 'Inbound':
+                new_rule.LocalPorts = str(port)
+            elif port is not None and direction == 'Outbound':
+                new_rule.RemotePorts = str(port)
             # check value
             if program is not None:
                 new_rule.ApplicationName = program
@@ -191,8 +191,7 @@ class Firewall_Rules():
             direction = None
         else:
             direction = 1 if direction == 'Inbound' else 2
-
-        profile = None if profile == 'any' else self.get_profiles(profile)
+        profile = None if self.get_profiles(profile) == 7 else self.get_profiles(profile)
         try:
             for rule in rules:
                 if rule.Name.lower() == name.lower() and \
@@ -249,8 +248,63 @@ class Firewall_Rules():
         rules_list.append(one_rule_list)
         return rules_list
     
-    def edit_selected_rule(self, oldName, oldDirection,oldProtocol,name,direction, action, protocol, port, profile, description, enable):
-        pass
+    def edit_selected_rule(self, old_name: str, profile: str, old_direction, name: str, description: str, enable: bool, direction: str, action: str, protocol: str,  port: str, election_port: str, program: str, election_program: str, ip: str):
+        # check exceptions of stupid users
+        rules = self.firewall.Rules
+        try:
+            profile = None if self.get_profiles(profile) == 7 else self.get_profiles(profile)
+            old_direction = 1 if old_direction == 'Inbound' else 2
+            port = None if port == '' else port
+            program = None if program == '' else program
+            for rule in rules:
+                if rule.Name.lower() == old_name.lower() and \
+                    (profile is None or rule.Profiles == profile) and \
+                        (direction is None or rule.Direction == old_direction):
+                    
+                    rule.Name = name
+                    rule.Description = 'None' if description == '' else description
+                    rule.Action = 1 if action == 'Allow' else 0
+                    rule.Enabled = enable
+                    rule.Direction = 1 if direction == 'Inbound' else 2
+
+                    if protocol == 'TCP':
+                        rule.Protocol = 6
+                    elif protocol == 'UDP':
+                        rule.Protocol = 17
+                    else:
+                        rule.Protocol = 256
+                        
+                    if election_port == 'Range':
+                        # check value
+                        if port is not None and direction == 'Inbound':
+                            rule.LocalPorts = str(port)
+                        elif port is not None and direction == 'Outbound':
+                            rule.RemotePorts = str(port)
+                    else: 
+                        rule.LocalPorts = ''
+                        rule.RemotePorts = ''
+
+                    # check value    
+                    if ip:
+                        rule.RemoteAddresses = ip
+                    else: rule.RemoteAddresses = '*'
+
+                    # check value 
+                    if election_program == 'Select':
+                        rule.ApplicationName = program
+                    else: rule.ApplicationName = '/'
+
+
+                    self.message.show_message('Se modifico la regla seleccionada', '', self.iconCorrect)
+
+        except Exception as exception:
+            com_error_info = exception.excepinfo
+            if com_error_info and len(com_error_info) > 5:
+                error_code = com_error_info[5]
+                error_message = win32api.FormatMessage(error_code)
+                print('error 1: ', error_message)
+            else:
+                print('error 2: ', exception.args[1])
 
 
     def get_protocol_name(self, protocol: int) -> str:
@@ -307,12 +361,16 @@ class Firewall_Rules():
         """
         if isinstance(profile, str):
             profile = profile.lower()
-            if profile == "domain":
-                return 1
-            elif profile == "private":
-                return 2
-            elif profile == "public":
-                return 4
+            profile_value = 0  # Inicializa el valor en 0
+
+            if "domain" in profile:
+                profile_value += 1
+            if "private" in profile:
+                profile_value += 2
+            if "public" in profile:
+                profile_value += 4
+
+            return profile_value
 
         elif isinstance(profile, int):
             profiles = []

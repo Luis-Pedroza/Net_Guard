@@ -261,10 +261,10 @@ class RulesTableCreator(object):
                 self.text_edit_IP.setPlainText(rule[0][10])
 
             self.btn_left.setText("Edit")
-            self.btn_left.clicked.connect(self.edit_selected_rule(rule))
+            self.btn_left.clicked.connect(lambda: self.edit_selected_rule(rule))
+            self.btn_left.clicked.connect(form.close)
             self.btn_right.setText("Delete")
-            self.btn_right.clicked.connect(self.deleteSelectedRule)
-            
+            # self.btn_right.clicked.connect(self.deleteSelectedRule())
 
             self.retranslateUi(form)
             QtCore.QMetaObject.connectSlotsByName(form)
@@ -273,7 +273,22 @@ class RulesTableCreator(object):
             self.message.show_message(code, exception, self.icon)
 
     def edit_selected_rule(self, rule: list):
-        pass
+        old_name = rule[0][0]
+        profile = rule[0][2]
+        old_direction = rule[0][4]
+
+        name = self.line_edit_name.text()
+        direction = self.comboBox_direction.currentText()
+        description = self.text_edit_description.toPlainText()
+        enable = self.checkBox_enable.isChecked()
+        action = self.comboBox_action.currentText()
+        protocol = self.comboBox_protocol.currentText()
+        election_port = self.comboBox_port.currentText()
+        port = self.line_edit_port.text()
+        election_program = self. comboBox_program.currentText()
+        program = self.line_edit_program.text()
+        ip = self.text_edit_IP.toPlainText()
+        self.rulesConnection.edit_selected_rule(old_name, profile, old_direction, name, description, enable, direction, action, protocol, port, election_port,  program, election_program, ip)
 
     # Method to delete the selected rule
     def deleteSelectedRule(self):
