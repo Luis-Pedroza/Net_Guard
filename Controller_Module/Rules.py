@@ -103,6 +103,8 @@ class Firewall_Rules():
             new_rule.Action = 1 if rule['action'] == 'Allow' else 0
             new_rule.Enabled = rule['enable']
             new_rule.Direction = 1 if rule['direction'] == 'Inbound' else 2
+            #CurrentProfiles = self.firewall.CurrentProfileTypes
+            #new_rule.Profiles = CurrentProfiles
 
             if rule['protocol'] == 'TCP':
                 new_rule.Protocol = 6
@@ -205,12 +207,11 @@ class Firewall_Rules():
         """
         rules = self.firewall.Rules
         rules_list = []
-
         if direction == 'any':
             direction = None
         else:
             direction = 1 if direction == 'Inbound' else 2
-        profile = None if self.get_profiles(profile) == 7 else self.get_profiles(profile)
+        profile = None if self.get_profiles(profile) == 7 or profile == 'any' else self.get_profiles(profile)
         try:
             for rule in rules:
                 if rule.Name.lower() == name.lower() and \
