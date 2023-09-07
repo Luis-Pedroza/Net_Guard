@@ -319,7 +319,7 @@ class Firewall_Rules():
         # Check exceptions of invalid user inputs
         rules = self.firewall.Rules
         try:
-            profile = None if self.get_profiles(rule_dict['profile']) == 7 else self.get_profiles(rule['profile'])
+            profile = None if self.get_profiles(rule_dict['profile']) == 7 else self.get_profiles(rule_dict['profile'])
             old_direction = 1 if rule_dict['old_direction'] == 'Inbound' else 2
             port = None if rule_dict['port'] == '' else rule_dict['port']
             program = None if rule_dict['program'] == '' else rule_dict['program']
