@@ -272,20 +272,21 @@ class Firewall_Rules():
         Edits a selected firewall rule with the provided parameters.
         
         Args:
-            old_name (str): The name of the firewall rule to be edited.
-            profile (str): The profile of the firewall rule.
-            old_direction (str): The old direction of the firewall rule, either 'Inbound' or 'Outbound'.
-            name (str): The new name for the firewall rule.
-            description (str): The new description for the firewall rule.
-            enable (bool): Whether the firewall rule should be enabled.
-            direction (str): The new direction for the firewall rule, either 'Inbound' or 'Outbound'.
-            action (str): The new action for the firewall rule, either 'Allow' or 'Block'.
-            protocol (str): The new protocol for the firewall rule, either 'TCP', 'UDP', or 'Any'.
-            port (str): The new port for the firewall rule.
-            election_port (str): The port election option, either 'Range' or 'Select'.
-            program (str): The new program/application for the firewall rule.
-            election_program (str): The program election option, either 'Select' or 'Any'.
-            ip (str): The new IP address for the firewall rule.
+            rule_dict (dict): A dictionary containing the following parameters for the rule:
+            - 'old_name' (str): The name of the firewall rule to be edited.
+            - 'profile' (str): The profile of the firewall rule.
+            - 'old_direction' (str): The old direction of the firewall rule, either 'Inbound' or 'Outbound'.
+            - 'name' (str): The new name for the firewall rule.
+            - 'description' (str): The new description for the firewall rule.
+            - 'enable' (bool): Whether the firewall rule should be enabled.
+            - 'direction' (str): The new direction for the firewall rule, either 'Inbound' or 'Outbound'.
+            - 'action' (str): The new action for the firewall rule, either 'Allow' or 'Block'.
+            - 'protocol' (str): The new protocol for the firewall rule, either 'TCP', 'UDP', or 'Any'.
+            - 'port' (str): The new port for the firewall rule.
+            - 'election_port' (str): The port election option, either 'Range' or 'Any'.
+            - 'program' (str): The new program/application for the firewall rule.
+            - 'election_program' (str): The program election option, either 'Select' or 'Any'.
+            - 'ip' (str): The new IP address for the firewall rule.
         
         Returns:
             None
@@ -295,8 +296,24 @@ class Firewall_Rules():
 
         Example Usage:
             firewall_rules = Firewall_Rules()
-            firewall_rules.edit_selected_rule("OldRule", "Private", "Inbound", "NewRule", "Updated description", True, "Outbound", "Block", "TCP", "80", "Range", "my_program.exe", "Select", "192.168.1.2")
-            
+            rule = {
+                'old_name': "OldRule",
+                'profile': "Private",
+                'old_direction': "Inbound",
+                'name': "NewRule",
+                'description': "Updated description",
+                'enable': True,
+                'direction': "Outbound",
+                'action': "Block",
+                'protocol': "TCP",
+                'port': "80",
+                'election_port': "Range",
+                'program': "my_program.exe",
+                'election_program': "Select",
+                'ip': "192.168.1.2"
+            }
+            firewall_rules.edit_selected_rule(rule)
+
         """
         # Check exceptions of invalid user inputs
         rules = self.firewall.Rules
@@ -331,10 +348,10 @@ class Firewall_Rules():
                     if rule_dict['protocol'] == 'Any' and rule_dict['election_port'] == 'Any':
                         pass
                     elif rule_dict['election_port'] == 'Range' and port is not None:
-                        # check value
                         if rule_dict['protocol'] == 'Any':
                             pass
                         elif rule_dict['direction'] == 'Inbound':
+                            # check value
                             rule.LocalPorts = str(port)
                         elif rule_dict['direction'] == 'Outbound':
                             rule.RemotePorts = str(port)
@@ -342,16 +359,16 @@ class Firewall_Rules():
                         rule.LocalPorts = ''
                         rule.RemotePorts = ''
 
-                    # check value    
                     if rule_dict['ip']:
+                        # check value 
                         rule.RemoteAddresses = rule_dict['ip']
                     else: rule.RemoteAddresses = '*'
 
-                    # check value 
                     if rule_dict['election_program'] == 'Select' :
+                        # check value
                         rule.ApplicationName = program
+                    # This line doesn't work
                     # else: 
-                    #     # this line doesn't work
                     #     rule.ApplicationName = ''
 
                     self.message.show_message('The rule has been modified', '', self.iconCorrect)
@@ -441,6 +458,6 @@ class Firewall_Rules():
                 profiles.append("Public")
             return profiles
 
-    def deleteRule(self, name, direction, profile, protocol, port):
+    def deleteRule(self, name, direction, profile, protocol):
         pass
     
