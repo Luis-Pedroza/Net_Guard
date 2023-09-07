@@ -162,6 +162,7 @@ class Ui_MainWindow(object):
         self.tableRules.setObjectName("tableRules")
         self.tableRules.setColumnCount(6)
         self.tableRules.cellDoubleClicked.connect(lambda row: self.get_searched_rules.get_selected_rule(self.tableRules, row))
+        self.tableRules.cellDoubleClicked.connect(lambda: self.updateRulesTable(self.tableRules))
         self.tableRules.horizontalHeader().sectionClicked.connect(lambda col: self.sort_table(self.tableRules, col))
         
         item = QtWidgets.QTableWidgetItem()
@@ -194,6 +195,7 @@ class Ui_MainWindow(object):
         self.NewRuleBtn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.NewRuleBtn.setObjectName("NewRuleBtn")
         self.NewRuleBtn.clicked.connect(lambda: self.show_new_rule_window())
+        self.NewRuleBtn.clicked.connect(lambda: self.updateRulesTable(self.tableRules))
 
         self.TableRulesLayout = QtWidgets.QGridLayout(self.tab_Rules)
         self.TableRulesLayout.addWidget(self.labelRule, 0,0)
