@@ -473,6 +473,30 @@ class Firewall_Rules():
             return profiles
 
     def delete_selected_rule(self, name: str, direction: str, profile: str, protocol: str):
+        """
+        Deletes a selected firewall rule based on the provided parameters.
+
+        Args:
+            name (str): The name of the firewall rule to be deleted.
+            direction (str): The direction of the firewall rule, either 'Inbound' or 'Outbound'.
+            profile (str): The profile of the firewall rule.
+            protocol (str): The protocol of the firewall rule.
+
+        Returns:
+            None
+
+        Raises:
+            Various exceptions if there is an issue while deleting the rule.
+
+        Example Usage:
+            firewall_rules = Firewall_Rules()
+            firewall_rules.delete_selected_rule("MyRule", "Inbound", "Private", "TCP")
+
+        Note:
+            HNetCfg.FwPolicy2 can delete only by name, so this method will delete
+            all rules with the given name. It does not use any other parameters
+
+        """
         rules = self.firewall.Rules
         try:
             for rule in rules:
