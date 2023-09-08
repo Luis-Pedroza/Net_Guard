@@ -15,7 +15,7 @@
 # ***************************************************
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-from Controller_Module.Ports import Get_Data, Table_Counter
+from Controller_Module.Ports import GetPortsData, TableCounter
 from Controller_Module.Rules import Firewall_Rules
 from Controller_Module.Report import Report_PDF
 from Controller_Module.Scan import Scan_Ports
@@ -216,8 +216,8 @@ class Ui_MainWindow(object):
         self.tab_Ports.setObjectName("tab_Ports")
         self.tabWidget.addTab(self.tab_Ports, "")
 
-        self.counter = Table_Counter(1,65535)
-        self.updatedTable = Get_Data()
+        self.counter = TableCounter(1,65535)
+        self.updatedTable = GetPortsData()
         self.errorMessage = PopUpMessage()
         
         #************************** HEADER ***************************"
