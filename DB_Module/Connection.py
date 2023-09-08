@@ -2,7 +2,7 @@
 # FILE: Connection.py
 #
 # DESCRIPTION:
-# This script defines a class, 'Database',
+# This script defines a class, 'DatabaseConnection',
 # which facilitates the interaction with an SQLite database.
 # It provides methods to establish a connection, disconnect,
 # and execute queries on the database.
@@ -17,7 +17,7 @@ from PyQt5.QtWidgets import QMessageBox
 from UI_Module.UI_Message import PopUpMessage
 
 
-class Database:
+class DatabaseConnection:
     """
     A class for interacting with a SQLite database.
 
@@ -49,7 +49,7 @@ class Database:
             db_name (str): The name of the database.
 
         """
-        self.popUpMessage = PopUpMessage()
+        self.popUp_Message = PopUpMessage()
         self.icon = QMessageBox.Critical
         self.db_name = db_name
         self.connection = None
@@ -58,17 +58,48 @@ class Database:
         """
         Establishes a connection to the database.
 
+        Args:
+            None
+
+        Returns:
+            None
+
+        Raises:
+            sqlite3.Error if there is an issue while connecting to the database.
+
+        Example Usage:
+            db = DatabaseConnection('my_database.db')
+            db.connect()
+
         """
         try:
             self.connection = sqlite3.connect(self.db_name)
         except sqlite3.Error as exception:
-            self.popUpMessage.show_message('ERROR_CONNECT_DB', exception, self.icon)
+            self.popUp_Message.show_message('ERROR_CONNECT_DB', exception, self.icon)
 
     def disconnect(self):
+        '''
+        Closes the connection to the database.
+
+        Args:
+            None
+
+        Returns:
+            None
+
+        Raises:
+            sqlite3.Error if there is an issue while disconnecting from the database.
+
+        Example Usage:
+            db = DatabaseConnection('my_database.db')
+            db.connect()
+            db.disconnect()
+
+        '''
         try:
             self.connection.close()
         except sqlite3.Error as exception:
-            self.popUpMessage.show_message('ERROR_DISCONNECT_DB', exception, self.icon)
+            self.popUp_Message.show_message('ERROR_DISCONNECT_DB', exception, self.icon)
 
     def query(self, query: str, params: tuple = None) -> list[tuple]:
         """
@@ -81,6 +112,15 @@ class Database:
         Returns:
             list: The fetched data from the query.
 
+        Raises:
+            sqlite3.Error if there is an issue while executing the query.
+
+        Example Usage:
+            db = DatabaseConnection('my_database.db')
+            db.connect()
+            data = db.query('SELECT * FROM my_table')
+            db.disconnect()
+
         """
         try:
             cursor = self.connection.cursor()
@@ -91,4 +131,4 @@ class Database:
             self.connection.commit()
             return cursor.fetchall()
         except sqlite3.Error as exception:
-            self.popUpMessage.show_message('ERROR_QUERY_DB', exception, self.icon)
+            self.popUp_Message.show_message('ERROR_QUERY_DB', exception, self.icon)

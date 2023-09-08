@@ -13,14 +13,14 @@
 # ***************************************************
 
 from PyQt5.QtWidgets import QMessageBox
-from DB_Module.Connection import Database
+from DB_Module.Connection import DatabaseConnection
 from UI_Module.UI_Message  import PopUpMessage
 
 class Get_Data():
     # initialize the class
     def __init__(self):
         # name and location of the DB
-        self.db = Database('Resources/ports.db')
+        self.db = DatabaseConnection('Resources/ports.db')
         # use of PopUpMessage for exceptions
         self.popUpMessage = PopUpMessage()
 
