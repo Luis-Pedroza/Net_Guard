@@ -87,6 +87,7 @@ class Firewall_Rules():
                 'direction': "in",
                 'action': "allow",
                 'protocol': "TCP",
+                'profile': "1",
                 'port': "80",
                 'selected_port': "Range",
                 'program': "my_program.exe",
@@ -103,15 +104,21 @@ class Firewall_Rules():
             new_rule.Action = 1 if rule['action'] == 'Allow' else 0
             new_rule.Enabled = rule['enable']
             new_rule.Direction = 1 if rule['direction'] == 'Inbound' else 2
-            #CurrentProfiles = self.firewall.CurrentProfileTypes
-            #new_rule.Profiles = CurrentProfiles
-
+            
             if rule['protocol'] == 'TCP':
                 new_rule.Protocol = 6
             elif rule['protocol'] == 'UDP':
                 new_rule.Protocol = 17
             else:
                 new_rule.Protocol = 256
+            
+            profile = rule['profile']
+            if profile == 0:
+                CurrentProfiles = self.firewall.CurrentProfileTypes
+                new_rule.Profiles = CurrentProfiles
+            else:
+                new_rule.Profiles = profile
+
             # check value
             if rule['port'] is not None and rule['direction'] == 'Inbound':
                 new_rule.LocalPorts = str(rule['selected_port'])
@@ -319,7 +326,7 @@ class Firewall_Rules():
         # Check exceptions of invalid user inputs
         rules = self.firewall.Rules
         try:
-            profile = None if self.get_profiles(rule_dict['profile']) == 7 else self.get_profiles(rule_dict['profile'])
+            profile = None if self.get_profiles(rule_dict['old_profile']) == 7 else self.get_profiles(rule_dict['old_profile'])
             old_direction = 1 if rule_dict['old_direction'] == 'Inbound' else 2
             port = None if rule_dict['port'] == '' else rule_dict['port']
             program = None if rule_dict['program'] == '' else rule_dict['program']
@@ -345,6 +352,13 @@ class Firewall_Rules():
                             rule.LocalPorts = ''
                             rule.RemotePorts = ''
                             rule.Protocol = 256
+
+                    new_profile = rule_dict['profile']
+                    if new_profile == 0:
+                        CurrentProfiles = self.firewall.CurrentProfileTypes
+                        rule.Profiles = CurrentProfiles
+                    else:
+                        rule.Profiles = new_profile
 
                     if rule_dict['protocol'] == 'Any' and rule_dict['election_port'] == 'Any':
                         pass
@@ -382,7 +396,6 @@ class Firewall_Rules():
                 self.message.show_message('UNABLE_TO_EXECUTE_edit_selected_rule', error_message, self.iconFail)
             else:
                 self.message.show_message('UNABLE_TO_EXECUTE_edit_selected_rule_1', exception.args[1], self.iconFail)
-
 
     def get_protocol_name(self, protocol: int) -> str:
         """
@@ -438,7 +451,7 @@ class Firewall_Rules():
         """
         if isinstance(profile, str):
             profile = profile.lower()
-            profile_value = 0  # Inicializa el valor en 0
+            profile_value = 0
 
             if "domain" in profile:
                 profile_value += 1

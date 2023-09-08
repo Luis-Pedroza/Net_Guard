@@ -130,14 +130,14 @@ class RulesTableCreator(object):
         self.comboBox_profile = QtWidgets.QComboBox(Form)
         self.comboBox_profile.setGeometry(QtCore.QRect(80, 320, 110, 22))
         self.comboBox_profile.setObjectName("comboBox_profile")
-        self.comboBox_profile.addItem("Any")
         self.comboBox_profile.addItem("Current")
         self.comboBox_profile.addItem("Domain")
         self.comboBox_profile.addItem("Private")
-        self.comboBox_profile.addItem("Public")
         self.comboBox_profile.addItem("Domain & Private")
+        self.comboBox_profile.addItem("Public")
         self.comboBox_profile.addItem("Domain & Public")
         self.comboBox_profile.addItem("Private & Public")
+        self.comboBox_profile.addItem("Any")
 
         self.label_port = QtWidgets.QLabel(Form)
         self.label_port.setGeometry(QtCore.QRect(210, 204, 47, 13))
@@ -217,6 +217,7 @@ class RulesTableCreator(object):
             "direction": self.comboBox_direction.currentText(),
             "action": self.comboBox_action.currentText(),
             "protocol": self.comboBox_protocol.currentText(),
+            "profile": self.comboBox_profile.currentIndex(),
             "port": None if self.comboBox_port.currentText() == 'Any' else self.line_edit_port.text(),
             "selected_port": self.line_edit_port.text(),
             "program": None if self.comboBox_program.currentText() == 'Any' else self.line_edit_program.text(),
@@ -263,6 +264,10 @@ class RulesTableCreator(object):
             else:
                 port_value = rule[0][8]
 
+            profile = rule[0][2]
+            profile = self.rulesConnection.get_profiles(profile)
+            self.comboBox_profile.setCurrentIndex(profile)
+
             if port_value == '' or port_value == '*':
                 self.comboBox_port.setCurrentText('Any')
             else:
@@ -295,7 +300,7 @@ class RulesTableCreator(object):
         rule_data = {
 
         'old_name': rule[0][0],
-        'profile': rule[0][2],
+        'old_profile': rule[0][2],
         'old_direction': rule[0][4],
 
         'name':self.line_edit_name.text(),
@@ -304,6 +309,8 @@ class RulesTableCreator(object):
         'enable': self.checkBox_enable.isChecked(),
         'action': self.comboBox_action.currentText(),
         'protocol': self.comboBox_protocol.currentText(),
+        'profile': self.comboBox_profile.currentIndex(),
+        'profile': self.comboBox_profile.currentIndex(),
         'election_port': self.comboBox_port.currentText(),
         'port': self.line_edit_port.text(),
         'election_program': self. comboBox_program.currentText(),
