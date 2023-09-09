@@ -10,15 +10,15 @@
 # ***************************************************
 
 from PyQt5 import QtCore, QtWidgets, QtGui
-from Controller_Module.Ports import Get_Data
+from Controller_Module.Ports import GetPortsData
 from UI_Module.UI_Message import PopUpMessage
 
 
 class TablePortsCreator(object):
     #Initialize the class
     def __init__(self, port, protocol, service):
-        # create a new object Get_Data to make an sql query
-        self.data_table_ports = Get_Data()
+        # create a new object GetPortsData to make an sql query
+        self.data_table_ports = GetPortsData()
         self.errorMessage = PopUpMessage()
         # get the data to search for
         self.port = port
