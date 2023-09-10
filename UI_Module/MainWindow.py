@@ -16,7 +16,7 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 from Controller_Module.Ports import GetPortsData, TableCounter
-from Controller_Module.Rules import Firewall_Rules
+from Controller_Module.Rules import FirewallManager
 from Controller_Module.Report import ReportPDF
 from Controller_Module.Scan import Scan_Ports
 from .UI_Rules_Tab import RulesTableCreator
@@ -118,7 +118,7 @@ class Ui_MainWindow(object):
         self.tab_Rules = QtWidgets.QWidget()
         self.tab_Rules.setObjectName("tab_Rules")
         self.tabWidget.addTab(self.tab_Rules, "")
-        self.getRules = Firewall_Rules()
+        self.getRules = FirewallManager()
         self.get_searched_rules = RulesTableCreator()
 
         #************************** Header ***************************"

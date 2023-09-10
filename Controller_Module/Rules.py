@@ -22,7 +22,7 @@ from PyQt5.QtWidgets import QMessageBox
 from UI_Module.UI_Message import PopUpMessage
 
 
-class Firewall_Rules():
+class FirewallManager():
     """
     A class for managing firewall rules.
 

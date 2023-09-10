@@ -10,14 +10,14 @@
 # ***************************************************
 
 from PyQt5 import QtCore, QtWidgets, QtGui
-from Controller_Module.Rules import Firewall_Rules
+from Controller_Module.Rules import FirewallManager
 from UI_Module.UI_Message import PopUpMessage
 
 class RulesTableCreator(object):
     #Initialize the class
     def __init__(self):
         self.message = PopUpMessage()
-        self.rulesConnection = Firewall_Rules()
+        self.rulesConnection = FirewallManager()
         self.icon = QtWidgets.QMessageBox.Information
         
     # setup of the table    
