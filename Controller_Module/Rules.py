@@ -3,7 +3,7 @@
 # -*- coding: utf-8 -*-
 #
 # DESCRIPTION:
-# The Firewall_Rules class is designed to interact with
+# The FirewallManager class is designed to interact with
 # the Windows Firewall, specifically managing rules.
 # It provides methods for adding new rules, retrieving rules,
 # searching for specific rules, editing existing rules, and more.
@@ -68,7 +68,7 @@ class FirewallManager():
             Various exceptions if there is an issue while adding the rule.
 
         Example Usage:
-            firewall_rules = Firewall_Rules()
+            firewall_rules = FirewallManager()
             new_rule = {
                 'name': "MyRule",
                 'description': "Allow incoming traffic",
@@ -149,7 +149,7 @@ class FirewallManager():
             - Various exceptions if there is an issue while retrieving rules.
 
         Example Usage:
-            firewall_rules = Firewall_Rules()
+            firewall_rules = FirewallManager()
             rules_info = firewall_rules.get_all_rules()
             for rule in rules_info:
                 print(rule)
@@ -195,7 +195,7 @@ class FirewallManager():
             - Various exceptions if there is an issue while searching for rules.
 
         Example Usage:
-            firewall_rules = Firewall_Rules()
+            firewall_rules = FirewallManager()
             matching_rules = firewall_rules.get_searched_rule("MyRule", profile="Domain", direction="in")
             for rule in matching_rules:
                 print(rule)
@@ -231,7 +231,7 @@ class FirewallManager():
             list: The updated list of firewall rules with the extracted information.
 
         Example Usage:
-            firewall_rules = Firewall_Rules()
+            firewall_rules = FirewallManager()
             rule = <some_firewall_rule>  # Replace with an actual firewall rule object
             rules_list = firewall_rules.enlist_rules(rule, [])
             print(rules_list)  # Updated list of firewall rules
@@ -292,7 +292,7 @@ class FirewallManager():
             Various exceptions if there is an issue while editing the rule.
 
         Example Usage:
-            firewall_rules = Firewall_Rules()
+            firewall_rules = FirewallManager()
             rule = {
                 'old_name': "OldRule",
                 'profile': "Private",
@@ -397,7 +397,7 @@ class FirewallManager():
             str: The name of the protocol or the input protocol number if no mapping is available.
 
         Example Usage:
-            firewall_rules = Firewall_Rules()
+            firewall_rules = FirewallManager()
             protocol_name = firewall_rules.get_protocol_name(6)
             print(protocol_name)  # Output: "TCP"
 
@@ -433,7 +433,7 @@ class FirewallManager():
             int: The numeric value representing the profile or None if no mapping is available.
 
         Example Usage:
-            firewall_rules = Firewall_Rules()
+            firewall_rules = FirewallManager()
             profile_value = firewall_rules.get_profiles("Private")
             print(profile_value)  # Output: 2
 
@@ -478,7 +478,7 @@ class FirewallManager():
             Various exceptions if there is an issue while deleting the rule.
 
         Example Usage:
-            firewall_rules = Firewall_Rules()
+            firewall_rules = FirewallManager()
             firewall_rules.delete_selected_rule("MyRule", "Inbound", "Private", "TCP")
 
         Note:
