@@ -3,24 +3,14 @@
 # -*- coding: utf-8 -*-
 #
 # DESCRIPTION:
-# This class encapsulates the functionality for managing firewall rules.
-#
-# Classes:
-#     Firewall_Rules
-#
-# Usage Example:
-#     firewall_rules = Firewall_Rules()
-#     firewall_rules.add_new_rule( /
-#        "MyRule", "Allow incoming traffic", "yes", "in", "allow", "TCP", "80", "my_program.exe", "192.168.1.1")
-#     rules_info = firewall_rules.get_all_rules()
-#     matching_rules = firewall_rules.get_searched_rule("MyRule", profile="Domain", direction="in")
-#     protocol_name = firewall_rules.get_protocol_name(6)
-#     profile_value = firewall_rules.get_profiles("Private")
-#     rules_list = firewall_rules.enlist_rules(rule, [])
-#     firewall_rules.edit_selected_rule("OldRule", "Private", "Inbound", "NewRule", "Updated description", \
-#         True, "Outbound", "Block", "TCP", "80", "Range", "my_program.exe", "Select", "192.168.1.2")
-#
-#
+# The Firewall_Rules class is designed to interact with
+# the Windows Firewall, specifically managing rules.
+# It provides methods for adding new rules, retrieving rules,
+# searching for specific rules, editing existing rules, and more.
+# Overall, this class serves as a convenient interface for
+# managing Windows Firewall rules programmatically,
+# making it easier to create, retrieve, search, and
+# edit firewall rules within an application
 #
 # AUTHOR:  Luis Pedroza
 # CREATED: 11/04/2023 (dd/mm/yy)
@@ -52,12 +42,11 @@ class Firewall_Rules():
         self.iconFail = QMessageBox.Critical
         self.iconCorrect = QMessageBox.Information
         self.firewall = win32com.client.Dispatch("HNetCfg.FwPolicy2")
-        
 
     def add_new_rule(self, rule: dict):
         """
         Adds a new firewall rule using the provided parameters.
-        
+
         Args:
             rule (dict): A dictionary containing the following parameters for the new rule:
             - 'name' (str): The name of the firewall rule.
@@ -71,10 +60,10 @@ class Firewall_Rules():
             - 'program' (str): The selected program option, 'Select' or None.
             - 'selected_program' (str): The name of the program/application associated with the rule. If None, it does not specify a program.
             - 'ip' (str): The IP address to which the rule applies. If None, it does not specify an IP address.
-    
+
         Returns:
             None
-            
+
         Raises:
             Various exceptions if there is an issue while adding the rule.
 
@@ -104,14 +93,14 @@ class Firewall_Rules():
             new_rule.Action = 1 if rule['action'] == 'Allow' else 0
             new_rule.Enabled = rule['enable']
             new_rule.Direction = 1 if rule['direction'] == 'Inbound' else 2
-            
+
             if rule['protocol'] == 'TCP':
                 new_rule.Protocol = 6
             elif rule['protocol'] == 'UDP':
                 new_rule.Protocol = 17
             else:
                 new_rule.Protocol = 256
-            
+
             profile = rule['profile']
             if profile == 0:
                 CurrentProfiles = self.firewall.CurrentProfileTypes
@@ -127,7 +116,7 @@ class Firewall_Rules():
             # check value
             if rule['program'] is not None:
                 new_rule.ApplicationName = rule['selected_program']
-            # check value    
+            # check value
             if rule['ip'] is not None:
                 new_rule.RemoteAddresses = rule['ip']
 
@@ -274,11 +263,11 @@ class Firewall_Rules():
         one_rule_list.append(ip)
         rules_list.append(one_rule_list)
         return rules_list
-    
+
     def edit_selected_rule(self, rule_dict: dict):
         """
         Edits a selected firewall rule with the provided parameters.
-        
+
         Args:
             rule_dict (dict): A dictionary containing the following parameters for the rule:
             - 'old_name' (str): The name of the firewall rule to be edited.
@@ -295,10 +284,10 @@ class Firewall_Rules():
             - 'program' (str): The new program/application for the firewall rule.
             - 'election_program' (str): The program election option, either 'Select' or 'Any'.
             - 'ip' (str): The new IP address for the firewall rule.
-        
+
         Returns:
             None
-            
+
         Raises:
             Various exceptions if there is an issue while editing the rule.
 
@@ -334,13 +323,13 @@ class Firewall_Rules():
                 if rule.Name.lower() == rule_dict['old_name'].lower() and \
                     (profile is None or rule.Profiles == profile) and \
                         (rule_dict['direction'] is None or rule.Direction == old_direction):
-                    
+
                     rule.Name = rule_dict['name']
                     rule.Description = 'None' if rule_dict['description'] == '' else rule_dict['description']
                     rule.Action = 1 if rule_dict['action'] == 'Allow' else 0
                     rule.Enabled = rule_dict['enable']
                     rule.Direction = 1 if rule_dict['direction'] == 'Inbound' else 2
-                    
+
                     if rule_dict['protocol'] == 'TCP':
                         rule.Protocol = 6
                     elif rule_dict['protocol'] == 'UDP':
@@ -375,15 +364,15 @@ class Firewall_Rules():
                         rule.RemotePorts = ''
 
                     if rule_dict['ip']:
-                        # check value 
+                        # check value
                         rule.RemoteAddresses = rule_dict['ip']
                     else: rule.RemoteAddresses = '*'
 
-                    if rule_dict['election_program'] == 'Select' :
+                    if rule_dict['election_program'] == 'Select':
                         # check value
                         rule.ApplicationName = program
                     # This line doesn't work
-                    # else: 
+                    # else:
                     #     rule.ApplicationName = ''
 
                     self.message.show_message('The rule has been modified', '', self.iconCorrect)
