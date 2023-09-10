@@ -1,67 +1,66 @@
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Image
-from reportlab.lib.styles import getSampleStyleSheet
-from reportlab.lib.pagesizes import letter
-from reportlab.lib import colors
-from PyQt5.QtWidgets import QMessageBox
+from reportlab.lib import colors, pagesizes, styles
+from PyQt5.QtWidgets import QMessageBox, QTableWidget
 import datetime
 import os
 from UI_Module.UI_Message  import PopUpMessage
 
-class Report_PDF():
-    def saveToPDF(self, path, table, value):
+class ReportPDF():
+    def save_to_PDF(self, report_path: str, data_table: QTableWidget, save_value: bool):
+        self.popUp_Message = PopUpMessage()
         date = datetime.datetime.now()
         format = "%d-%m-%Y %H:%M"
-        actualDate = date.strftime(format)
+        current_date = date.strftime(format)
+        report_path = f"{report_path}/Report.pdf"
 
-        if os.path.exists(path):
-            directory, base_name = os.path.split(path)
+        if os.path.exists(report_path):
+            directory, base_name = os.path.split(report_path)
             base_name, extension = os.path.splitext(base_name)
             count = 1
-            while os.path.exists(path):
+            while os.path.exists(report_path):
                 new_base_name = f"{base_name}{count}"
-                path = os.path.join(directory, f"{new_base_name}{extension}")
+                report_path = os.path.join(directory, f"{new_base_name}{extension}")
                 count += 1
 
-        self.popUpMessage = PopUpMessage()
-        report = SimpleDocTemplate(path, pagesize=letter, topMargin=30)
-        data = []
-        newTable = []
+        report = SimpleDocTemplate(report_path, pagesize = pagesizes.letter, topMargin=30)
+        header_template = []
+        table_template = []
+        data_template = []
 
-        # ***************** Logo *****************
         header_image = "Resources/NetGuard.png"
         image = Image(header_image, width=167, height=75, hAlign='LEFT')
-        data.append(image)
-        if value:
-            text = "Escaneo de conexiones activas"
-            dateText = f"Fecha del escaneo: {actualDate}"
-        else:
-            text = "Tabla de reglas"
-            dateText = f"Fecha de creación: {actualDate}"
         
-        text = Paragraph(text, style=getSampleStyleSheet()['Heading3'])
-        data.append(text)
+        if save_value:
+            text = "Active connections"
+        else:
+            text = "List of Firewall rules"
 
-        dateText = Paragraph(dateText, style=getSampleStyleSheet()['Heading3'])
-        dateText.spaceAfter = 20 
-        data.append(dateText)
+        date_text = f"Date: {current_date}"
 
-        header = ["Protocolo", "Dirección Local", "Dirección Remota", "Estado", "PID", "Programa"]
-        newTable.append(header)
+        current_text = f'{text}\n{date_text}'
+        current_text = Paragraph(current_text, style=styles.getSampleStyleSheet()['Heading3'])
+        header_template.append([image, current_text])
+        
+        header_table = Table(header_template, colWidths=[370, 150])
+        header_table.spaceAfter = 20
+        data_template.append(header_table)
+
+        header = ["Protocol", "Local Address", "Remote Address", "State", "PID", "Program"]
+        table_template.append(header)
 
 
-        for row in range(table.rowCount()):
+        for row in range(data_table.rowCount()):
             row_data = []
-            for col in range(table.columnCount()):
-                item = table.item(row, col)
+            for col in range(data_table.columnCount()):
+                item = data_table.item(row, col)
                 if item is not None:
-                    row_data.append(Paragraph(item.text(), style=getSampleStyleSheet()['Normal']))
+                    row_data.append(Paragraph(item.text(), style=styles.getSampleStyleSheet()['Normal']))
                 else:
                     row_data.append("")
-            newTable.append(row_data)
+            table_template.append(row_data)
 
-        # Convert table data to reportlab Table format
-        table = Table(newTable, colWidths=90)
-        table.setStyle(TableStyle([
+        data_table = Table(table_template, colWidths=90)
+        data_table.setStyle(TableStyle([
             ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
             ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
             ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
@@ -71,6 +70,11 @@ class Report_PDF():
             ('GRID', (0, 0), (-1, -1), 1, colors.black),
         ]))
 
-        data.append(table)
-        report.build(data)
-        self.popUpMessage.show_message('Se guardo el reporte', 'Se guardo el reporte en la carpeta de documentos', QMessageBox.Information)
+        data_template.append(data_table)
+        report.build(data_template, onFirstPage = self.add_page_number, onLaterPages = self.add_page_number)
+        self.popUp_Message.show_message('The Report has been saved', 'Check documents for the PDF', QMessageBox.Information)
+
+    def add_page_number(self, canvas, doc):
+        page_num = canvas.getPageNumber()
+        text = f"Page {page_num}"
+        canvas.drawRightString(550, 20, text)
