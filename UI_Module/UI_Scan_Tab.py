@@ -9,13 +9,13 @@
 # ***************************************************
 
 from PyQt5 import QtCore, QtWidgets, QtGui
-from Controller_Module.Scan import Scan_Ports
+from Controller_Module.Scan import ScanPorts
 from UI_Module.UI_Message import PopUpMessage
 
 class PortsRangeWindow(object):
     def __init__(self):
         super().__init__()
-        self.range = Scan_Ports()
+        self.range = ScanPorts()
         self.message=PopUpMessage()
         self.icon = QtWidgets.QMessageBox.Information
 
@@ -80,18 +80,18 @@ class PortsRangeWindow(object):
         # change both values (TCP, UDP)
         # status False means an error
         if self.checkTCP.isChecked() and self.checkUDP.isChecked():
-            statusTCP = self.range.changeRange('tcp', self.rangeTCP.value())
-            statusUDP = self.range.changeRange('udp', self.rangeUDP.value())
+            statusTCP = self.range.change_ports_range('tcp', self.rangeTCP.value())
+            statusUDP = self.range.change_ports_range('udp', self.rangeUDP.value())
             if statusTCP != False or statusUDP != False:
                 self.message.show_message(code,'',self.icon)
         # change UDP
         elif self.checkUDP.isChecked():
-            statusUDP = self.range.changeRange('udp', self.rangeUDP.value())
+            statusUDP = self.range.change_ports_range('udp', self.rangeUDP.value())
             if statusUDP != False:
                 self.message.show_message(code,'',self.icon)
         # change TCP
         elif self.checkTCP.isChecked():
-            statusTCP = self.range.changeRange('tcp', self.rangeTCP.value())
+            statusTCP = self.range.change_ports_range('tcp', self.rangeTCP.value())
             if statusTCP != False:
                 self.message.show_message(code,'',self.icon)
         # None checked
@@ -103,8 +103,8 @@ class PortsRangeWindow(object):
     def reset(self):
         code = 'Se restablecieron los valores predeterminados'
         # The recommended range is 16384
-        statusTCP = self.range.changeRange('tcp',16384)
-        statusUDP = self.range.changeRange('udp',16384)
+        statusTCP = self.range.change_ports_range('tcp',16384)
+        statusUDP = self.range.change_ports_range('udp',16384)
         
         # Error control, status False means an error
         if statusTCP != False or statusUDP != False:

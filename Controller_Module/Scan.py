@@ -15,13 +15,13 @@ from PyQt5.QtWidgets import QMessageBox
 from UI_Module.UI_Message import PopUpMessage
 
 
-class Scan_Ports():
+class ScanPorts():
     def __init__(self):
         self.message = PopUpMessage()
         self.icon = QMessageBox.Critical
     # static method to get all the ports in use
     @staticmethod
-    def scanAll():
+    def scan_active_ports():
         # initialize a connection of all kinds (TCP & UDP)
         # and an empty list
         connections = psutil.net_connections(kind='all')
@@ -30,9 +30,9 @@ class Scan_Ports():
         # gets each data on the connection
         for data in connections:
             # get the local socket (ip address & port)
-            localAddress = f"{data.laddr.ip}:{data.laddr.port}"
+            local_address = f"{data.laddr.ip}:{data.laddr.port}"
             # get the remote socket if there´s any (ip address & port)
-            remoteAddress = f"{data.raddr.ip}:{data.raddr.port}" if data.raddr else "-"
+            remote_address = f"{data.raddr.ip}:{data.raddr.port}" if data.raddr else "-"
             # get the status of the connection
             status = data.status
             # get the PID of the program
@@ -50,46 +50,46 @@ class Scan_Ports():
             else:
                 protocol = "-" if data.kind != psutil.SOCK_RAW else "RAW"
             # insert the data on the list and return it
-            connection_data.append([protocol, localAddress, remoteAddress, status, pid, program])
+            connection_data.append([protocol, local_address, remote_address, status, pid, program])
         return connection_data
     
     # Method to get the range of the ports 
-    def getRange(self):
+    def get_ports_range(self):
         # command to get tcp and udp range
-        commandTCP = 'netsh int ipv4 show dynamicport tcp'
-        commandUDP = 'netsh int ipv4 show dynamicport udp'
+        command_TCP = 'netsh int ipv4 show dynamicport tcp'
+        command_UDP = 'netsh int ipv4 show dynamicport udp'
         try: 
             # execute both commands
-            outputTCP = subprocess.run(commandTCP, shell=True, capture_output=True, encoding='cp850')
-            outputUDP = subprocess.run(commandUDP, shell=True, capture_output=True, encoding='cp850')
+            output_TCP = subprocess.run(command_TCP, shell=True, capture_output=True, encoding='cp850')
+            output_UDP = subprocess.run(command_UDP, shell=True, capture_output=True, encoding='cp850')
             # if output has an error show an error window
-            if outputTCP.returncode != 0 or outputUDP.returncode != 0:
-                self.message.show_message('UNABLE_To_getRange',outputTCP.stdout.splitlines()[1], self.icon)
+            if output_TCP.returncode != 0 or output_UDP.returncode != 0:
+                self.message.show_message('UNABLE_To_get_ports_range',output_TCP.stdout.splitlines()[1], self.icon)
             # else return the output
             else:
-                return str(outputTCP.stdout), str(outputUDP.stdout)
+                return str(output_TCP.stdout), str(output_UDP.stdout)
         # exception control
         except subprocess.CalledProcessError as exception:
-            self.message.show_message('UNABLE_To_Execute_Command_in_getRange', exception, self.icon)
+            self.message.show_message('UNABLE_To_Execute_Command_in_get_ports_range', exception, self.icon)
 
     # Method to change the range of the ports
-    def changeRange(self, protocol, range):
+    def change_ports_range(self, protocol, range):
         status = True
         # change range with first port 49152(dynamic range). IANA recommendation default=16384
-        commandRange = f'netsh int ipv4 set dynamicport {protocol} start=49152 num={range}'
+        command_range = f'netsh int ipv4 set dynamicport {protocol} start=49152 num={range}'
         try: 
             # execute command
-            outputRange = subprocess.run(commandRange, shell=True, capture_output=True, encoding='cp850')
+            output_range = subprocess.run(command_range, shell=True, capture_output=True, encoding='cp850')
             # if output has an error show a popUp message and return status false
-            if outputRange.returncode != 0:
-                self.message.show_message('UNABLE_To_changeRange', outputRange.stdout, self.icon)
+            if output_range.returncode != 0:
+                self.message.show_message('UNABLE_To_change_ports_range', output_range.stdout, self.icon)
                 status = False
             # if output does'nt has an error return status true
             else:
                 status = True
         # if there's an exception return code False
         except subprocess.CalledProcessError as exception:
-            self.message.show_message('UNABLE_To_Execute_Command_in_changeRange', exception, self.icon)
+            self.message.show_message('UNABLE_To_Execute_Command_in_change_ports_range', exception, self.icon)
             status = False
         finally: return status
 

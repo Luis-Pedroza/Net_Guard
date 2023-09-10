@@ -18,7 +18,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from Controller_Module.Ports import GetPortsData, TableCounter
 from Controller_Module.Rules import FirewallManager
 from Controller_Module.Report import ReportPDF
-from Controller_Module.Scan import Scan_Ports
+from Controller_Module.Scan import ScanPorts
 from .UI_Rules_Tab import RulesTableCreator
 from .UI_Ports_Tab import TablePortsCreator
 from .UI_Scan_Tab import PortsRangeWindow
@@ -50,7 +50,7 @@ class Ui_MainWindow(object):
         self.tab_Scan = QtWidgets.QWidget()
         self.tab_Scan.setObjectName("tab_Scan")
         self.tabWidget.addTab(self.tab_Scan, "") 
-        self.getList = Scan_Ports()
+        self.getList = ScanPorts()
 
         #************************** Table ***************************"
         self.TableScan = QtWidgets.QTableWidget(self.tab_Scan)
@@ -505,7 +505,7 @@ class Ui_MainWindow(object):
         #clear the table and get new values
         mainTable.clearContents()
         mainTable.setRowCount(0)
-        getData = self.getList.scanAll()
+        getData = self.getList.scan_active_ports()
         #insert new values in table
         mainTable.setRowCount(len(getData))
         for row, row_data in enumerate(getData):
@@ -516,7 +516,7 @@ class Ui_MainWindow(object):
         mainTable.repaint()
 
         #get Range of ports
-        getRange = self.getList.getRange()
+        getRange = self.getList.get_ports_range()
         tcpRange = getRange[0].splitlines()[4]
         udpRange = getRange[1].splitlines()[4]
 
