@@ -1,12 +1,60 @@
+# ***************************************************
+# FILE: Report.py
+#
+# DESCRIPTION:
+#
+# The provided code defines a Python class called ReportPDF
+# for generating and saving PDF reports. This class is designed to
+# create PDF reports from tabular data, with options for specifying
+# the report's title and adding page numbers. It leverages the
+# ReportLab library for PDF generation and relies on PyQt5 for
+# graphical user interface components like message boxes.
+#
+# AUTHOR:  Luis Pedroza
+# CREATED: 01/09/2023 (dd/mm/yy)
+# ******************* ********************************
+
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Image
 from reportlab.lib import colors, pagesizes, styles
+from reportlab.pdfgen import canvas
 from PyQt5.QtWidgets import QMessageBox, QTableWidget
 import datetime
 import os
-from UI_Module.UI_Message  import PopUpMessage
+from UI_Module.UI_Message import PopUpMessage
+
 
 class ReportPDF():
+    """
+    A class for generating and saving PDF reports.
+
+    Methods:
+        save_to_PDF(self, report_path: str, data_table: QTableWidget, save_value: bool)
+            Saves a PDF report based on the provided data and options.
+
+        add_page_number(self, canvas: canvas.Canvas, doc: SimpleDocTemplate)
+            Adds page numbers to the generated PDF.
+
+    """
     def save_to_PDF(self, report_path: str, data_table: QTableWidget, save_value: bool):
+        """
+        Saves a PDF report based on the provided data and options.
+
+        Args:
+            report_path (str): The path where the PDF report will be saved.
+            data_table (QTableWidget): The table widget containing the data for the report.
+            save_value (bool): Indicates whether the report is for active connections (True) or firewall rules (False).
+
+        Returns:
+            None
+
+        Raises:
+            None
+
+        Example Usage:
+            pdf_report = ReportPDF()
+            pdf_report.save_to_PDF('reports', data_widget, True)
+
+        """
         self.popUp_Message = PopUpMessage()
         date = datetime.datetime.now()
         format = "%d-%m-%Y %H:%M"
@@ -22,14 +70,14 @@ class ReportPDF():
                 report_path = os.path.join(directory, f"{new_base_name}{extension}")
                 count += 1
 
-        report = SimpleDocTemplate(report_path, pagesize = pagesizes.letter, topMargin=30)
+        report = SimpleDocTemplate(report_path, pagesize=pagesizes.letter, topMargin=30)
         header_template = []
         table_template = []
         data_template = []
 
         header_image = "Resources/NetGuard.png"
         image = Image(header_image, width=167, height=75, hAlign='LEFT')
-        
+
         if save_value:
             text = "Active connections"
         else:
@@ -40,14 +88,13 @@ class ReportPDF():
         current_text = f'{text}\n{date_text}'
         current_text = Paragraph(current_text, style=styles.getSampleStyleSheet()['Heading3'])
         header_template.append([image, current_text])
-        
+
         header_table = Table(header_template, colWidths=[370, 150])
         header_table.spaceAfter = 20
         data_template.append(header_table)
 
         header = ["Protocol", "Local Address", "Remote Address", "State", "PID", "Program"]
         table_template.append(header)
-
 
         for row in range(data_table.rowCount()):
             row_data = []
@@ -71,10 +118,27 @@ class ReportPDF():
         ]))
 
         data_template.append(data_table)
-        report.build(data_template, onFirstPage = self.add_page_number, onLaterPages = self.add_page_number)
+        report.build(data_template, onFirstPage=self.add_page_number, onLaterPages=self.add_page_number)
         self.popUp_Message.show_message('The Report has been saved', 'Check documents for the PDF', QMessageBox.Information)
 
-    def add_page_number(self, canvas, doc):
+    def add_page_number(self, canvas: canvas.Canvas, doc: SimpleDocTemplate):
+        """
+        Adds page numbers to the generated PDF.
+
+        Args:
+            canvas: The PDF canvas.
+            doc: The PDF document.
+
+        Returns:
+            None
+
+        Raises:
+            None
+
+        Example Usage:
+            Called automatically by the PDF generation process.
+
+        """
         page_num = canvas.getPageNumber()
         text = f"Page {page_num}"
         canvas.drawRightString(550, 20, text)
