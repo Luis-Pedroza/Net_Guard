@@ -1,9 +1,11 @@
 # ***************************************************
 # FILE: UI_Rules_Tab.py
 #
-# DESCRIPTION: 
-# Gets all the rules in the firewall and initialize a window with a table
-# Shows more information when double click on the cell
+# DESCRIPTION:
+#
+# The RulesTableCreator class is used for creating and setting up a table to
+# display firewall rules information, as well as for managing the
+# addition, editing, and deletion of firewall rules.
 #
 # AUTHOR:  Luis Pedroza
 # CREATED: 17/04/2023 (dd/mm/yy)
@@ -13,29 +15,92 @@ from PyQt5 import QtCore, QtWidgets, QtGui
 from Controller_Module.Rules import FirewallManager
 from UI_Module.UI_Message import PopUpMessage
 
+
 class RulesTableCreator(object):
-    #Initialize the class
+    '''
+    A class for creating and setting up a table to display firewall rules information.
+
+    Attributes:
+        message (PopUpMessage): A class for displaying messages.
+        rules_connection (FirewallManager): An object for managing firewall rules.
+        icon (QtWidgets.QMessageBox.Icon): An icon for message boxes.
+
+    Methods:
+        __init__(self)
+            Initialize the RulesTableCreator class.
+
+        setup_rules_table(self, main_window, name, profile, direction)
+            Set up the table to display firewall rules information based on search criteria.
+
+        init_rule_window(self, Form, action=False, rule=None)
+            Initialize a window for adding, editing, or deleting firewall rules.
+
+        retranslateUi(self, Form)
+            Set the window title.
+
+        enable_selected(self, text, line_edit_widget)
+            Enable or disable input fields based on selected options.
+
+        add_new_rule(self)
+            Add a new firewall rule.
+
+        get_selected_rule(self, table, row)
+            Show detailed information for a selected firewall rule.
+
+        setUp_filled_window(self, form, rule)
+            Set up the window with filled information for editing a rule.
+
+        edit_selected_rule(self, rule)
+            Edit a selected firewall rule.
+
+        delete_selected_rule(self, rule)
+            Delete a selected firewall rule.
+
+    '''
     def __init__(self):
+        '''
+        Initializes the RulesTableCreator class.
+
+        Args:
+            None
+
+        '''
         self.message = PopUpMessage()
-        self.rulesConnection = FirewallManager()
+        self.rules_connection = FirewallManager()
         self.icon = QtWidgets.QMessageBox.Information
-        
-    # setup of the table    
-    def setup_rules_table(self, main_window, name, profile, direction):
-        #initialize the main window with the specifications
+
+    def setup_rules_table(self, main_window: QtWidgets.QMainWindow, name: str, profile: str, direction: str):
+        '''
+        Set up the table to display firewall rules information based on search criteria.
+
+        Args:
+            main_window (QtWidgets.QMainWindow): The main window to display the table.
+            name (str): The name of the rule to search for.
+            profile (str): The profile of the rule to search for.
+            direction (str): The direction of the rule to search for.
+
+        Returns:
+            None
+
+        Raises:
+            None
+
+        Example Usage:
+            table_creator = RulesTableCreator()
+            table_creator.setup_rules_table(main_window, "MyRule", "Domain", "Inbound")
+
+        '''
         main_window.setObjectName("main_window")
         main_window.setFixedSize(760, 350)
         main_window.setWindowTitle("Búsqueda")
         main_window.setWindowIcon(QtGui.QIcon("Resources/icon.ico"))
 
-        # get the data 
-        rules_data_list = self.rulesConnection.get_searched_rule(name, profile, direction)
+        rules_data_list = self.rules_connection.get_searched_rule(name, profile, direction)
 
-        # check if data has information
         if rules_data_list:
             self.Form = QtWidgets.QWidget()
             self.new_table = QtWidgets.QTableWidget(main_window)
-            header = ['Rule', 'Enable', 'Profile', 'Action', 'Direction', 'Protocol' ]
+            header = ['Rule', 'Enable', 'Profile', 'Action', 'Direction', 'Protocol']
             self.new_table.setColumnCount(6)
             self.new_table.setRowCount(len(rules_data_list))
             self.new_table.setHorizontalHeaderLabels(header)
@@ -45,7 +110,6 @@ class RulesTableCreator(object):
             self.new_table.horizontalHeader().setSectionResizeMode(0, QtWidgets.QHeaderView.Stretch)
             self.new_table.cellDoubleClicked.connect(lambda row: self.get_selected_rule(self.new_table, row))
 
-            # add information on the table
             for i, row in enumerate(rules_data_list):
                 item = QtWidgets.QTableWidgetItem(str(row[0]))
                 self.new_table.setItem(i, 0, item)
@@ -60,12 +124,28 @@ class RulesTableCreator(object):
                 item = QtWidgets.QTableWidgetItem(str(row[5]))
                 self.new_table.setItem(i, 5, item)
 
-        # if there is'n data, initialize an empty table
         else: self.new_table = QtWidgets.QTableWidget(main_window)
 
-    def init_rule_window(self, Form: QtWidgets.QDialog, action: bool=False, rule: list = None):
+    def init_rule_window(self, Form: QtWidgets.QDialog, action: bool = False, rule: list = None):
         '''
-        if action == True the window is for edit and delete
+        Initialize a window for adding, editing, or deleting firewall rules.
+
+        Args:
+            Form (QtWidgets.QDialog): The form/window to initialize.
+            action (bool, optional): Flag indicating whether the window is for editing (True)
+                or Creating (False) a rule. Default is False.
+            rule (list, optional): The rule data to populate the window for editing. Default is None.
+
+        Returns:
+            None
+
+        Raises:
+            None
+
+        Example Usage:
+            table_creator = RulesTableCreator()
+            table_creator.init_rule_window(new_form, True, search)
+
         '''
         Form.setObjectName("Form")
         Form.setFixedSize(400, 500)
@@ -86,7 +166,7 @@ class RulesTableCreator(object):
         self.text_edit_description = QtWidgets.QTextEdit(Form)
         self.text_edit_description.setGeometry(QtCore.QRect(20, 70, 340, 70))
         self.text_edit_description.setObjectName("text_edit_description")
-        
+
         self.checkBox_enable = QtWidgets.QCheckBox(Form)
         self.checkBox_enable.setGeometry(QtCore.QRect(30, 160, 70, 17))
         self.checkBox_enable.setObjectName("checkBox_enable")
@@ -175,18 +255,18 @@ class RulesTableCreator(object):
         self.label_IP.setText("IP Direction")
         self.text_edit_IP = QtWidgets.QTextEdit(Form)
         self.text_edit_IP.setGeometry(QtCore.QRect(30, 370, 340, 70))
-        self.text_edit_IP.setObjectName("text_edit_IP")      
+        self.text_edit_IP.setObjectName("text_edit_IP")
 
         self.btn_left = QtWidgets.QPushButton(Form)
         self.btn_left.setGeometry(QtCore.QRect(70, 450, 101, 26))
         self.btn_left.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.btn_left.setObjectName("btn_left")
-  
+
         self.btn_right = QtWidgets.QPushButton(Form)
         self.btn_right.setGeometry(QtCore.QRect(250, 450, 101, 26))
         self.btn_right.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.btn_right.setObjectName("btn_right")
-        
+
         if action:
             self.setUp_filled_window(Form, rule)
         else:
@@ -199,17 +279,69 @@ class RulesTableCreator(object):
         self.retranslateUi(Form)
         QtCore.QMetaObject.connectSlotsByName(Form)
 
-    def retranslateUi(self, Form):
+    def retranslateUi(self, Form: QtWidgets.QDialog):
+        '''
+        Set the window title.
+
+        Args:
+            Form (QtWidgets.QDialog): The form/window to set the title for.
+
+        Returns:
+            None
+
+        Raises:
+            None
+
+        Example Usage:
+            table_creator = RulesTableCreator()
+            table_creator.retranslateUi(form)
+
+        '''
         _translate = QtCore.QCoreApplication.translate
         Form.setWindowTitle(_translate("Form", "Rule"))
-    
-    def enable_selected(self, text, line_edit_widget):
+
+    def enable_selected(self, text: str, line_edit_widget: QtWidgets.QLineEdit):
+        '''
+        Enable or disable input fields based on selected options.
+
+        Args:
+            text (str): The selected option.
+            line_edit_widget (QtWidgets.QLineEdit or QtWidgets.QTextEdit): The input widget to enable or disable.
+
+        Returns:
+            None
+
+        Raises:
+            None
+
+        Example Usage:
+            table_creator = RulesTableCreator()
+            table_creator.enable_selected("Any", line_edit_widget)
+
+        '''
         if text == 'Any':
             line_edit_widget.setEnabled(False)
         else:
             line_edit_widget.setEnabled(True)
 
     def add_new_rule(self):
+        '''
+        Add a new firewall rule.
+
+        Args:
+            None
+
+        Returns:
+            None
+
+        Raises:
+            None
+
+        Example Usage:
+            table_creator = RulesTableCreator()
+            table_creator.add_new_rule()
+
+        '''
         rule_data = {
             "name": self.line_edit_name.text(),
             "description": self.text_edit_description.toPlainText(),
@@ -226,27 +358,62 @@ class RulesTableCreator(object):
         }
 
         if rule_data["name"] != '':
-            self.rulesConnection.add_new_rule(rule_data)
+            self.rules_connection.add_new_rule(rule_data)
         else:
             code = 'specify the name of the rule'
             error = 'To create a new rule you must specify at least the name of the rule.\n Check help to create a new rule'
             self.message.show_message(code, error, self.icon)
 
-
     def get_selected_rule(self, table: QtWidgets.QTableWidget, row: int):
-            new_form = QtWidgets.QDialog()
-            name = table.item(row, 0)
-            name = name.text()
-            profile = table.item(row, 2)
-            profile = profile.text()
-            direction = table.item(row, 4)
-            direction = direction.text()
+        '''
+        Show detailed information for a selected firewall rule.
 
-            search = self.rulesConnection.get_searched_rule(name, profile, direction)
-            self.init_rule_window(new_form, True, search)
-            new_form.exec_()
+        Args:
+            table (QtWidgets.QTableWidget): The table containing firewall rules.
+            row (int): The selected row.
+
+        Returns:
+            None
+
+        Raises:
+            None
+
+        Example Usage:
+            table_creator = RulesTableCreator()
+            table_creator.get_selected_rule(table, 0)
+
+        '''
+        new_form = QtWidgets.QDialog()
+        name = table.item(row, 0)
+        name = name.text()
+        profile = table.item(row, 2)
+        profile = profile.text()
+        direction = table.item(row, 4)
+        direction = direction.text()
+
+        search = self.rules_connection.get_searched_rule(name, profile, direction)
+        self.init_rule_window(new_form, True, search)
+        new_form.exec_()
 
     def setUp_filled_window(self, form: QtWidgets.QDialog, rule: list):
+        '''
+        Set up the window with filled information for editing a rule.
+
+        Args:
+            form (QtWidgets.QDialog): The form/window to initialize.
+            rule (list): The rule data to populate the window for editing.
+
+        Returns:
+            None
+
+        Raises:
+            None
+
+        Example Usage:
+            table_creator = RulesTableCreator()
+            table_creator.setUp_filled_window(form, rule)
+
+        '''
         try:
             self.line_edit_name.setText(rule[0][0])
             self.text_edit_description.setPlainText(rule[0][6])
@@ -265,7 +432,7 @@ class RulesTableCreator(object):
                 port_value = rule[0][8]
 
             profile = rule[0][2]
-            profile = self.rulesConnection.get_profiles(profile)
+            profile = self.rules_connection.get_profiles(profile)
             self.comboBox_profile.setCurrentIndex(profile)
 
             if port_value == '' or port_value == '*':
@@ -287,41 +454,74 @@ class RulesTableCreator(object):
             self.btn_left.clicked.connect(lambda: self.edit_selected_rule(rule))
             self.btn_left.clicked.connect(form.close)
             self.btn_right.setText("Delete")
-            self.btn_right.clicked.connect(lambda: self.deleteSelectedRule(rule))
+            self.btn_right.clicked.connect(lambda: self.delete_selected_rule(rule))
             self.btn_right.clicked.connect(form.close)
 
             self.retranslateUi(form)
             QtCore.QMetaObject.connectSlotsByName(form)
         except Exception as exception:
-            code = 'No se pudo acceder a la regla seleccionada'
+            code = 'Unable to axes the selected rule'
             self.message.show_message(code, exception, self.icon)
 
     def edit_selected_rule(self, rule: list):
+        '''
+        Edit a selected firewall rule.
+
+        Args:
+            rule (list): The rule data to edit.
+
+        Returns:
+            None
+
+        Raises:
+            None
+
+        Example Usage:
+            table_creator = RulesTableCreator()
+            table_creator.edit_selected_rule(rule)
+
+        '''
         rule_data = {
+            'old_name': rule[0][0],
+            'old_profile': rule[0][2],
+            'old_direction': rule[0][4],
 
-        'old_name': rule[0][0],
-        'old_profile': rule[0][2],
-        'old_direction': rule[0][4],
-
-        'name':self.line_edit_name.text(),
-        'direction': self.comboBox_direction.currentText(),
-        'description': self.text_edit_description.toPlainText(),
-        'enable': self.checkBox_enable.isChecked(),
-        'action': self.comboBox_action.currentText(),
-        'protocol': self.comboBox_protocol.currentText(),
-        'profile': self.comboBox_profile.currentIndex(),
-        'profile': self.comboBox_profile.currentIndex(),
-        'election_port': self.comboBox_port.currentText(),
-        'port': self.line_edit_port.text(),
-        'election_program': self. comboBox_program.currentText(),
-        'program': self.line_edit_program.text(),
-        'ip': self.text_edit_IP.toPlainText()
+            'name': self.line_edit_name.text(),
+            'direction': self.comboBox_direction.currentText(),
+            'description': self.text_edit_description.toPlainText(),
+            'enable': self.checkBox_enable.isChecked(),
+            'action': self.comboBox_action.currentText(),
+            'protocol': self.comboBox_protocol.currentText(),
+            'profile': self.comboBox_profile.currentIndex(),
+            'profile': self.comboBox_profile.currentIndex(),
+            'election_port': self.comboBox_port.currentText(),
+            'port': self.line_edit_port.text(),
+            'election_program': self. comboBox_program.currentText(),
+            'program': self.line_edit_program.text(),
+            'ip': self.text_edit_IP.toPlainText()
         }
-        self.rulesConnection.edit_selected_rule(rule_data)
+        self.rules_connection.edit_selected_rule(rule_data)
 
-    def deleteSelectedRule(self, rule: list):
+    def delete_selected_rule(self, rule: list):
+        '''
+        Delete a selected firewall rule.
+
+        Args:
+            rule (list): The rule data to delete.
+
+        Returns:
+            None
+
+        Raises:
+            None
+
+        Example Usage:
+            table_creator = RulesTableCreator()
+            table_creator.deleteSelectedRule(rule)
+
+        '''
         name = rule[0][0]
         direction = rule[0][4]
-        profile= rule[0][2]
+        profile = rule[0][2]
         protocol = rule[0][5]
-        self.rulesConnection.delete_selected_rule(name, direction, profile, protocol)
+        self.rules_connection.delete_selected_rule(name, direction, profile, protocol)
