@@ -572,7 +572,7 @@ class Ui_MainWindow(object):
     def showPortsRangeWindow(self):
         self.initRangeWindow = QtWidgets.QDialog()
         self.RangeWindow = PortsRangeWindow()
-        self.RangeWindow.setUpWindow(self.initRangeWindow)
+        self.RangeWindow.setUp_window(self.initRangeWindow)
         self.initRangeWindow.exec_()
 
     def showSearchRuleTable(self):

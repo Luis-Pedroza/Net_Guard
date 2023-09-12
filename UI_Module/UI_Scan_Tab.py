@@ -1,8 +1,12 @@
 # ***************************************************
 # FILE: UI_Scan_Tab.py
 #
-# DESCRIPTION: 
-# Initialize the window to change or reset the values of the range
+# DESCRIPTION:
+#
+# The PortsRangeWindow class is used for configuring and changing
+# port ranges for TCP and UDP connections.
+# It provides methods for changing the ranges,
+# resetting them to defaults, and setting up the user interface for this purpose.
 #
 # AUTHOR:  Luis Pedroza
 # CREATED: 18/04/2023 (dd/mm/yy)
@@ -12,101 +16,170 @@ from PyQt5 import QtCore, QtWidgets, QtGui
 from Controller_Module.Scan import ScanPorts
 from UI_Module.UI_Message import PopUpMessage
 
+
 class PortsRangeWindow(object):
+    '''
+    A class for configuring and changing port ranges for TCP and UDP connections.
+
+    Attributes:
+        range (ScanPorts): An object for scanning and changing port ranges.
+        message (PopUpMessage): A class for displaying messages.
+        icon (QtWidgets.QMessageBox.Icon): An icon for message boxes.
+
+    Methods:
+        __init__(self)
+            Initializes the PortsRangeWindow class.
+
+        setUp_window(self, main_window)
+            Sets up the main window for changing port ranges.
+
+        change_range(self)
+            Changes the port ranges for TCP and/or UDP connections based on user input.
+
+        reset_default_values(self)
+            Resets the port ranges to default values.
+
+    '''
     def __init__(self):
+        '''
+        Initializes the PortsRangeWindow class.
+
+        Args:
+            None
+
+        '''
         super().__init__()
         self.range = ScanPorts()
-        self.message=PopUpMessage()
+        self.message = PopUpMessage()
         self.icon = QtWidgets.QMessageBox.Information
 
-    def setUpWindow(self, MainWindow):
-        # initialize the main window with the specifications
-        MainWindow.setObjectName("MainWindow")
-        MainWindow.setFixedSize(380, 250)
-        MainWindow.setWindowTitle("Rango de Puertos")
-        MainWindow.setWindowIcon(QtGui.QIcon("Resources/icon.ico"))
+    def setUp_window(self, main_window):
+        '''
+        Sets up the main window for changing port ranges.
 
-        # initialize  the options
-        self.checkTCP = QtWidgets.QCheckBox(MainWindow)
-        self.checkTCP.setGeometry(QtCore.QRect(80, 50, 121, 17))
-        self.checkTCP.setObjectName("checkTCP")
-        self.checkTCP.setText("Cambiar rango TCP")
-        self.rangeTCP = QtWidgets.QSpinBox(MainWindow)
+        Args:
+            main_window (QtWidgets.QMainWindow): The main window for configuring port ranges.
+
+        Returns:
+            None
+
+        Raises:
+            None
+
+        Example Usage:
+            ports_range_window = PortsRangeWindow()
+            ports_range_window.setUp_window(main_window)
+
+        '''
+        main_window.setObjectName("main_window")
+        main_window.setFixedSize(380, 250)
+        main_window.setWindowTitle("Ports Range")
+        main_window.setWindowIcon(QtGui.QIcon("Resources/icon.ico"))
+
+        self.checkBox_TCP = QtWidgets.QCheckBox(main_window)
+        self.checkBox_TCP.setGeometry(QtCore.QRect(80, 50, 121, 17))
+        self.checkBox_TCP.setObjectName("checkBox_TCP")
+        self.checkBox_TCP.setText("Change TCP range")
+        self.rangeTCP = QtWidgets.QSpinBox(main_window)
         self.rangeTCP.setGeometry(QtCore.QRect(220, 50, 60, 22))
         self.rangeTCP.setObjectName("rangeTCP")
         self.rangeTCP.setMaximum(16384)
         self.rangeTCP.setMinimum(255)
 
-        self.checkUDP = QtWidgets.QCheckBox(MainWindow)
-        self.checkUDP.setGeometry(QtCore.QRect(80, 95, 121, 17))
-        self.checkUDP.setObjectName("checkUDP")
-        self.checkUDP.setText("Cambiar rango UDP")
-        self.rangeUDP = QtWidgets.QSpinBox(MainWindow)
+        self.checkBox_UDP = QtWidgets.QCheckBox(main_window)
+        self.checkBox_UDP.setGeometry(QtCore.QRect(80, 95, 121, 17))
+        self.checkBox_UDP.setObjectName("checkBox_UDP")
+        self.checkBox_UDP.setText("Change UDP range")
+        self.rangeUDP = QtWidgets.QSpinBox(main_window)
         self.rangeUDP.setGeometry(QtCore.QRect(220, 90, 60, 22))
         self.rangeUDP.setObjectName("rangeUDP")
         self.rangeUDP.setMaximum(16384)
         self.rangeUDP.setMinimum(255)
-        
-        # Button to change the range
-        self.changeRangeBtn = QtWidgets.QToolButton(MainWindow)
-        self.changeRangeBtn.setGeometry(QtCore.QRect(20, 200, 101, 26))
-        self.changeRangeBtn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-        self.changeRangeBtn.setObjectName("changeRangeBtn")
-        self.changeRangeBtn.setText("Cambiar")
-        self.changeRangeBtn.clicked.connect(lambda: self.change())
-        self.changeRangeBtn.clicked.connect(MainWindow.close)
 
-        # Button to reset the values
+        self.change_range_btn = QtWidgets.QToolButton(main_window)
+        self.change_range_btn.setGeometry(QtCore.QRect(20, 200, 101, 26))
+        self.change_range_btn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.change_range_btn.setObjectName("change_range_btn")
+        self.change_range_btn.setText("Change")
+        self.change_range_btn.clicked.connect(lambda: self.change_range())
+        self.change_range_btn.clicked.connect(main_window.close)
+
         # IANA recommendation 16384 ports
-        self.resetValuesBtn = QtWidgets.QToolButton(MainWindow)
-        self.resetValuesBtn.setGeometry(QtCore.QRect(140, 200, 101, 26))
-        self.resetValuesBtn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-        self.resetValuesBtn.setObjectName("resetValuesBtn")
-        self.resetValuesBtn.setText("Restablecer")
-        self.resetValuesBtn.clicked.connect(lambda: self.reset())
-        self.resetValuesBtn.clicked.connect(MainWindow.close)
+        self.reset_values_btn = QtWidgets.QToolButton(main_window)
+        self.reset_values_btn.setGeometry(QtCore.QRect(140, 200, 101, 26))
+        self.reset_values_btn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.reset_values_btn.setObjectName("reset_values_btn")
+        self.reset_values_btn.setText("Reset")
+        self.reset_values_btn.clicked.connect(lambda: self.reset_default_values())
+        self.reset_values_btn.clicked.connect(main_window.close)
 
-        # Button to close the window
-        self.cancelBtn = QtWidgets.QToolButton(MainWindow)
-        self.cancelBtn.setGeometry(QtCore.QRect(260, 200, 101, 26))
-        self.cancelBtn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-        self.cancelBtn.setObjectName("cancelBtn")
-        self.cancelBtn.setText("Cancelar")
-        self.cancelBtn.clicked.connect(MainWindow.close)
+        self.cancel_btn = QtWidgets.QToolButton(main_window)
+        self.cancel_btn.setGeometry(QtCore.QRect(260, 200, 101, 26))
+        self.cancel_btn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.cancel_btn.setObjectName("cancel_btn")
+        self.cancel_btn.setText("Cancel")
+        self.cancel_btn.clicked.connect(main_window.close)
 
-    # Method to change range values
-    def change(self):
-        code = 'Se cambió el rango seleccionado'
-        # change both values (TCP, UDP)
+    def change_range(self):
+        '''
+        Changes the port ranges for TCP and/or UDP connections based on user input.
+
+        Args:
+            None
+
+        Returns:
+            None
+
+        Raises:
+            None
+
+        Example Usage:
+            ports_range_window = PortsRangeWindow()
+            ports_range_window.change_range()
+
+        '''
+        code = 'Selected range has been changed'
         # status False means an error
-        if self.checkTCP.isChecked() and self.checkUDP.isChecked():
+        if self.checkBox_TCP.isChecked() and self.checkBox_UDP.isChecked():
             statusTCP = self.range.change_ports_range('tcp', self.rangeTCP.value())
             statusUDP = self.range.change_ports_range('udp', self.rangeUDP.value())
-            if statusTCP != False or statusUDP != False:
-                self.message.show_message(code,'',self.icon)
-        # change UDP
-        elif self.checkUDP.isChecked():
+            if statusTCP is not False or statusUDP is not False:
+                self.message.show_message(code, '', self.icon)
+        elif self.checkBox_UDP.isChecked():
             statusUDP = self.range.change_ports_range('udp', self.rangeUDP.value())
-            if statusUDP != False:
-                self.message.show_message(code,'',self.icon)
-        # change TCP
-        elif self.checkTCP.isChecked():
+            if statusUDP is not False:
+                self.message.show_message(code, '', self.icon)
+        elif self.checkBox_TCP.isChecked():
             statusTCP = self.range.change_ports_range('tcp', self.rangeTCP.value())
-            if statusTCP != False:
-                self.message.show_message(code,'',self.icon)
-        # None checked
+            if statusTCP is not False:
+                self.message.show_message(code, '', self.icon)
         else:
-            code = 'No seleccionó una opción'
-            self.message.show_message(code,'',self.icon)
-            
-    # method to reste default values
-    def reset(self):
-        code = 'Se restablecieron los valores predeterminados'
+            code = 'Must select an option'
+            self.message.show_message(code, '', self.icon)
+
+    def reset_default_values(self):
+        '''
+        Resets the port ranges to default values.
+
+        Args:
+            None
+
+        Returns:
+            None
+
+        Raises:
+            None
+
+        Example Usage:
+            ports_range_window = PortsRangeWindow()
+            ports_range_window.reset()
+
+        '''
+        code = 'Defaults values were reset'
         # The recommended range is 16384
-        statusTCP = self.range.change_ports_range('tcp',16384)
-        statusUDP = self.range.change_ports_range('udp',16384)
-        
-        # Error control, status False means an error
-        if statusTCP != False or statusUDP != False:
-            self.message.show_message(code,'',self.icon)
+        statusTCP = self.range.change_ports_range('tcp', 16384)
+        statusUDP = self.range.change_ports_range('udp', 16384)
+
+        if statusTCP is not False or statusUDP is not False:
+            self.message.show_message(code, '', self.icon)
         else: pass
