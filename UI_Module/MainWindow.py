@@ -622,7 +622,7 @@ class Ui_MainWindow(object):
         #initialize new table with TablePortsCreator
         self.InitSearchTable = QtWidgets.QDialog()
         self.TableApp = TablePortsCreator(port, protocol, service)
-        self.TableApp.setupTable(self.InitSearchTable)
+        self.TableApp.setup_table(self.InitSearchTable)
 
         #exceptions of the search
         if port >= 49152:
