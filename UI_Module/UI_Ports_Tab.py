@@ -1,7 +1,7 @@
 # ***************************************************
 # FILE: UI_Ports_Tab.py
 #
-# DESCRIPTION: 
+# DESCRIPTION:
 # The TablePortsCreator class is used to create and set up
 # a table for displaying network ports information based on
 # specified search criteria, including port number,
@@ -86,13 +86,13 @@ class TablePortsCreator(object):
         if ports_list:
             rows = len(ports_list)
             self.new_table = QtWidgets.QTableWidget(main_window)
-            header = ['Port', 'Service', 'Protocol', 'Description', 'Reference' ]
+            header = ['Port', 'Service', 'Protocol', 'Description', 'Reference']
             self.new_table.setColumnCount(5)
             self.new_table.setRowCount(rows)
             self.new_table.setHorizontalHeaderLabels(header)
             self.new_table.setGeometry(QtCore.QRect(1, 0, 759, 349))
             self.new_table.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
-            self.new_table.horizontalHeader().setSectionResizeMode(3,QtWidgets.QHeaderView.Stretch)
+            self.new_table.horizontalHeader().setSectionResizeMode(3, QtWidgets.QHeaderView.Stretch)
             self.new_table.cellDoubleClicked.connect(self.init_ports_window)
 
             for row_num, row_data in enumerate(ports_list):
