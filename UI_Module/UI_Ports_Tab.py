@@ -2,8 +2,12 @@
 # FILE: UI_Ports_Tab.py
 #
 # DESCRIPTION: 
-# TablePortsCreator is a class that facilitates the creation and setup of a Qt-based table for displaying data.
-# It interacts with a database to retrieve relevant information and populates the table with that data.
+# The TablePortsCreator class is used to create and set up
+# a table for displaying network ports information based on
+# specified search criteria, including port number,
+# protocol (TCP/UDP), and service name.
+# It utilizes the GetPortsData class for querying port information
+# and the PopUpMessage class for error messages.
 #
 # AUTHOR:  Luis Pedroza
 # CREATED: 16/03/2023 (dd/mm/yy)
@@ -15,14 +19,61 @@ from UI_Module.UI_Message import PopUpMessage
 
 
 class TablePortsCreator(object):
-    def __init__(self, port, protocol, service):
+    """
+    A class for creating and setting up a table to display network ports information.
+
+    Attributes:
+        data_table_ports (GetPortsData): An object for querying port information.
+        error_message (PopUpMessage): A class for displaying error messages.
+        port (int): The port number to search for.
+        protocol (str): The protocol (TCP/UDP) to filter the search.
+        service (str): The service name to filter the search.
+
+    Methods:
+        __init__(self, port: int, protocol: str, service: str)
+            Initialize the TablePortsCreator class with search parameters.
+
+        setup_table(self, MainWindow: QtWidgets.QMainWindow)
+            Set up the table to display port information based on search criteria.
+
+        init_ports_window(self)
+            Show a message indicating that the init_ports_window function is under construction.
+
+    """
+    def __init__(self, port: int, protocol: str, service: str):
+        """
+        Initializes the TablePortsCreator class with search parameters.
+
+        Args:
+            port (int): The port number to search for.
+            protocol (str): The protocol (TCP/UDP) to filter the search.
+            service (str): The service name to filter the search.
+
+        """
         self.data_table_ports = GetPortsData()
         self.error_message = PopUpMessage()
         self.port = port
         self.protocol = protocol.lower()
         self.service = service
-        
-    def setup_table(self, main_window):
+
+    def setup_table(self, main_window: QtWidgets.QMainWindow):
+        """
+        Set up the table to display port information based on search criteria.
+
+        Args:
+            MainWindow (QtWidgets.QMainWindow): The main window to display the table.
+
+        Returns:
+            None
+
+        Raises:
+            None
+
+        Example Usage:
+            table_creator = TablePortsCreator(80, "tcp", "http")
+            table_creator.setup_table(main_window)
+
+        """
         main_window.setObjectName("main_window")
         main_window.setFixedSize(760, 350)
         main_window.setWindowTitle("Search")
@@ -48,10 +99,15 @@ class TablePortsCreator(object):
                 for col_num, col_data in enumerate(row_data):
                     item = QtWidgets.QTableWidgetItem(str(col_data))
                     self.new_table.setItem(row_num, col_num, item)
-            
+
         else: self.new_table = QtWidgets.QTableWidget(main_window)
 
     def init_ports_window(self):
+        """
+        init_ports_window should show specific information about the selected port
+        Method under construction
+
+        """
         code = 'This does not work'
         message = 'In development'
         icon = QtWidgets.QMessageBox.Information
