@@ -17,7 +17,7 @@ from PyQt5.QtWidgets import QMessageBox
 from UI_Module.UI_Message import PopUpMessage
 
 
-class DatabaseConnection:
+class DatabaseConnection():
     """
     A class for interacting with a SQLite database.
 
