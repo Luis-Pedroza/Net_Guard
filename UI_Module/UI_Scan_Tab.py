@@ -53,7 +53,7 @@ class PortsRangeWindow(object):
         self.message = PopUpMessage()
         self.icon = QtWidgets.QMessageBox.Information
 
-    def setUp_window(self, main_window):
+    def setUp_window(self, main_window: QtWidgets.QMainWindow):
         '''
         Sets up the main window for changing port ranges.
 
