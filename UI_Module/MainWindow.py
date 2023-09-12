@@ -23,7 +23,7 @@ from .UI_Rules_Tab import RulesTableCreator
 from .UI_Ports_Tab import TablePortsCreator
 from .UI_Scan_Tab import PortsRangeWindow
 from .UI_Message import PopUpMessage
-from .UI_About import Ui_Dialog
+from .UI_About import UiDialog
 
 class Ui_MainWindow(object):     
     def setupUi(self, MainWindow):  
@@ -678,6 +678,6 @@ class Ui_MainWindow(object):
     
     def openAbout(self):
         about_dialog = QtWidgets.QDialog()
-        ui_about = Ui_Dialog()
+        ui_about = UiDialog()
         ui_about.setupUi(about_dialog)
         about_dialog.exec_()

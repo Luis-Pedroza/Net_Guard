@@ -15,7 +15,7 @@
 #
 # Classes:
 #     Ui_Dialog
-
+#
 # Usage Example:
 #     dialog_ui = Ui_Dialog()
 #     dialog = QtWidgets.QDialog()
@@ -29,7 +29,7 @@
 from PyQt5 import QtCore, QtWidgets, QtGui
 
 
-class Ui_Dialog(object):
+class UiDialog(object):
     """
     A class for setting up the user interface of the Net Guard software information dialog.
 
