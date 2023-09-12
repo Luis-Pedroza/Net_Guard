@@ -72,7 +72,7 @@ class UiDialog(object):
         self.about_text.setReadOnly(True)
         with open("Resources/about.txt", "r", encoding="utf-8") as archivo:
             self.text_about = archivo.read()
-        
+
         self.label_link = QtWidgets.QLabel(Dialog)
         self.label_link.setGeometry(QtCore.QRect(75, 230, 300, 20))
         self.label_link.setObjectName("label_link")
