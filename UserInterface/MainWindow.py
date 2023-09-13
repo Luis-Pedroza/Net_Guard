@@ -26,20 +26,20 @@ from .Alerts import PopUpMessage
 from .About import UiDialog
 
 class Ui_MainWindow(object):     
-    def setupUi(self, MainWindow):  
-        self.saveReport = ReportPDF()
-        path = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.DocumentsLocation)
+    def setupUi(self, main_window):  
+        self.report_manager = ReportPDF()
+        report_path = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.DocumentsLocation)
    
-        MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(755, 616)
-        MainWindow.setWindowIcon(QtGui.QIcon("Resources/icon.ico"))
+        main_window.setObjectName("main_window")
+        main_window.resize(755, 616)
+        main_window.setWindowIcon(QtGui.QIcon("Resources/icon.ico"))
         
-        self.centralWidget = QtWidgets.QWidget(MainWindow)
-        self.centralWidget.setObjectName("centralWidget")
+        self.central_widget = QtWidgets.QWidget(main_window)
+        self.central_widget.setObjectName("central_widget")
         
-        self.mainLayout = QtWidgets.QVBoxLayout(self.centralWidget)
+        self.main_layout = QtWidgets.QVBoxLayout(self.central_widget)
 
-        self.tabWidget = QtWidgets.QTabWidget(self.centralWidget)
+        self.tabWidget = QtWidgets.QTabWidget(self.central_widget)
         self.tabWidget.setEnabled(True)
         self.tabWidget.setCursor(QtGui.QCursor(QtCore.Qt.ArrowCursor))
         self.tabWidget.setObjectName("tabWidget")
@@ -50,66 +50,66 @@ class Ui_MainWindow(object):
         self.tab_Scan = QtWidgets.QWidget()
         self.tab_Scan.setObjectName("tab_Scan")
         self.tabWidget.addTab(self.tab_Scan, "") 
-        self.getList = ScanPorts()
+        self.connection_manager = ScanPorts()
 
         #************************** Table ***************************"
-        self.TableScan = QtWidgets.QTableWidget(self.tab_Scan)
-        self.TableScan.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
-        self.TableScan.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.ResizeToContents)
-        self.TableScan.setObjectName("TableScan")
-        self.TableScan.setColumnCount(6)
-        self.TableScan.cellDoubleClicked.connect(self.showScanTableInfo)
-        self.TableScan.horizontalHeader().sectionClicked.connect(lambda col: self.sort_table(self.TableScan, col))
+        self.scan_table = QtWidgets.QTableWidget(self.tab_Scan)
+        self.scan_table.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
+        self.scan_table.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.ResizeToContents)
+        self.scan_table.setObjectName("scan_table")
+        self.scan_table.setColumnCount(6)
+        self.scan_table.cellDoubleClicked.connect(self.showScanTableInfo)
+        self.scan_table.horizontalHeader().sectionClicked.connect(lambda col: self.sort_table(self.scan_table, col))
         
         item = QtWidgets.QTableWidgetItem()
-        self.TableScan.setHorizontalHeaderItem(0, item)
+        self.scan_table.setHorizontalHeaderItem(0, item)
         item = QtWidgets.QTableWidgetItem()
-        self.TableScan.setHorizontalHeaderItem(1, item)
-        self.TableScan.horizontalHeader().setSectionResizeMode(1, QtWidgets.QHeaderView.Stretch)
+        self.scan_table.setHorizontalHeaderItem(1, item)
+        self.scan_table.horizontalHeader().setSectionResizeMode(1, QtWidgets.QHeaderView.Stretch)
         item = QtWidgets.QTableWidgetItem()
-        self.TableScan.setHorizontalHeaderItem(2, item)
-        self.TableScan.horizontalHeader().setSectionResizeMode(2, QtWidgets.QHeaderView.Stretch)
+        self.scan_table.setHorizontalHeaderItem(2, item)
+        self.scan_table.horizontalHeader().setSectionResizeMode(2, QtWidgets.QHeaderView.Stretch)
         item = QtWidgets.QTableWidgetItem()
-        self.TableScan.setHorizontalHeaderItem(3, item)
+        self.scan_table.setHorizontalHeaderItem(3, item)
         item = QtWidgets.QTableWidgetItem()
-        self.TableScan.setHorizontalHeaderItem(4, item)
+        self.scan_table.setHorizontalHeaderItem(4, item)
         item = QtWidgets.QTableWidgetItem()
-        self.TableScan.setHorizontalHeaderItem(5, item)
+        self.scan_table.setHorizontalHeaderItem(5, item)
 
         #************************** Footer **************************"
         
-        self.labelRangeTCP = QtWidgets.QLabel(self.tab_Scan)
-        self.labelRangeTCP.setObjectName("labelRangeTCP")
-        self.labelRangeValueTCP = QtWidgets.QLabel(self.tab_Scan)
-        self.labelRangeValueTCP.setObjectName("labelRangeValueTCP")
+        self.label_rangeTCP = QtWidgets.QLabel(self.tab_Scan)
+        self.label_rangeTCP.setObjectName("label_rangeTCP")
+        self.label_valueTCP = QtWidgets.QLabel(self.tab_Scan)
+        self.label_valueTCP.setObjectName("label_valueTCP")
         
-        self.labelRangeUDP = QtWidgets.QLabel(self.tab_Scan)
-        self.labelRangeUDP.setObjectName("labelRangeUDP")
-        self.labelRangeValueUDP = QtWidgets.QLabel(self.tab_Scan)
-        self.labelRangeValueUDP.setObjectName("labelRangeValueUDP")
+        self.label_rangeUDP = QtWidgets.QLabel(self.tab_Scan)
+        self.label_rangeUDP.setObjectName("label_rangeUDP")
+        self.label_valueUDP = QtWidgets.QLabel(self.tab_Scan)
+        self.label_valueUDP.setObjectName("label_valueUDP")
 
-        self.updateScanTable(self.TableScan)
+        self.updateScanTable(self.scan_table)
 
-        self.ScanPortsBtn = QtWidgets.QToolButton(self.tab_Scan)
-        self.ScanPortsBtn.setFixedSize(101, 26)
-        self.ScanPortsBtn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-        self.ScanPortsBtn.setObjectName("ScanPortsBtn")
-        self.ScanPortsBtn.clicked.connect(lambda: self.updateScanTable(self.TableScan))
+        self.port_scan_btn = QtWidgets.QToolButton(self.tab_Scan)
+        self.port_scan_btn.setFixedSize(101, 26)
+        self.port_scan_btn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.port_scan_btn.setObjectName("port_scan_btn")
+        self.port_scan_btn.clicked.connect(lambda: self.updateScanTable(self.scan_table))
 
-        self.EditRangeBtn = QtWidgets.QToolButton(self.tab_Scan)
-        self.EditRangeBtn.setFixedSize(101, 26)
-        self.EditRangeBtn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-        self.EditRangeBtn.setObjectName("EditRangeBtn")
-        self.EditRangeBtn.clicked.connect(lambda: self.showPortsRangeWindow())
+        self.edit_range_btn = QtWidgets.QToolButton(self.tab_Scan)
+        self.edit_range_btn.setFixedSize(101, 26)
+        self.edit_range_btn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.edit_range_btn.setObjectName("edit_range_btn")
+        self.edit_range_btn.clicked.connect(lambda: self.showPortsRangeWindow())
 
-        self.TableScanLayout = QtWidgets.QGridLayout(self.tab_Scan)
-        self.TableScanLayout.addWidget(self.TableScan, 0, 0, 1, 3)
-        self.TableScanLayout.addWidget(self.labelRangeTCP, 1, 0)
-        self.TableScanLayout.addWidget(self.labelRangeValueTCP, 1, 1)
-        self.TableScanLayout.addWidget(self.labelRangeUDP, 2, 0)
-        self.TableScanLayout.addWidget(self.labelRangeValueUDP, 2, 1)
-        self.TableScanLayout.addWidget(self.ScanPortsBtn, 3, 0)
-        self.TableScanLayout.addWidget(self.EditRangeBtn, 3, 1)
+        self.scan_table_layout = QtWidgets.QGridLayout(self.tab_Scan)
+        self.scan_table_layout.addWidget(self.scan_table, 0, 0, 1, 3)
+        self.scan_table_layout.addWidget(self.label_rangeTCP, 1, 0)
+        self.scan_table_layout.addWidget(self.label_valueTCP, 1, 1)
+        self.scan_table_layout.addWidget(self.label_rangeUDP, 2, 0)
+        self.scan_table_layout.addWidget(self.label_valueUDP, 2, 1)
+        self.scan_table_layout.addWidget(self.port_scan_btn, 3, 0)
+        self.scan_table_layout.addWidget(self.edit_range_btn, 3, 1)
 
 
         #*************************************************************"
@@ -118,96 +118,91 @@ class Ui_MainWindow(object):
         self.tab_Rules = QtWidgets.QWidget()
         self.tab_Rules.setObjectName("tab_Rules")
         self.tabWidget.addTab(self.tab_Rules, "")
-        self.getRules = FirewallManager()
+        self.rules_manager = FirewallManager()
         self.get_searched_rules = RulesTableCreator()
 
         #************************** Header ***************************"
-        self.searchRuleBtn = QtWidgets.QToolButton(self.tab_Rules)
+        self.search_rule_btn = QtWidgets.QToolButton(self.tab_Rules)
 
-        self.labelRule = QtWidgets.QLabel(self.tab_Rules)
-        self.labelRule.setObjectName("labelRule")
-        self.lineEditSearchRule = QtWidgets.QLineEdit(self.tab_Rules)
-        self.lineEditSearchRule.setObjectName("lineEditSearchRule")
-        self.lineEditSearchRule.returnPressed.connect(self.searchRuleBtn.click)
+        self.label_rule = QtWidgets.QLabel(self.tab_Rules)
+        self.label_rule.setObjectName("label_rule")
+        self.lineEdit_search_rule = QtWidgets.QLineEdit(self.tab_Rules)
+        self.lineEdit_search_rule.setObjectName("lineEdit_search_rule")
+        self.lineEdit_search_rule.returnPressed.connect(self.search_rule_btn.click)
 
-        self.labelProfile = QtWidgets.QLabel(self.tab_Rules)
-        self.labelProfile.setObjectName("labelProfile")
-        self.comboBoxProfileRule = QtWidgets.QComboBox(self.tab_Rules)
-        self.comboBoxProfileRule.setObjectName("comboBoxProfileRule")
-        self.comboBoxProfileRule.addItem('Cualquiera')
-        self.comboBoxProfileRule.addItem('Publico')
-        self.comboBoxProfileRule.addItem('Privado')
-        self.comboBoxProfileRule.addItem('Dominio')
-        self.comboBoxProfileRule.setCurrentText('Cualquiera')
+        self.label_profile = QtWidgets.QLabel(self.tab_Rules)
+        self.label_profile.setObjectName("label_profile")
+        self.comboBox_rule_profile = QtWidgets.QComboBox(self.tab_Rules)
+        self.comboBox_rule_profile.setObjectName("comboBox_rule_profile")
         
-        self.labelDirection = QtWidgets.QLabel(self.tab_Rules)
-        self.labelDirection.setObjectName("labelDirection")
-        self.comboBoxDirectionRule = QtWidgets.QComboBox(self.tab_Rules)
-        self.comboBoxDirectionRule.setObjectName("comboBoxDirectionRule")
-        self.comboBoxDirectionRule.addItem('Cualquiera')
-        self.comboBoxDirectionRule.addItem('Entrada')
-        self.comboBoxDirectionRule.addItem('Salida')
-        self.comboBoxDirectionRule.setCurrentText('Cualquiera')
+        self.label_direction = QtWidgets.QLabel(self.tab_Rules)
+        self.label_direction.setObjectName("label_direction")
+        self.comboBox_rule_direction = QtWidgets.QComboBox(self.tab_Rules)
+        self.comboBox_rule_direction.setObjectName("comboBox_rule_direction")
+        self.comboBox_rule_direction.addItem('Any')
+        self.comboBox_rule_direction.addItem('Inbound')
+        self.comboBox_rule_direction.addItem('Outbound')
+        self.comboBox_rule_direction.setCurrentText('Any')
         
-        self.searchRuleBtn.setFixedSize(101, 26)
-        self.searchRuleBtn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-        self.searchRuleBtn.setObjectName("searchRuleBtn")
-        self.searchRuleBtn.clicked.connect(self.showSearchRuleTable)
+        self.search_rule_btn.setFixedSize(101, 26)
+        self.search_rule_btn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.search_rule_btn.setObjectName("search_rule_btn")
+        self.search_rule_btn.clicked.connect(self.showSearchRuleTable)
         
 
         #************************** Table ***************************"
-        self.tableRules = QtWidgets.QTableWidget(self.tab_Rules)
-        self.tableRules.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
-        self.tableRules.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.ResizeToContents)
-        self.tableRules.setObjectName("tableRules")
-        self.tableRules.setColumnCount(6)
-        self.tableRules.cellDoubleClicked.connect(lambda row: self.get_searched_rules.get_selected_rule(self.tableRules, row))
-        self.tableRules.cellDoubleClicked.connect(lambda: self.updateRulesTable(self.tableRules))
-        self.tableRules.horizontalHeader().sectionClicked.connect(lambda col: self.sort_table(self.tableRules, col))
+        self.rules_table = QtWidgets.QTableWidget(self.tab_Rules)
+        self.rules_table.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
+        self.rules_table.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.ResizeToContents)
+        self.rules_table.setObjectName("rules_table")
+        self.rules_table.setColumnCount(6)
+        self.rules_table.cellDoubleClicked.connect(lambda row: self.get_searched_rules.get_selected_rule(self.rules_table, row))
+        self.rules_table.cellDoubleClicked.connect(lambda: self.updateRulesTable(self.rules_table))
+        self.rules_table.horizontalHeader().sectionClicked.connect(lambda col: self.sort_table(self.rules_table, col))
         
         item = QtWidgets.QTableWidgetItem()
-        self.tableRules.setVerticalHeaderItem(0, item)
-        self.tableRules.horizontalHeader().setSectionResizeMode(0, QtWidgets.QHeaderView.Stretch)
+        self.rules_table.setVerticalHeaderItem(0, item)
+        self.rules_table.horizontalHeader().setSectionResizeMode(0, QtWidgets.QHeaderView.Stretch)
         item = QtWidgets.QTableWidgetItem()
-        self.tableRules.setHorizontalHeaderItem(0, item)
+        self.rules_table.setHorizontalHeaderItem(0, item)
         item = QtWidgets.QTableWidgetItem()
-        self.tableRules.setHorizontalHeaderItem(1, item)
+        self.rules_table.setHorizontalHeaderItem(1, item)
         item = QtWidgets.QTableWidgetItem()
-        self.tableRules.setHorizontalHeaderItem(2, item)
+        self.rules_table.setHorizontalHeaderItem(2, item)
         item = QtWidgets.QTableWidgetItem()
-        self.tableRules.setHorizontalHeaderItem(3, item)
+        self.rules_table.setHorizontalHeaderItem(3, item)
         item = QtWidgets.QTableWidgetItem()
-        self.tableRules.setHorizontalHeaderItem(4, item)
+        self.rules_table.setHorizontalHeaderItem(4, item)
         item = QtWidgets.QTableWidgetItem()
-        self.tableRules.setHorizontalHeaderItem(5, item)
+        self.rules_table.setHorizontalHeaderItem(5, item)
 
-        self.updateRulesTable(self.tableRules)
+        self.updateRulesTable(self.rules_table)
         
         #************************** Buttons ***************************"
-        self.RefreshRuleBtn = QtWidgets.QToolButton(self.tab_Rules)
-        self.RefreshRuleBtn.setFixedSize(101, 26)
-        self.RefreshRuleBtn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-        self.RefreshRuleBtn.setObjectName("RefreshRuleBtn")
-        self.RefreshRuleBtn.clicked.connect(lambda: self.updateRulesTable(self.tableRules))
+        self.reload_rules_table = QtWidgets.QToolButton(self.tab_Rules)
+        self.reload_rules_table.setFixedSize(101, 26)
+        self.reload_rules_table.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.reload_rules_table.setObjectName("reload_rules_table")
+        self.reload_rules_table.clicked.connect(lambda: self.updateRulesTable(self.rules_table))
 
-        self.NewRuleBtn = QtWidgets.QToolButton(self.tab_Rules)
-        self.NewRuleBtn.setFixedSize(101, 26)
-        self.NewRuleBtn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-        self.NewRuleBtn.setObjectName("NewRuleBtn")
-        self.NewRuleBtn.clicked.connect(lambda: self.show_new_rule_window())
-        self.NewRuleBtn.clicked.connect(lambda: self.updateRulesTable(self.tableRules))
+        self.new_rule_btn = QtWidgets.QToolButton(self.tab_Rules)
+        self.new_rule_btn.setFixedSize(101, 26)
+        self.new_rule_btn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.new_rule_btn.setObjectName("new_rule_btn")
+        self.new_rule_btn.clicked.connect(lambda: self.show_new_rule_window())
+        self.new_rule_btn.clicked.connect(lambda: self.updateRulesTable(self.rules_table))
 
-        self.TableRulesLayout = QtWidgets.QGridLayout(self.tab_Rules)
-        self.TableRulesLayout.addWidget(self.labelRule, 0,0)
-        self.TableRulesLayout.addWidget(self.lineEditSearchRule, 0,1)
-        self.TableRulesLayout.addWidget(self.labelProfile, 0,2)
-        self.TableRulesLayout.addWidget(self.comboBoxProfileRule, 0,3)
-        self.TableRulesLayout.addWidget(self.labelDirection, 0,4)
-        self.TableRulesLayout.addWidget(self.comboBoxDirectionRule, 0,5)
-        self.TableRulesLayout.addWidget(self.searchRuleBtn, 0,6)
-        self.TableRulesLayout.addWidget(self.tableRules, 1, 0, 1, 7)
-        self.TableRulesLayout.addWidget(self.RefreshRuleBtn, 2,0)
-        self.TableRulesLayout.addWidget(self.NewRuleBtn, 2,1)
+        self.rules_table_layout = QtWidgets.QGridLayout(self.tab_Rules)
+        self.rules_table_layout.addWidget(self.label_rule, 0,0)
+        self.rules_table_layout.addWidget(self.lineEdit_search_rule, 0,1)
+        self.rules_table_layout.addWidget(self.label_profile, 0,2)
+        self.rules_table_layout.addWidget(self.comboBox_rule_profile, 0,3)
+        self.rules_table_layout.addWidget(self.label_direction, 0,4)
+        self.rules_table_layout.addWidget(self.comboBox_rule_direction, 0,5)
+        self.rules_table_layout.addWidget(self.search_rule_btn, 0,6)
+        self.rules_table_layout.addWidget(self.rules_table, 1, 0, 1, 7)
+        self.rules_table_layout.addWidget(self.reload_rules_table, 2,0)
+        self.rules_table_layout.addWidget(self.new_rule_btn, 2,1)
 
         #*************************************************************"
         #************************* TAB PORTS *************************"
@@ -217,295 +212,299 @@ class Ui_MainWindow(object):
         self.tabWidget.addTab(self.tab_Ports, "")
 
         self.counter = TableCounter(1,65535)
-        self.updatedTable = GetPortsData()
-        self.errorMessage = PopUpMessage()
+        self.ports_manager = GetPortsData()
+        self.messages_manager = PopUpMessage()
         
         #************************** HEADER ***************************"
-        self.SearchPortBtn = QtWidgets.QToolButton(self.tab_Ports)
+        self.search_port_btn = QtWidgets.QToolButton(self.tab_Ports)
         
-        self.labelPort = QtWidgets.QLabel(self.tab_Ports)
-        self.labelPort.setObjectName("labelPort")
-        self.spinBoxPort = QtWidgets.QSpinBox(self.tab_Ports)
-        self.spinBoxPort.setMaximum(65535)
-        self.spinBoxPort.setObjectName("spinBoxPort")
+        self.label_port = QtWidgets.QLabel(self.tab_Ports)
+        self.label_port.setObjectName("label_port")
+        self.spinBox_port = QtWidgets.QSpinBox(self.tab_Ports)
+        self.spinBox_port.setMaximum(65535)
+        self.spinBox_port.setObjectName("spinBox_port")
 
-        self.labelService = QtWidgets.QLabel(self.tab_Ports)
-        self.labelService.setObjectName("labelService")
-        self.lineEditSearch = QtWidgets.QLineEdit(self.tab_Ports)
-        self.lineEditSearch.setObjectName("lineEditSearch")
-        self.lineEditSearch.returnPressed.connect(self.SearchPortBtn.click)
+        self.label_service = QtWidgets.QLabel(self.tab_Ports)
+        self.label_service.setObjectName("label_service")
+        self.lineEdit_search = QtWidgets.QLineEdit(self.tab_Ports)
+        self.lineEdit_search.setObjectName("lineEdit_search")
+        self.lineEdit_search.returnPressed.connect(self.search_port_btn.click)
 
-        self.labelProtocol = QtWidgets.QLabel(self.tab_Ports)
-        self.labelProtocol.setObjectName("labelProtocol")
-        self.comboBoxProtocol = QtWidgets.QComboBox(self.tab_Ports)
-        self.comboBoxProtocol.setObjectName("comboBoxProtocol")
-        self.comboBoxProtocol.addItem('Ambos')
-        self.comboBoxProtocol.addItem('TCP')
-        self.comboBoxProtocol.addItem('UDP')
+        self.label_protocol = QtWidgets.QLabel(self.tab_Ports)
+        self.label_protocol.setObjectName("label_protocol")
+        self.comboBox_protocol = QtWidgets.QComboBox(self.tab_Ports)
+        self.comboBox_protocol.setObjectName("comboBox_protocol")
 
-        self.SearchPortBtn.setFixedSize(101, 26)
-        self.SearchPortBtn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-        self.SearchPortBtn.setObjectName("SearchPortBtn")
-        self.SearchPortBtn.clicked.connect(self.showSearchPortsTable)
+        self.search_port_btn.setFixedSize(101, 26)
+        self.search_port_btn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.search_port_btn.setObjectName("search_port_btn")
+        self.search_port_btn.clicked.connect(self.showSearchPortsTable)
 
         #*************************** TABLE ***************************"
-        self.TablePorts = QtWidgets.QTableWidget(self.tab_Ports)
-        self.TablePorts.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
-        self.TablePorts.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.ResizeToContents)
-        self.TablePorts.setObjectName("TablePorts")
-        self.TablePorts.setColumnCount(5)
-        self.TablePorts.setRowCount(14)
-        self.TablePorts.cellDoubleClicked.connect(self.showPortsTableInfo)
+        self.ports_table = QtWidgets.QTableWidget(self.tab_Ports)
+        self.ports_table.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
+        self.ports_table.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.ResizeToContents)
+        self.ports_table.setObjectName("ports_table")
+        self.ports_table.setColumnCount(5)
+        self.ports_table.setRowCount(14)
+        self.ports_table.cellDoubleClicked.connect(self.showPortsTableInfo)
 
         item = QtWidgets.QTableWidgetItem()
-        self.TablePorts.setHorizontalHeaderItem(0, item)
+        self.ports_table.setHorizontalHeaderItem(0, item)
         item = QtWidgets.QTableWidgetItem()
-        self.TablePorts.setHorizontalHeaderItem(1, item)
+        self.ports_table.setHorizontalHeaderItem(1, item)
         item = QtWidgets.QTableWidgetItem()
-        self.TablePorts.setHorizontalHeaderItem(2, item)
+        self.ports_table.setHorizontalHeaderItem(2, item)
         item = QtWidgets.QTableWidgetItem()
-        self.TablePorts.setHorizontalHeaderItem(3, item)
-        self.TablePorts.horizontalHeader().setSectionResizeMode(3, QtWidgets.QHeaderView.Stretch)
+        self.ports_table.setHorizontalHeaderItem(3, item)
+        self.ports_table.horizontalHeader().setSectionResizeMode(3, QtWidgets.QHeaderView.Stretch)
         item = QtWidgets.QTableWidgetItem()
-        self.TablePorts.setHorizontalHeaderItem(4, item)
+        self.ports_table.setHorizontalHeaderItem(4, item)
 
-        self.updatePortsTable(self.TablePorts)
+        self.updatePortsTable(self.ports_table)
         
         #************************** BUTTONS **************************"
-        self.PreviousTableBtn = QtWidgets.QToolButton(self.tab_Ports)
-        self.PreviousTableBtn.setFixedSize(101, 26)
-        self.PreviousTableBtn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-        self.PreviousTableBtn.setObjectName("PreviousTableBtn")
-        self.PreviousTableBtn.clicked.connect(lambda: self.previousValue(self.TablePorts))
+        self.previous_table_btn = QtWidgets.QToolButton(self.tab_Ports)
+        self.previous_table_btn.setFixedSize(101, 26)
+        self.previous_table_btn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.previous_table_btn.setObjectName("previous_table_btn")
+        self.previous_table_btn.clicked.connect(lambda: self.previousValue(self.ports_table))
         
-        self.NextTableBtn = QtWidgets.QToolButton(self.tab_Ports)
-        self.NextTableBtn.setFixedSize(101, 26)
-        self.NextTableBtn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-        self.NextTableBtn.setObjectName("NextTableBtn")
-        self.NextTableBtn.clicked.connect(lambda: self.nextValue(self.TablePorts))
+        self.next_table_btn = QtWidgets.QToolButton(self.tab_Ports)
+        self.next_table_btn.setFixedSize(101, 26)
+        self.next_table_btn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.next_table_btn.setObjectName("next_table_btn")
+        self.next_table_btn.clicked.connect(lambda: self.nextValue(self.ports_table))
       
-        self.TablePortsLayout = QtWidgets.QGridLayout(self.tab_Ports)
-        self.TablePortsLayout.addWidget(self.labelPort, 0, 0)
-        self.TablePortsLayout.addWidget(self.spinBoxPort, 0, 1)
-        self.TablePortsLayout.addWidget(self.labelService, 0, 2)
-        self.TablePortsLayout.addWidget(self.lineEditSearch, 0, 3)
-        self.TablePortsLayout.addWidget(self.labelProtocol, 0, 4)
-        self.TablePortsLayout.addWidget(self.comboBoxProtocol, 0, 5)
-        self.TablePortsLayout.addWidget(self.SearchPortBtn, 0, 6)
-        self.TablePortsLayout.addWidget(self.TablePorts, 1, 0, 1, 7)
-        self.TablePortsLayout.addWidget(self.PreviousTableBtn, 2, 0)
-        self.TablePortsLayout.addWidget(self.NextTableBtn, 2, 1)
+        self.ports_table_layout = QtWidgets.QGridLayout(self.tab_Ports)
+        self.ports_table_layout.addWidget(self.label_port, 0, 0)
+        self.ports_table_layout.addWidget(self.spinBox_port, 0, 1)
+        self.ports_table_layout.addWidget(self.label_service, 0, 2)
+        self.ports_table_layout.addWidget(self.lineEdit_search, 0, 3)
+        self.ports_table_layout.addWidget(self.label_protocol, 0, 4)
+        self.ports_table_layout.addWidget(self.comboBox_protocol, 0, 5)
+        self.ports_table_layout.addWidget(self.search_port_btn, 0, 6)
+        self.ports_table_layout.addWidget(self.ports_table, 1, 0, 1, 7)
+        self.ports_table_layout.addWidget(self.previous_table_btn, 2, 0)
+        self.ports_table_layout.addWidget(self.next_table_btn, 2, 1)
         
         #*************************************************************"
         #************************* MENU BAR **************************"
         #*************************************************************"
-        MainWindow.setCentralWidget(self.centralWidget)
-        self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 755, 22))
-        self.menubar.setObjectName("menubar")
-        self.menuFile = QtWidgets.QMenu(self.menubar)
-        self.menuFile.setObjectName("menuFile")
-        self.menuEdit = QtWidgets.QMenu(self.menubar)
-        self.menuEdit.setObjectName("menuEdit")
-        self.menuConfig = QtWidgets.QMenu(self.menubar)
-        self.menuConfig.setObjectName("menuConfig")
-        self.menuHelp = QtWidgets.QMenu(self.menubar)
-        self.menuHelp.setObjectName("menuHelp")
+        main_window.setCentralWidget(self.central_widget)
+        self.menu_bar = QtWidgets.QMenuBar(main_window)
+        self.menu_bar.setGeometry(QtCore.QRect(0, 0, 755, 22))
+        self.menu_bar.setObjectName("menu_bar")
+        self.file_menu = QtWidgets.QMenu(self.menu_bar)
+        self.file_menu.setObjectName("file_menu")
+        self.edit_menu = QtWidgets.QMenu(self.menu_bar)
+        self.edit_menu.setObjectName("edit_menu")
+        self.config_menu = QtWidgets.QMenu(self.menu_bar)
+        self.config_menu.setObjectName("config_menu")
+        self.help_menu = QtWidgets.QMenu(self.menu_bar)
+        self.help_menu.setObjectName("help_menu")
         
-        MainWindow.setMenuBar(self.menubar)
-        self.statusbar = QtWidgets.QStatusBar(MainWindow)
+        main_window.setMenuBar(self.menu_bar)
+        self.statusbar = QtWidgets.QStatusBar(main_window)
         self.statusbar.setObjectName("statusbar")
-        MainWindow.setStatusBar(self.statusbar)
+        main_window.setStatusBar(self.statusbar)
         
         #************************** FILE **************************"
-        self.action_Save_Scan = QtWidgets.QAction(MainWindow)
-        self.action_Save_Scan.setShortcut('Ctrl+S')
-        self.action_Save_Scan.setObjectName("action_Save_Scan")
-        self.action_Save_Scan.triggered.connect(lambda: self.saveReport.save_to_PDF(path, self.TableScan, True))
-        self.action_Save_Rules = QtWidgets.QAction(MainWindow)
-        self.action_Save_Rules.setShortcut('Ctrl+R')
-        self.action_Save_Rules.setObjectName("action_Save_Rules")
-        self.action_Save_Rules.triggered.connect(lambda: self.saveReport.save_to_PDF(path, self.tableRules, False))
+        self.action_save_scan = QtWidgets.QAction(main_window)
+        self.action_save_scan.setShortcut('Ctrl+S')
+        self.action_save_scan.setObjectName("action_save_scan")
+        self.action_save_scan.triggered.connect(lambda: self.report_manager.save_to_PDF(report_path, self.scan_table, True))
+        self.action_save_rules = QtWidgets.QAction(main_window)
+        self.action_save_rules.setShortcut('Ctrl+R')
+        self.action_save_rules.setObjectName("action_save_rules")
+        self.action_save_rules.triggered.connect(lambda: self.report_manager.save_to_PDF(report_path, self.rules_table, False))
         
 
         #************************** EDIT **************************"
-        self.action_New_Rule = QtWidgets.QAction(MainWindow)
-        self.action_New_Rule.setShortcut('Ctrl+N')
-        self.action_New_Rule.setObjectName("action_New_Rule")
-        self.action_New_Rule.triggered.connect(lambda: self.show_new_rule_window())
-        self.action_Change_Range = QtWidgets.QAction(MainWindow)
-        self.action_Change_Range.setShortcut('Ctrl+C')
-        self.action_Change_Range.setObjectName("action_Change_Range")
-        self.action_Change_Range.triggered.connect(lambda: self.showPortsRangeWindow())
-        self.action_Refresh_Scan = QtWidgets.QAction(MainWindow)
-        self.action_Refresh_Scan.setShortcut('Ctrl+E')
-        self.action_Refresh_Scan.setObjectName("action_Refresh_Scan")
-        self.action_Refresh_Scan.triggered.connect(lambda: self.updateScanTable(self.TableScan))
+        self.action_new_rule = QtWidgets.QAction(main_window)
+        self.action_new_rule.setShortcut('Ctrl+N')
+        self.action_new_rule.setObjectName("action_new_rule")
+        self.action_new_rule.triggered.connect(lambda: self.show_new_rule_window())
+        self.action_change_range = QtWidgets.QAction(main_window)
+        self.action_change_range.setShortcut('Ctrl+C')
+        self.action_change_range.setObjectName("action_change_range")
+        self.action_change_range.triggered.connect(lambda: self.showPortsRangeWindow())
+        self.action_reload_scan = QtWidgets.QAction(main_window)
+        self.action_reload_scan.setShortcut('Ctrl+E')
+        self.action_reload_scan.setObjectName("action_reload_scan")
+        self.action_reload_scan.triggered.connect(lambda: self.updateScanTable(self.scan_table))
 
         #************************** CONFIG **************************"
-        self.actionLanguage = QtWidgets.QAction(MainWindow)
-        self.actionLanguage.setObjectName("actionLanguage")
-        self.actionLanguage.setShortcut('Ctrl+L')
-        self.actionTheme = QtWidgets.QAction(MainWindow)
-        self.actionTheme.setObjectName("actionTheme")
-        self.actionTheme.setShortcut('Ctrl+T')
+        self.action_select_language = QtWidgets.QAction(main_window)
+        self.action_select_language.setObjectName("action_select_language")
+        self.action_select_language.setShortcut('Ctrl+L')
+        self.action_select_theme = QtWidgets.QAction(main_window)
+        self.action_select_theme.setObjectName("action_select_theme")
+        self.action_select_theme.setShortcut('Ctrl+T')
 
         #************************** HELP **************************"
-        self.helpChangeRange = QtWidgets.QAction(MainWindow)
-        self.helpChangeRange.setObjectName("helpChangeRange")
-        self.helpNewRule = QtWidgets.QAction(MainWindow)
-        self.helpNewRule.setObjectName("helpNewRule")
-        self.helpChangeRule = QtWidgets.QAction(MainWindow)
-        self.helpChangeRule.setObjectName("helpChangeRule")
-        self.helpSearchRule = QtWidgets.QAction(MainWindow)
-        self.helpSearchRule.setObjectName("helpSearchRule")
-        self.helpSearchPort = QtWidgets.QAction(MainWindow)
-        self.helpSearchPort.setObjectName("helpSearchPort")
-        self.action_About = QtWidgets.QAction(MainWindow)
+        self.help_change_range = QtWidgets.QAction(main_window)
+        self.help_change_range.setObjectName("help_change_range")
+        self.help_new_rule = QtWidgets.QAction(main_window)
+        self.help_new_rule.setObjectName("help_new_rule")
+        self.help_change_rule = QtWidgets.QAction(main_window)
+        self.help_change_rule.setObjectName("help_change_rule")
+        self.help_search_rule = QtWidgets.QAction(main_window)
+        self.help_search_rule.setObjectName("help_search_rule")
+        self.help_search_port = QtWidgets.QAction(main_window)
+        self.help_search_port.setObjectName("help_search_port")
+        self.action_About = QtWidgets.QAction(main_window)
         self.action_About.setObjectName("action_About")
         self.action_About.triggered.connect(lambda: self.openAbout())
 
-        self.menuFile.addAction(self.action_Save_Scan)
-        self.menuFile.addAction(self.action_Save_Rules)
+        self.file_menu.addAction(self.action_save_scan)
+        self.file_menu.addAction(self.action_save_rules)
 
-        self.menuEdit.addAction(self.action_New_Rule)
-        self.menuEdit.addAction(self.action_Change_Range)
-        self.menuEdit.addAction(self.action_Refresh_Scan)
+        self.edit_menu.addAction(self.action_new_rule)
+        self.edit_menu.addAction(self.action_change_range)
+        self.edit_menu.addAction(self.action_reload_scan)
         
-        self.menuConfig.addAction(self.actionLanguage)
-        self.menuConfig.addAction(self.actionTheme)
+        self.config_menu.addAction(self.action_select_language)
+        self.config_menu.addAction(self.action_select_theme)
 
-        self.menuHelp.addAction(self.helpChangeRange)
-        self.menuHelp.addAction(self.helpNewRule)
-        self.menuHelp.addAction(self.helpChangeRule)
-        self.menuHelp.addAction(self.helpSearchRule)
-        self.menuHelp.addAction(self.helpSearchPort)
-        self.menuHelp.addSeparator()
-        self.menuHelp.addAction(self.action_About)
+        self.help_menu.addAction(self.help_change_range)
+        self.help_menu.addAction(self.help_new_rule)
+        self.help_menu.addAction(self.help_change_rule)
+        self.help_menu.addAction(self.help_search_rule)
+        self.help_menu.addAction(self.help_search_port)
+        self.help_menu.addSeparator()
+        self.help_menu.addAction(self.action_About)
 
-        self.menubar.addAction(self.menuFile.menuAction())
-        self.menubar.addAction(self.menuEdit.menuAction())
-        self.menubar.addAction(self.menuConfig.menuAction())
-        self.menubar.addAction(self.menuHelp.menuAction())
+        self.menu_bar.addAction(self.file_menu.menuAction())
+        self.menu_bar.addAction(self.edit_menu.menuAction())
+        self.menu_bar.addAction(self.config_menu.menuAction())
+        self.menu_bar.addAction(self.help_menu.menuAction())
 
         self.tabWidget.setCurrentIndex(0)
-        self.mainLayout.addWidget(self.tabWidget)
-        self.retranslateUi(MainWindow)
-        QtCore.QMetaObject.connectSlotsByName(MainWindow)
+        self.main_layout.addWidget(self.tabWidget)
+        self.retranslateUi(main_window)
+        QtCore.QMetaObject.connectSlotsByName(main_window)
 
     def retranslateUi(self, MainWindow):
-        self.translator = QtCore.QTranslator()
-        self.translator.load("Resources/lan/language_en.qm")
-        QtCore.QCoreApplication.installTranslator(self.translator)
+        # self.translator = QtCore.QTranslator()
+        # self.translator.load("Resources/lan/language_en.qm")
+        # QtCore.QCoreApplication.installTranslator(self.translator)
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "Net Guard"))
 
         #************************************************************
         #************************* TAB SCAN *************************
         #************************************************************
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_Scan), _translate("MainWindow", "Escáner"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_Scan), _translate("main_window", "Scan"))
 
-        item = self.TableScan.horizontalHeaderItem(0)
-        item.setText(_translate("MainWindow", "Protocolo"))
-        item = self.TableScan.horizontalHeaderItem(1)
-        item.setText(_translate("MainWindow", "Dirección Local"))
-        item = self.TableScan.horizontalHeaderItem(2)
-        item.setText(_translate("MainWindow", "Dirección Remota"))
-        item = self.TableScan.horizontalHeaderItem(3)
-        item.setText(_translate("MainWindow", "Estado"))
-        item = self.TableScan.horizontalHeaderItem(4)
+        item = self.scan_table.horizontalHeaderItem(0)
+        item.setText(_translate("MainWindow", "Protocol"))
+        item = self.scan_table.horizontalHeaderItem(1)
+        item.setText(_translate("MainWindow", "Local Address"))
+        item = self.scan_table.horizontalHeaderItem(2)
+        item.setText(_translate("MainWindow", "Remote Address"))
+        item = self.scan_table.horizontalHeaderItem(3)
+        item.setText(_translate("MainWindow", "State"))
+        item = self.scan_table.horizontalHeaderItem(4)
         item.setText(_translate("MainWindow", "PID"))
-        item = self.TableScan.horizontalHeaderItem(5)
-        item.setText(_translate("MainWindow", "Programa"))
+        item = self.scan_table.horizontalHeaderItem(5)
+        item.setText(_translate("MainWindow", "Program"))
             
-        self.labelRangeTCP.setText(_translate("MainWindow", "Rango TCP:"))
-        self.labelRangeUDP.setText(_translate("MainWindow", "Rango UDP:"))
+        self.label_rangeTCP.setText(_translate("MainWindow", "TCP Range:"))
+        self.label_rangeUDP.setText(_translate("MainWindow", "UDP Range:"))
         
-        self.ScanPortsBtn.setText(_translate("MainWindow", "Actualizar"))
-        self.EditRangeBtn.setText(_translate("MainWindow", "Modificar"))
+        self.port_scan_btn.setText(_translate("MainWindow", "Update"))
+        self.edit_range_btn.setText(_translate("MainWindow", "Modify"))
 
         #************************************************************
         #************************* TAB RULES ************************
         #************************************************************
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_Rules), _translate("MainWindow", "Reglas"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_Rules), _translate("MainWindow", "Rules"))
 
-        self.labelRule.setText(_translate("MainWindow", "Nombre"))
-        self.labelProfile.setText(_translate("MainWindow", "Perfil"))
-        self.labelDirection.setText(_translate("MainWindow", "Dirección"))
-        self.searchRuleBtn.setText(_translate("MainWindow", "Buscar"))
+        self.label_rule.setText(_translate("MainWindow", "Name"))
+        self.label_profile.setText(_translate("MainWindow", "Profile"))
+        self.label_direction.setText(_translate("MainWindow", "Direction"))
+        self.search_rule_btn.setText(_translate("MainWindow", "Search"))
+        self.comboBox_rule_profile.addItem(_translate("MainWindow",'Any'))
+        self.comboBox_rule_profile.addItem(_translate("MainWindow",'Public'))
+        self.comboBox_rule_profile.addItem(_translate("MainWindow",'Private'))
+        self.comboBox_rule_profile.addItem(_translate("MainWindow",'Domain'))
         
-        item = self.tableRules.horizontalHeaderItem(0)
-        item.setText(_translate("MainWindow", "Regla"))
-        item = self.tableRules.horizontalHeaderItem(1)
-        item.setText(_translate("MainWindow", "Habilitada"))
-        item = self.tableRules.horizontalHeaderItem(2)
-        item.setText(_translate("MainWindow", "Perfil"))
-        item = self.tableRules.horizontalHeaderItem(3)
-        item.setText(_translate("MainWindow", "Acción"))
-        item = self.tableRules.horizontalHeaderItem(4)
-        item.setText(_translate("MainWindow", "Dirección"))
-        item = self.tableRules.horizontalHeaderItem(5)
-        item.setText(_translate("MainWindow", "Protocolo"))
+        item = self.rules_table.horizontalHeaderItem(0)
+        item.setText(_translate("MainWindow", "Rule"))
+        item = self.rules_table.horizontalHeaderItem(1)
+        item.setText(_translate("MainWindow", "Enable"))
+        item = self.rules_table.horizontalHeaderItem(2)
+        item.setText(_translate("MainWindow", "Profile"))
+        item = self.rules_table.horizontalHeaderItem(3)
+        item.setText(_translate("MainWindow", "Action"))
+        item = self.rules_table.horizontalHeaderItem(4)
+        item.setText(_translate("MainWindow", "Direction"))
+        item = self.rules_table.horizontalHeaderItem(5)
+        item.setText(_translate("MainWindow", "Protocol"))
         
-        self.RefreshRuleBtn.setText(_translate("MainWindow", "Actualizar"))
-        self.NewRuleBtn.setText(_translate("MainWindow", "Agregar"))
+        self.reload_rules_table.setText(_translate("MainWindow", "Update"))
+        self.new_rule_btn.setText(_translate("MainWindow", "Add"))
 
         #************************************************************
         #************************* TAB PORTS ************************
         #************************************************************
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_Ports), _translate("MainWindow", "Puertos"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_Ports), _translate("MainWindow", "Ports"))
 
-        self.SearchPortBtn.setText(_translate("MainWindow", "Buscar"))
-        self.labelPort.setText(_translate("MainWindow", "Puerto"))
-        self.labelService.setText(_translate("MainWindow", "Servicio"))
-        self.labelProtocol.setText(_translate("MainWindow", "Protocolo"))
+        self.search_port_btn.setText(_translate("MainWindow", "Search"))
+        self.label_port.setText(_translate("MainWindow", "Port"))
+        self.label_service.setText(_translate("MainWindow", "Service"))
+        self.label_protocol.setText(_translate("MainWindow", "Protocol"))
+        self.comboBox_protocol.addItem(_translate("MainWindow", "Any"))
+        self.comboBox_protocol.addItem(_translate("MainWindow", "TCP"))
+        self.comboBox_protocol.addItem(_translate("MainWindow", "UDP"))
 
-        item = self.TablePorts.horizontalHeaderItem(0)
-        item.setText(_translate("MainWindow", "Puerto"))
-        item = self.TablePorts.horizontalHeaderItem(1)
-        item.setText(_translate("MainWindow", "Servicio"))
-        item = self.TablePorts.horizontalHeaderItem(2)
-        item.setText(_translate("MainWindow", "Protocolo"))
-        item = self.TablePorts.horizontalHeaderItem(3)
-        item.setText(_translate("MainWindow", "Descripción"))
-        item = self.TablePorts.horizontalHeaderItem(4)
-        item.setText(_translate("MainWindow", "Referencia"))
+        item = self.ports_table.horizontalHeaderItem(0)
+        item.setText(_translate("MainWindow", "Port"))
+        item = self.ports_table.horizontalHeaderItem(1)
+        item.setText(_translate("MainWindow", "Service"))
+        item = self.ports_table.horizontalHeaderItem(2)
+        item.setText(_translate("MainWindow", "Protocol"))
+        item = self.ports_table.horizontalHeaderItem(3)
+        item.setText(_translate("MainWindow", "Description"))
+        item = self.ports_table.horizontalHeaderItem(4)
+        item.setText(_translate("MainWindow", "Reference"))
 
-        self.PreviousTableBtn.setText(_translate("MainWindow", "Atrás"))
-        self.NextTableBtn.setText(_translate("MainWindow", "Siguiente"))
+        self.previous_table_btn.setText(_translate("MainWindow", "Back"))
+        self.next_table_btn.setText(_translate("MainWindow", "Next"))
 
         #*************************************************************"
         #************************* MENU BAR **************************"
         #*************************************************************"
         
-        self.menuFile.setTitle(_translate("MainWindow", "Archivo"))
-        self.menuEdit.setTitle(_translate("MainWindow", "Editar"))
-        self.menuConfig.setTitle(_translate("MainWindow", "Configuración"))
-        self.menuHelp.setTitle(_translate("MainWindow", "Ayuda"))
+        self.file_menu.setTitle(_translate("MainWindow", "File"))
+        self.edit_menu.setTitle(_translate("MainWindow", "Edit"))
+        self.config_menu.setTitle(_translate("MainWindow", "Configuration"))
+        self.help_menu.setTitle(_translate("MainWindow", "Help"))
 
-        self.action_Save_Scan.setText(_translate("MainWindow", "Guardar Escaneo"))
-        self.action_Save_Rules.setText(_translate("MainWindow", "Guardar Reglas"))
+        self.action_save_scan.setText(_translate("MainWindow", "Save scan"))
+        self.action_save_rules.setText(_translate("MainWindow", "Save rules"))
         
-        self.action_New_Rule.setText(_translate("MainWindow", "Nueva Regla"))
-        self.action_Change_Range.setText(_translate("MainWindow", "Cambiar Rango de Puertos"))
-        self.action_Refresh_Scan.setText(_translate("MainWindow", "Actualizar Escaneo"))
+        self.action_new_rule.setText(_translate("MainWindow", "New rule"))
+        self.action_change_range.setText(_translate("MainWindow", "Change ports range"))
+        self.action_reload_scan.setText(_translate("MainWindow", "Update scan"))
 
-        self.actionLanguage.setText(_translate("MainWindow", "Idioma"))
-        self.actionTheme.setText(_translate("MainWindow", "Tema"))
+        self.action_select_language.setText(_translate("MainWindow", "Language"))
+        self.action_select_theme.setText(_translate("MainWindow", "Theme"))
         
-        self.helpChangeRange.setText(_translate("MainWindow", "Cambiar rango de puertos"))
-        self.helpNewRule.setText(_translate("MainWindow", "Crear nuevas reglas"))
-        self.helpChangeRule.setText(_translate("MainWindow", "Modificar Reglas"))
-        self.helpSearchRule.setText(_translate("MainWindow", "Buscar Reglas"))
-        self.helpSearchPort.setText(_translate("MainWindow", "Buscar Puertos"))
-        self.action_About.setText(_translate("MainWindow", "Acerca de Net Guard"))
+        self.help_change_range.setText(_translate("MainWindow", "Change ports range"))
+        self.help_new_rule.setText(_translate("MainWindow", "Add new rule"))
+        self.help_change_rule.setText(_translate("MainWindow", "modify rule"))
+        self.help_search_rule.setText(_translate("MainWindow", "Search rule"))
+        self.help_search_port.setText(_translate("MainWindow", "Search port"))
+        self.action_About.setText(_translate("MainWindow", "About Net Guard"))
 
     # Method to update the table in the scan tab.
     def updateScanTable(self, mainTable):
         #clear the table and get new values
         mainTable.clearContents()
         mainTable.setRowCount(0)
-        getData = self.getList.scan_active_ports()
+        getData = self.connection_manager.scan_active_ports()
         #insert new values in table
         mainTable.setRowCount(len(getData))
         for row, row_data in enumerate(getData):
@@ -516,20 +515,20 @@ class Ui_MainWindow(object):
         mainTable.repaint()
 
         #get Range of ports
-        getRange = self.getList.get_ports_range()
+        getRange = self.connection_manager.get_ports_range()
         tcpRange = getRange[0].splitlines()[4]
         udpRange = getRange[1].splitlines()[4]
 
         #set Range on labels
-        self.labelRangeValueTCP.setText(tcpRange.split(':')[1])
-        self.labelRangeValueUDP.setText(udpRange.split(':')[1])
+        self.label_valueTCP.setText(tcpRange.split(':')[1])
+        self.label_valueUDP.setText(udpRange.split(':')[1])
 
     # Method to update the table in the rules tab
     def updateRulesTable(self, mainTable):
         # Clear the table and get new values
         mainTable.clearContents()
         mainTable.setRowCount(0)
-        rules = self.getRules.get_all_rules()
+        rules = self.rules_manager.get_all_rules()
         # Insert new values on table
         mainTable.setRowCount(len(rules))
         for i, row in enumerate(rules):
@@ -554,7 +553,7 @@ class Ui_MainWindow(object):
         self.minValue = self.counter.current_value
         self.maxValue = self.counter.current_value + 13
         #get the ports by ID between minimum and maximum value
-        self.newTable = self.updatedTable.get_all_ports(self.minValue, self.maxValue)
+        self.newTable = self.ports_manager.get_all_ports(self.minValue, self.maxValue)
         #clear the table and insert new values
         if self.newTable:
             mainTable.clearContents()
@@ -577,9 +576,9 @@ class Ui_MainWindow(object):
 
     def showSearchRuleTable(self):
         icon = QtWidgets.QMessageBox.Information
-        name = self.lineEditSearchRule.text()
-        profile = self.comboBoxProfileRule.currentText()
-        direction = self.comboBoxDirectionRule.currentText()
+        name = self.lineEdit_search_rule.text()
+        profile = self.comboBox_rule_profile.currentText()
+        direction = self.comboBox_rule_direction.currentText()
         self.InitSearchTable = QtWidgets.QDialog()
 
         translations = {
@@ -595,19 +594,19 @@ class Ui_MainWindow(object):
         self.searchRule = RulesTableCreator()
         self.searchRule.setup_rules_table(self.InitSearchTable, name, translateProfile, translateDirection)
 
-        if self.lineEditSearchRule.text() == '':
+        if self.lineEdit_search_rule.text() == '':
             code = 'Ingrese el nombre de la regla'
             error = 'Debe ingresar el nombre de la regla para poder realizar una búsqueda'
-            self.errorMessage.show_message(code, error, icon)
+            self.messages_manager.show_message(code, error, icon)
         elif self.searchRule.new_table.rowCount() == 0:
             code = 'No se encontraron datos coincidentes'
             error = 'La búsqueda no arrojo ningún dato coincidente con los parámetros ingresados'
-            self.errorMessage.show_message(code, error, icon)
+            self.messages_manager.show_message(code, error, icon)
         else: 
             self.InitSearchTable.exec_()
-        self.lineEditSearchRule.clear()
-        self.comboBoxProfileRule.setCurrentText('Cualquiera')
-        self.comboBoxDirectionRule.setCurrentText('Cualquiera')
+        self.lineEdit_search_rule.clear()
+        self.comboBox_rule_profile.setCurrentText('Cualquiera')
+        self.comboBox_rule_direction.setCurrentText('Cualquiera')
 
 
     # Method to show a table with the searched ports
@@ -615,9 +614,9 @@ class Ui_MainWindow(object):
         #icon for the exception
         icon = QtWidgets.QMessageBox.Information
         #get the values
-        port = self.spinBoxPort.value()
-        service = self.lineEditSearch.text()
-        protocol = self.comboBoxProtocol.currentText()
+        port = self.spinBox_port.value()
+        service = self.lineEdit_search.text()
+        protocol = self.comboBox_protocol.currentText()
 
         #initialize new table with TablePortsCreator
         self.InitSearchTable = QtWidgets.QDialog()
@@ -629,30 +628,30 @@ class Ui_MainWindow(object):
             #port value is´nt registered 
             code = 'Puerto no registrado'
             error = 'El puerto que intenta buscar no se encuentra registrado por la IANA'
-            self.errorMessage.show_message(code, error, icon)
+            self.messages_manager.show_message(code, error, icon)
         elif service == '' and port == 0:
             #empty values of search
             code = 'No se puede realizar la búsqueda'
             error = 'La búsqueda no se puede procesar como la especifico, revise la ayuda para realizar búsquedas'
-            self.errorMessage.show_message(code, error, icon)
+            self.messages_manager.show_message(code, error, icon)
         elif self.TableApp.new_table.rowCount() == 0:
             #data is´nt on the DB
             code = 'No se encontraron datos coincidentes'
             error = 'La búsqueda no arrojó ningún dato coincidente con los parámetros ingresados'
-            self.errorMessage.show_message(code, error, icon)
+            self.messages_manager.show_message(code, error, icon)
         else:
             #show the results
             self.InitSearchTable.exec_()
-        self.lineEditSearch.clear()
-        self.spinBoxPort.setValue(0)
-        self.comboBoxProtocol.setCurrentText('Ambos')
+        self.lineEdit_search.clear()
+        self.spinBox_port.setValue(0)
+        self.comboBox_protocol.setCurrentText('Ambos')
     
     #Method to show a windows with more information
     def showScanTableInfo(self):
         code = 'Función en construcción'
         message = 'Función showScanTableInfo en construcción'
         icon = QtWidgets.QMessageBox.Information
-        self.errorMessage.show_message(code, message, icon)
+        self.messages_manager.show_message(code, message, icon)
 
     def show_new_rule_window(self):
         self.init_rules_dialog = QtWidgets.QDialog()
@@ -665,7 +664,7 @@ class Ui_MainWindow(object):
         code = 'Función en construcción'
         message = 'Función showPortsTableInfo en construcción'
         icon = QtWidgets.QMessageBox.Information
-        self.errorMessage.show_message(code, message, icon)
+        self.messages_manager.show_message(code, message, icon)
 
     # counter to show the next 14 values on the table in the tab ports
     def nextValue(self, mainTable):
