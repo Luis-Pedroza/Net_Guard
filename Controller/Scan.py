@@ -41,14 +41,6 @@ class ScanPorts():
 
     """
     def __init__(self):
-        """
-        Initializes the ScanPorts class.
-
-        Attributes:
-            message (PopUpMessage): A class for displaying pop-up messages.
-            icon (QMessageBox.Icon): An icon for message boxes in case of errors.
-
-        """
         self.message = PopUpMessage()
         self.icon = QMessageBox.Critical
 

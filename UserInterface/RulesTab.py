@@ -58,13 +58,6 @@ class RulesTableCreator(object):
 
     '''
     def __init__(self):
-        '''
-        Initializes the RulesTableCreator class.
-
-        Args:
-            None
-
-        '''
         self.message = PopUpMessage()
         self.rules_connection = FirewallManager()
         self.icon = QtWidgets.QMessageBox.Information

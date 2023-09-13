@@ -42,13 +42,6 @@ class DatabaseConnection():
 
     """
     def __init__(self, db_name: str):
-        """
-        Initializes the Database class.
-
-        Args:
-            db_name (str): The name of the database.
-
-        """
         self.popUp_Message = PopUpMessage()
         self.icon = QMessageBox.Critical
         self.db_name = db_name

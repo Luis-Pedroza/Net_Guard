@@ -41,15 +41,6 @@ class TablePortsCreator(object):
 
     """
     def __init__(self, port: int, protocol: str, service: str):
-        """
-        Initializes the TablePortsCreator class with search parameters.
-
-        Args:
-            port (int): The port number to search for.
-            protocol (str): The protocol (TCP/UDP) to filter the search.
-            service (str): The service name to filter the search.
-
-        """
         self.data_table_ports = GetPortsData()
         self.error_message = PopUpMessage()
         self.port = port

@@ -41,10 +41,6 @@ class GetPortsData():
 
     '''
     def __init__(self):
-        """
-        Initializes the GetPortsData class.
-
-        """
         self.database = DatabaseConnection('Resources/ports.db')
         self.popUp_Message = PopUpMessage()
 

@@ -41,13 +41,6 @@ class PortsRangeWindow(object):
 
     '''
     def __init__(self):
-        '''
-        Initializes the PortsRangeWindow class.
-
-        Args:
-            None
-
-        '''
         super().__init__()
         self.range = ScanPorts()
         self.message = PopUpMessage()
