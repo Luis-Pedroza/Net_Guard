@@ -44,5 +44,3 @@
 - [v1.0.0-rc-w7](https://github.com/Luis-Pedroza/Net_Guard/releases/tag/v1.0.0-rc-W7)
 - [v1.0.0-rc](https://github.com/Luis-Pedroza/Net_Guard/releases/tag/v1.0.0-rc)
 <br><br>
-
-# How to use
