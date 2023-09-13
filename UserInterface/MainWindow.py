@@ -58,7 +58,7 @@ class Ui_MainWindow(object):
         self.scan_table.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.ResizeToContents)
         self.scan_table.setObjectName("scan_table")
         self.scan_table.setColumnCount(6)
-        self.scan_table.cellDoubleClicked.connect(self.showScanTableInfo)
+        self.scan_table.cellDoubleClicked.connect(self.show_scan_table_info)
         self.scan_table.horizontalHeader().sectionClicked.connect(lambda col: self.sort_table(self.scan_table, col))
         
         item = QtWidgets.QTableWidgetItem()
@@ -88,19 +88,19 @@ class Ui_MainWindow(object):
         self.label_valueUDP = QtWidgets.QLabel(self.tab_Scan)
         self.label_valueUDP.setObjectName("label_valueUDP")
 
-        self.updateScanTable(self.scan_table)
+        self.update_scan_table(self.scan_table)
 
         self.port_scan_btn = QtWidgets.QToolButton(self.tab_Scan)
         self.port_scan_btn.setFixedSize(101, 26)
         self.port_scan_btn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.port_scan_btn.setObjectName("port_scan_btn")
-        self.port_scan_btn.clicked.connect(lambda: self.updateScanTable(self.scan_table))
+        self.port_scan_btn.clicked.connect(lambda: self.update_scan_table(self.scan_table))
 
         self.edit_range_btn = QtWidgets.QToolButton(self.tab_Scan)
         self.edit_range_btn.setFixedSize(101, 26)
         self.edit_range_btn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.edit_range_btn.setObjectName("edit_range_btn")
-        self.edit_range_btn.clicked.connect(lambda: self.showPortsRangeWindow())
+        self.edit_range_btn.clicked.connect(lambda: self.show_range_ports_window())
 
         self.scan_table_layout = QtWidgets.QGridLayout(self.tab_Scan)
         self.scan_table_layout.addWidget(self.scan_table, 0, 0, 1, 3)
@@ -146,7 +146,7 @@ class Ui_MainWindow(object):
         self.search_rule_btn.setFixedSize(101, 26)
         self.search_rule_btn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.search_rule_btn.setObjectName("search_rule_btn")
-        self.search_rule_btn.clicked.connect(self.showSearchRuleTable)
+        self.search_rule_btn.clicked.connect(self.show_search_rule_table)
         
 
         #************************** Table ***************************"
@@ -156,7 +156,7 @@ class Ui_MainWindow(object):
         self.rules_table.setObjectName("rules_table")
         self.rules_table.setColumnCount(6)
         self.rules_table.cellDoubleClicked.connect(lambda row: self.get_searched_rules.get_selected_rule(self.rules_table, row))
-        self.rules_table.cellDoubleClicked.connect(lambda: self.updateRulesTable(self.rules_table))
+        self.rules_table.cellDoubleClicked.connect(lambda: self.update_rules_table(self.rules_table))
         self.rules_table.horizontalHeader().sectionClicked.connect(lambda col: self.sort_table(self.rules_table, col))
         
         item = QtWidgets.QTableWidgetItem()
@@ -175,21 +175,21 @@ class Ui_MainWindow(object):
         item = QtWidgets.QTableWidgetItem()
         self.rules_table.setHorizontalHeaderItem(5, item)
 
-        self.updateRulesTable(self.rules_table)
+        self.update_rules_table(self.rules_table)
         
         #************************** Buttons ***************************"
         self.reload_rules_table = QtWidgets.QToolButton(self.tab_Rules)
         self.reload_rules_table.setFixedSize(101, 26)
         self.reload_rules_table.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.reload_rules_table.setObjectName("reload_rules_table")
-        self.reload_rules_table.clicked.connect(lambda: self.updateRulesTable(self.rules_table))
+        self.reload_rules_table.clicked.connect(lambda: self.update_rules_table(self.rules_table))
 
         self.new_rule_btn = QtWidgets.QToolButton(self.tab_Rules)
         self.new_rule_btn.setFixedSize(101, 26)
         self.new_rule_btn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.new_rule_btn.setObjectName("new_rule_btn")
         self.new_rule_btn.clicked.connect(lambda: self.show_new_rule_window())
-        self.new_rule_btn.clicked.connect(lambda: self.updateRulesTable(self.rules_table))
+        self.new_rule_btn.clicked.connect(lambda: self.update_rules_table(self.rules_table))
 
         self.rules_table_layout = QtWidgets.QGridLayout(self.tab_Rules)
         self.rules_table_layout.addWidget(self.label_rule, 0,0)
@@ -237,7 +237,7 @@ class Ui_MainWindow(object):
         self.search_port_btn.setFixedSize(101, 26)
         self.search_port_btn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.search_port_btn.setObjectName("search_port_btn")
-        self.search_port_btn.clicked.connect(self.showSearchPortsTable)
+        self.search_port_btn.clicked.connect(self.show_search_ports_table)
 
         #*************************** TABLE ***************************"
         self.ports_table = QtWidgets.QTableWidget(self.tab_Ports)
@@ -246,7 +246,7 @@ class Ui_MainWindow(object):
         self.ports_table.setObjectName("ports_table")
         self.ports_table.setColumnCount(5)
         self.ports_table.setRowCount(14)
-        self.ports_table.cellDoubleClicked.connect(self.showPortsTableInfo)
+        self.ports_table.cellDoubleClicked.connect(self.show_ports_table_nfo)
 
         item = QtWidgets.QTableWidgetItem()
         self.ports_table.setHorizontalHeaderItem(0, item)
@@ -260,7 +260,7 @@ class Ui_MainWindow(object):
         item = QtWidgets.QTableWidgetItem()
         self.ports_table.setHorizontalHeaderItem(4, item)
 
-        self.updatePortsTable(self.ports_table)
+        self.update_ports_table(self.ports_table)
         
         #************************** BUTTONS **************************"
         self.previous_table_btn = QtWidgets.QToolButton(self.tab_Ports)
@@ -327,11 +327,11 @@ class Ui_MainWindow(object):
         self.action_change_range = QtWidgets.QAction(main_window)
         self.action_change_range.setShortcut('Ctrl+C')
         self.action_change_range.setObjectName("action_change_range")
-        self.action_change_range.triggered.connect(lambda: self.showPortsRangeWindow())
+        self.action_change_range.triggered.connect(lambda: self.show_range_ports_window())
         self.action_reload_scan = QtWidgets.QAction(main_window)
         self.action_reload_scan.setShortcut('Ctrl+E')
         self.action_reload_scan.setObjectName("action_reload_scan")
-        self.action_reload_scan.triggered.connect(lambda: self.updateScanTable(self.scan_table))
+        self.action_reload_scan.triggered.connect(lambda: self.update_scan_table(self.scan_table))
 
         #************************** CONFIG **************************"
         self.action_select_language = QtWidgets.QAction(main_window)
@@ -354,7 +354,7 @@ class Ui_MainWindow(object):
         self.help_search_port.setObjectName("help_search_port")
         self.action_About = QtWidgets.QAction(main_window)
         self.action_About.setObjectName("action_About")
-        self.action_About.triggered.connect(lambda: self.openAbout())
+        self.action_About.triggered.connect(lambda: self.show_window_about())
 
         self.file_menu.addAction(self.action_save_scan)
         self.file_menu.addAction(self.action_save_rules)
@@ -499,7 +499,7 @@ class Ui_MainWindow(object):
         self.action_About.setText(_translate("MainWindow", "About Net Guard"))
 
     # Method to update the table in the scan tab.
-    def updateScanTable(self, mainTable):
+    def update_scan_table(self, mainTable):
         #clear the table and get new values
         mainTable.clearContents()
         mainTable.setRowCount(0)
@@ -523,7 +523,7 @@ class Ui_MainWindow(object):
         self.label_valueUDP.setText(udpRange.split(':')[1])
 
     # Method to update the table in the rules tab
-    def updateRulesTable(self, mainTable):
+    def update_rules_table(self, mainTable):
         # Clear the table and get new values
         mainTable.clearContents()
         mainTable.setRowCount(0)
@@ -547,7 +547,7 @@ class Ui_MainWindow(object):
         mainTable.repaint()
         
     # Method to update the table in the ports tab    
-    def updatePortsTable(self, mainTable):
+    def update_ports_table(self, mainTable):
         # initialize maximum and minimum value of the counter to show only 14 values
         self.minValue = self.counter.current_value
         self.maxValue = self.counter.current_value + 13
@@ -567,13 +567,13 @@ class Ui_MainWindow(object):
         table.sortItems(column, QtCore.Qt.AscendingOrder)
 
     # Method to initialize the change of range window
-    def showPortsRangeWindow(self):
+    def show_range_ports_window(self):
         self.initRangeWindow = QtWidgets.QDialog()
         self.RangeWindow = PortsRangeWindow()
         self.RangeWindow.setUp_window(self.initRangeWindow)
         self.initRangeWindow.exec_()
 
-    def showSearchRuleTable(self):
+    def show_search_rule_table(self):
         icon = QtWidgets.QMessageBox.Information
         name = self.lineEdit_search_rule.text()
         profile = self.comboBox_rule_profile.currentText()
@@ -599,7 +599,7 @@ class Ui_MainWindow(object):
 
 
     # Method to show a table with the searched ports
-    def showSearchPortsTable(self):
+    def show_search_ports_table(self):
         #icon for the exception
         icon = QtWidgets.QMessageBox.Information
         #get the values
@@ -636,7 +636,7 @@ class Ui_MainWindow(object):
         self.comboBox_protocol.setCurrentIndex(0)
     
     #Method to show a windows with more information
-    def showScanTableInfo(self):
+    def show_scan_table_info(self):
         code = 'This does not work'
         message = 'still in develop'
         icon = QtWidgets.QMessageBox.Information
@@ -649,7 +649,7 @@ class Ui_MainWindow(object):
         self.init_rules_dialog.exec_()
 
     # Method to show a windows with more information
-    def showPortsTableInfo(self):
+    def show_ports_table_nfo(self):
         code = 'This does not work'
         message = 'still in develop'
         icon = QtWidgets.QMessageBox.Information
@@ -658,13 +658,13 @@ class Ui_MainWindow(object):
     # counter to show the next 14 values on the table in the tab ports
     def nextValue(self, mainTable):
         self.counter.next()
-        self.updatePortsTable(mainTable)
+        self.update_ports_table(mainTable)
     # counter to show the previous 14 values on the table in the tab ports
     def previousValue(self, mainTable):
         self.counter.previous()
-        self.updatePortsTable(mainTable)
+        self.update_ports_table(mainTable)
     
-    def openAbout(self):
+    def show_window_about(self):
         about_dialog = QtWidgets.QDialog()
         ui_about = UiDialog()
         ui_about.setupUi(about_dialog)
