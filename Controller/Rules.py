@@ -203,11 +203,11 @@ class FirewallManager():
         """
         rules = self.firewall.Rules
         rules_list = []
-        if direction == 'any':
+        if direction == 'Any':
             direction = None
         else:
             direction = 1 if direction == 'Inbound' else 2
-        profile = None if self.get_profiles(profile) == 7 or profile == 'any' else self.get_profiles(profile)
+        profile = None if self.get_profiles(profile) == 7 or profile == 'Any' else self.get_profiles(profile)
         try:
             for rule in rules:
                 if rule.Name.lower() == name.lower() and \

@@ -94,7 +94,7 @@ class GetPortsData():
             data = ports_data.get_search(80, 'TCP', 'http')
         """
         # if port is 0 then search by service and show both protocols (TCP & UDP)
-        if protocol == 'ambos' and port == 0:
+        if protocol == 'both' and port == 0:
             try:
                 query = 'SELECT * FROM Ports_Info WHERE Service LIKE ?'
                 params = ('%'+service+'%',)
@@ -106,7 +106,7 @@ class GetPortsData():
                 self.popUp_Message.show_message('UNABLE_TO_SEARCH_Both_Service', exception, QMessageBox.Critical)
                 return None
         # if port isn't 0 then search by port and show both protocols (TCP & UDP)
-        elif protocol == 'ambos' and port != 0:
+        elif protocol == 'both' and port != 0:
             try:
                 query = 'SELECT * FROM Ports_Info WHERE Port == ?'
                 params = (port,)

@@ -142,7 +142,6 @@ class Ui_MainWindow(object):
         self.comboBox_rule_direction.addItem('Any')
         self.comboBox_rule_direction.addItem('Inbound')
         self.comboBox_rule_direction.addItem('Outbound')
-        self.comboBox_rule_direction.setCurrentText('Any')
         
         self.search_rule_btn.setFixedSize(101, 26)
         self.search_rule_btn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
@@ -455,7 +454,7 @@ class Ui_MainWindow(object):
         self.label_port.setText(_translate("MainWindow", "Port"))
         self.label_service.setText(_translate("MainWindow", "Service"))
         self.label_protocol.setText(_translate("MainWindow", "Protocol"))
-        self.comboBox_protocol.addItem(_translate("MainWindow", "Any"))
+        self.comboBox_protocol.addItem(_translate("MainWindow", "Both"))
         self.comboBox_protocol.addItem(_translate("MainWindow", "TCP"))
         self.comboBox_protocol.addItem(_translate("MainWindow", "UDP"))
 
@@ -581,18 +580,8 @@ class Ui_MainWindow(object):
         direction = self.comboBox_rule_direction.currentText()
         self.InitSearchTable = QtWidgets.QDialog()
 
-        translations = {
-        "Cualquiera": "any",
-        "Publico": "public",
-        "Privado": "private",
-        "Dominio": "domain",
-        "Entrada": "in",
-        "Salida": "out"
-        }
-        translateProfile = translations.get(profile, profile)
-        translateDirection = translations.get(direction, direction)
         self.searchRule = RulesTableCreator()
-        self.searchRule.setup_rules_table(self.InitSearchTable, name, translateProfile, translateDirection)
+        self.searchRule.setup_rules_table(self.InitSearchTable, name, profile, direction)
 
         if self.lineEdit_search_rule.text() == '':
             code = 'Ingrese el nombre de la regla'
@@ -605,8 +594,8 @@ class Ui_MainWindow(object):
         else: 
             self.InitSearchTable.exec_()
         self.lineEdit_search_rule.clear()
-        self.comboBox_rule_profile.setCurrentText('Cualquiera')
-        self.comboBox_rule_direction.setCurrentText('Cualquiera')
+        self.comboBox_rule_profile.setCurrentText('Any')
+        self.comboBox_rule_direction.setCurrentText('Any')
 
 
     # Method to show a table with the searched ports
@@ -644,7 +633,7 @@ class Ui_MainWindow(object):
             self.InitSearchTable.exec_()
         self.lineEdit_search.clear()
         self.spinBox_port.setValue(0)
-        self.comboBox_protocol.setCurrentText('Ambos')
+        self.comboBox_protocol.setCurrentIndex(0)
     
     #Method to show a windows with more information
     def showScanTableInfo(self):
