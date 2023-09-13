@@ -102,4 +102,4 @@ class UiDialog(object):
         _translate = QtCore.QCoreApplication.translate
         Dialog.setWindowTitle(_translate("Dialog", "Net Guard"))
         self.about_text.setPlainText(_translate("Dialog", self.text_about))
-        self.close_window.setText(_translate("Dialog", "Aceptar"))
+        self.close_window.setText(_translate("Dialog", "Ok"))

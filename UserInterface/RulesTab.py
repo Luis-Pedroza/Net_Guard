@@ -85,7 +85,7 @@ class RulesTableCreator(object):
         '''
         main_window.setObjectName("main_window")
         main_window.setFixedSize(760, 350)
-        main_window.setWindowTitle("Búsqueda")
+        main_window.setWindowTitle("Search")
         main_window.setWindowIcon(QtGui.QIcon("Resources/icon.ico"))
 
         rules_data_list = self.rules_connection.get_searched_rule(name, profile, direction)
@@ -178,7 +178,7 @@ class RulesTableCreator(object):
         self.label_action = QtWidgets.QLabel(Form)
         self.label_action.setGeometry(QtCore.QRect(30, 244, 47, 13))
         self.label_action.setObjectName("labelActionPort")
-        self.label_action.setText("Acción")
+        self.label_action.setText("Action")
         self.comboBox_action = QtWidgets.QComboBox(Form)
         self.comboBox_action.setGeometry(QtCore.QRect(80, 240, 110, 22))
         self.comboBox_action.setObjectName("comboBoxActionPort")
@@ -353,8 +353,8 @@ class RulesTableCreator(object):
         if rule_data["name"] != '':
             self.rules_connection.add_new_rule(rule_data)
         else:
-            code = 'specify the name of the rule'
-            error = 'To create a new rule you must specify at least the name of the rule.\n Check help to create a new rule'
+            code = 'Specify the name of the rule'
+            error = 'To create a new rule you must specify at least the name of the rule.\nCheck help to create a new rule'
             self.message.show_message(code, error, self.icon)
 
     def get_selected_rule(self, table: QtWidgets.QTableWidget, row: int):
@@ -453,7 +453,7 @@ class RulesTableCreator(object):
             self.retranslateUi(form)
             QtCore.QMetaObject.connectSlotsByName(form)
         except Exception as exception:
-            code = 'Unable to axes the selected rule'
+            code = 'Unable to access the selected rule'
             self.message.show_message(code, exception, self.icon)
 
     def edit_selected_rule(self, rule: list):

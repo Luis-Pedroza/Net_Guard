@@ -584,12 +584,12 @@ class Ui_MainWindow(object):
         self.searchRule.setup_rules_table(self.InitSearchTable, name, profile, direction)
 
         if self.lineEdit_search_rule.text() == '':
-            code = 'Ingrese el nombre de la regla'
-            error = 'Debe ingresar el nombre de la regla para poder realizar una búsqueda'
+            code = 'Must specify the name of the rule'
+            error = 'You must enter the name of the rule to be able to perform a search'
             self.messages_manager.show_message(code, error, icon)
         elif self.searchRule.new_table.rowCount() == 0:
-            code = 'No se encontraron datos coincidentes'
-            error = 'La búsqueda no arrojo ningún dato coincidente con los parámetros ingresados'
+            code = 'No matching data found'
+            error = 'The search did not return any data matching the parameters'
             self.messages_manager.show_message(code, error, icon)
         else: 
             self.InitSearchTable.exec_()
@@ -615,18 +615,18 @@ class Ui_MainWindow(object):
         #exceptions of the search
         if port >= 49152:
             #port value is´nt registered 
-            code = 'Puerto no registrado'
-            error = 'El puerto que intenta buscar no se encuentra registrado por la IANA'
+            code = 'Unregistered port'
+            error = 'The port you are trying to search for is not registered by the IANA'
             self.messages_manager.show_message(code, error, icon)
         elif service == '' and port == 0:
             #empty values of search
-            code = 'No se puede realizar la búsqueda'
-            error = 'La búsqueda no se puede procesar como la especifico, revise la ayuda para realizar búsquedas'
+            code = 'Cannot perform search'
+            error = 'The search cannot be processed as specified, please review the search help'
             self.messages_manager.show_message(code, error, icon)
         elif self.TableApp.new_table.rowCount() == 0:
             #data is´nt on the DB
-            code = 'No se encontraron datos coincidentes'
-            error = 'La búsqueda no arrojó ningún dato coincidente con los parámetros ingresados'
+            code = 'No matching data found'
+            error = 'The search did not return any data matching the parameters'
             self.messages_manager.show_message(code, error, icon)
         else:
             #show the results
@@ -637,8 +637,8 @@ class Ui_MainWindow(object):
     
     #Method to show a windows with more information
     def showScanTableInfo(self):
-        code = 'Función en construcción'
-        message = 'Función showScanTableInfo en construcción'
+        code = 'This does not work'
+        message = 'still in develop'
         icon = QtWidgets.QMessageBox.Information
         self.messages_manager.show_message(code, message, icon)
 
@@ -650,8 +650,8 @@ class Ui_MainWindow(object):
 
     # Method to show a windows with more information
     def showPortsTableInfo(self):
-        code = 'Función en construcción'
-        message = 'Función showPortsTableInfo en construcción'
+        code = 'This does not work'
+        message = 'still in develop'
         icon = QtWidgets.QMessageBox.Information
         self.messages_manager.show_message(code, message, icon)
 

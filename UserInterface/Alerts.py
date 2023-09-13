@@ -51,7 +51,7 @@ class PopUpMessage():
 
         """
         mainMessage = QMessageBox()
-        mainMessage.setWindowTitle('AVISO')
+        mainMessage.setWindowTitle('Notice')
         mainMessage.setText(code)
         mainMessage.setInformativeText(str(error))
         mainMessage.setIcon(icon)
