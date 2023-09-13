@@ -12,8 +12,8 @@
 # ***************************************************
 
 from PyQt5 import QtCore, QtWidgets, QtGui
-from Controller_Module.Rules import FirewallManager
-from UI_Module.UI_Message import PopUpMessage
+from Controller.Rules import FirewallManager
+from UserInterface.Alerts import PopUpMessage
 
 
 class RulesTableCreator(object):

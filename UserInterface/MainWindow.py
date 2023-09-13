@@ -15,15 +15,15 @@
 # ***************************************************
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-from Controller_Module.Ports import GetPortsData, TableCounter
-from Controller_Module.Rules import FirewallManager
-from Controller_Module.Report import ReportPDF
-from Controller_Module.Scan import ScanPorts
-from .UI_Rules_Tab import RulesTableCreator
-from .UI_Ports_Tab import TablePortsCreator
-from .UI_Scan_Tab import PortsRangeWindow
-from .UI_Message import PopUpMessage
-from .UI_About import UiDialog
+from Controller.Ports import GetPortsData, TableCounter
+from Controller.Rules import FirewallManager
+from Controller.Report import ReportPDF
+from Controller.Scan import ScanPorts
+from .RulesTab import RulesTableCreator
+from .PortsTab import TablePortsCreator
+from .ScanTab import PortsRangeWindow
+from .Alerts import PopUpMessage
+from .About import UiDialog
 
 class Ui_MainWindow(object):     
     def setupUi(self, MainWindow):  
@@ -635,7 +635,7 @@ class Ui_MainWindow(object):
             code = 'No se puede realizar la búsqueda'
             error = 'La búsqueda no se puede procesar como la especifico, revise la ayuda para realizar búsquedas'
             self.errorMessage.show_message(code, error, icon)
-        elif self.TableApp.newTable.rowCount() == 0:
+        elif self.TableApp.new_table.rowCount() == 0:
             #data is´nt on the DB
             code = 'No se encontraron datos coincidentes'
             error = 'La búsqueda no arrojó ningún dato coincidente con los parámetros ingresados'

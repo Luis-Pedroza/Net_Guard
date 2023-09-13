@@ -14,8 +14,8 @@
 # ***************************************************
 
 from PyQt5 import QtCore, QtWidgets, QtGui
-from Controller_Module.Ports import GetPortsData
-from UI_Module.UI_Message import PopUpMessage
+from Controller.Ports import GetPortsData
+from UserInterface.Alerts import PopUpMessage
 
 
 class TablePortsCreator(object):

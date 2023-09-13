@@ -14,7 +14,7 @@
 
 import sqlite3
 from PyQt5.QtWidgets import QMessageBox
-from UI_Module.UI_Message import PopUpMessage
+from UserInterface.Alerts import PopUpMessage
 
 
 class DatabaseConnection():

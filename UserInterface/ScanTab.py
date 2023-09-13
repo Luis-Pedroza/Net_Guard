@@ -13,8 +13,8 @@
 # ***************************************************
 
 from PyQt5 import QtCore, QtWidgets, QtGui
-from Controller_Module.Scan import ScanPorts
-from UI_Module.UI_Message import PopUpMessage
+from Controller.Scan import ScanPorts
+from UserInterface.Alerts import PopUpMessage
 
 
 class PortsRangeWindow(object):

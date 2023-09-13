@@ -17,8 +17,8 @@
 # ***************************************************
 
 from PyQt5.QtWidgets import QMessageBox
-from UI_Module.UI_Message import PopUpMessage
-from DB_Module.Connection import DatabaseConnection
+from UserInterface.Alerts import PopUpMessage
+from Database.Connection import DatabaseConnection
 
 
 class GetPortsData():

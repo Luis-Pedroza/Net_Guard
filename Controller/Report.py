@@ -20,7 +20,7 @@ from reportlab.pdfgen import canvas
 from PyQt5.QtWidgets import QMessageBox, QTableWidget
 import datetime
 import os
-from UI_Module.UI_Message import PopUpMessage
+from UserInterface.Alerts import PopUpMessage
 
 
 class ReportPDF():

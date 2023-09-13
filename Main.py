@@ -24,7 +24,7 @@
 
 import sys
 from PyQt5 import QtWidgets
-from UI_Module.MainWindow import Ui_MainWindow
+from UserInterface.MainWindow import Ui_MainWindow
 
 
 class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
