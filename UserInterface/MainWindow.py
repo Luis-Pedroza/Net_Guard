@@ -523,10 +523,15 @@ class Ui_MainWindow(object):
 
         self.label_rule.setText(_translate("MainWindow", "Name"))
         self.label_profile.setText(_translate("MainWindow", "Profile"))
+
         self.comboBox_rule_profile.addItem(_translate("MainWindow", "Any"))
-        self.comboBox_rule_profile.addItem(_translate("MainWindow", "Public"))
-        self.comboBox_rule_profile.addItem(_translate("MainWindow", "Private"))
         self.comboBox_rule_profile.addItem(_translate("MainWindow", "Domain"))
+        self.comboBox_rule_profile.addItem(_translate("MainWindow", "Private"))
+        self.comboBox_rule_profile.addItem(_translate("MainWindow", "Domain & Private"))
+        self.comboBox_rule_profile.addItem(_translate("MainWindow", "Public"))
+        self.comboBox_rule_profile.addItem(_translate("MainWindow", "Domain & Public"))
+        self.comboBox_rule_profile.addItem(_translate("MainWindow", "Private & Public"))
+
         self.label_direction.setText(_translate("MainWindow", "Direction"))
         self.comboBox_rule_direction.addItem(_translate("MainWindow", "Any"))
         self.comboBox_rule_direction.addItem(_translate("MainWindow", "Inbound"))

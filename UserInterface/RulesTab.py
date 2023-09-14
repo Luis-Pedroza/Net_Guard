@@ -83,11 +83,7 @@ class RulesTableCreator(object):
             table_creator.setup_rules_table(main_window, "MyRule", "Domain", "Inbound")
 
         '''
-        profile_mapping = {0: 'Any', 1: 'Public', 2: 'Private', 3: 'Domain'}
-        direction_mapping = {0: 'Any', 1: 'Inbound', 2: 'Outbound'}
-
-        profile = profile_mapping.get(profile, 'Any')
-        direction = direction_mapping.get(direction, 'Any')
+        profile = 7 if profile == 0 else profile
 
         main_window.setObjectName("main_window")
         main_window.setFixedSize(760, 350)
@@ -385,11 +381,9 @@ class RulesTableCreator(object):
         new_form = QtWidgets.QDialog()
         name = table.item(row, 0)
         name = name.text()
-        profile = table.item(row, 2)
-        profile = profile.text()
-        direction = table.item(row, 4)
-        direction = direction.text()
-
+        profile = table.item(row, 2).text()
+        profile = self.rules_connection.get_profiles(profile)
+        direction = 1 if table.item(row, 4).text() == 'Inbound' else 2
         search = self.rules_connection.get_searched_rule(name, profile, direction)
         self.init_rule_window(new_form, True, search)
         new_form.exec_()

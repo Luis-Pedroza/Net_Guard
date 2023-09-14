@@ -172,7 +172,7 @@ class FirewallManager():
         except Exception as exception:
             self.message.show_message('UNABLE_TO_EXECUTE_get_all_rules', exception, self.iconFail)
 
-    def get_searched_rule(self, name: str, profile: str = None, direction: str = None) -> list[list]:
+    def get_searched_rule(self, name: str, profile: int = None, direction: int = None) -> list[list]:
         """
         Searches for firewall rules based on the provided parameters and returns a list of matching rules.
 
@@ -203,11 +203,9 @@ class FirewallManager():
         """
         rules = self.firewall.Rules
         rules_list = []
-        if direction == 'Any':
-            direction = None
-        else:
-            direction = 1 if direction == 'Inbound' else 2
-        profile = None if self.get_profiles(profile) == 7 or profile == 'Any' else self.get_profiles(profile)
+        
+        direction = None if direction == 0 else direction
+        profile = None if profile == 7 else profile
         try:
             for rule in rules:
                 if rule.Name.lower() == name.lower() and \
