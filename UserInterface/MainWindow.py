@@ -590,6 +590,24 @@ class Ui_MainWindow(object):
         self.help_search_port.setText(_translate("MainWindow", "Search port"))
         self.action_About.setText(_translate("MainWindow", "About Net Guard"))
 
+        # *************************************************************"
+        # ************************* EXCEPTIONS **************************"
+        # *************************************************************"
+        self.rule_name_missing_message = _translate("MainWindow", "Must specify the name of the rule")
+        self.rule_name_missing_description = _translate("MainWindow", "You must enter the name of the rule to be able to perform a search")
+
+        self.no_matching_data_message = _translate("MainWindow", "No matching data found")
+        self.no_matching_data_description = _translate("MainWindow", "The search did not return any data matching the parameters")
+
+        self.unregistered_port_message = _translate("MainWindow", "Unregistered port")
+        self.unregistered_port_description = _translate("MainWindow", "The port you are trying to search for is not registered by the IANA")
+
+        self.invalid_search_message = _translate("MainWindow", "Cannot perform search")
+        self.invalid_search_description = _translate("MainWindow", "The search cannot be processed as specified, please review the search help")
+
+        self.port_not_found_message = _translate("MainWindow", "No matching data found")
+        self.port_not_found_description = _translate("MainWindow", "The search did not return any data matching the parameters")
+
     def update_scan_table(self, mainTable: QtWidgets.QTableWidget):
         '''
         Updates the table in the "Scan" tab with scan data.
@@ -763,18 +781,14 @@ class Ui_MainWindow(object):
         self.searchRule.setup_rules_table(self.InitSearchTable, name, profile, direction)
 
         if self.lineEdit_search_rule.text() == '':
-            code = 'Must specify the name of the rule'
-            error = 'You must enter the name of the rule to be able to perform a search'
-            self.messages_manager.show_message(code, error, icon)
+            self.messages_manager.show_message(self.rule_name_missing_message, self.rule_name_missing_description, icon)
         elif self.searchRule.new_table.rowCount() == 0:
-            code = 'No matching data found'
-            error = 'The search did not return any data matching the parameters'
-            self.messages_manager.show_message(code, error, icon)
+            self.messages_manager.show_message(self.no_matching_data_message, self.no_matching_data_description, icon)
         else:
             self.InitSearchTable.exec_()
         self.lineEdit_search_rule.clear()
-        self.comboBox_rule_profile.setCurrentText('Any')
-        self.comboBox_rule_direction.setCurrentText('Any')
+        self.comboBox_rule_profile.setCurrentIndex(0)
+        self.comboBox_rule_direction.setCurrentIndex(0)
 
     def show_search_ports_table(self):
         '''
@@ -799,24 +813,18 @@ class Ui_MainWindow(object):
         service = self.lineEdit_search.text()
         protocol = self.comboBox_protocol.currentText()
 
-        self.InitSearchTable = QtWidgets.QDialog()
-        self.TableApp = TablePortsCreator(port, protocol, service)
-        self.TableApp.setup_table(self.InitSearchTable)
-
-        if port >= 49152:
-            code = 'Unregistered port'
-            error = 'The port you are trying to search for is not registered by the IANA'
-            self.messages_manager.show_message(code, error, icon)
-        elif service == '' and port == 0:
-            code = 'Cannot perform search'
-            error = 'The search cannot be processed as specified, please review the search help'
-            self.messages_manager.show_message(code, error, icon)
-        elif self.TableApp.new_table.rowCount() == 0:
-            code = 'No matching data found'
-            error = 'The search did not return any data matching the parameters'
-            self.messages_manager.show_message(code, error, icon)
+        if service == '' and port == 0:
+            self.messages_manager.show_message(self.invalid_search_message, self.invalid_search_description, icon)
+        elif port >= 49152:
+            self.messages_manager.show_message(self.unregistered_port_message, self.unregistered_port_description, icon)
         else:
-            self.InitSearchTable.exec_()
+            self.InitSearchTable = QtWidgets.QDialog()
+            self.TableApp = TablePortsCreator(port, protocol, service)
+            self.TableApp.setup_table(self.InitSearchTable)        
+            if self.TableApp.new_table.rowCount() == 0:
+                self.messages_manager.show_message(self.port_not_found_message, self.port_not_found_description, icon)
+            else:
+                self.InitSearchTable.exec_()
         self.lineEdit_search.clear()
         self.spinBox_port.setValue(0)
         self.comboBox_protocol.setCurrentIndex(0)
