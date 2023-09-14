@@ -1,12 +1,10 @@
-Net Guard es un software desarrollado para monitorear y controlar las conexiones del equipo.
+Net Guard is a Python-based desktop application.
 
-Net Guard es una interfaz gráfica intuitiva, permite al usuario visualizar y controlar las conexiones hechas mediante puertos TCP y UDP.
-Ofrece funciones como el escaneo de puertos, modificación del rango dinámico de puertos, control de reglas del firewall y mostrar información acerca de las confecciones establecidas, ademas, tiene implementada una base de datos con información sobre los puertos.
+It allows users to visualize and manage connections made through TCP and UDP ports.
+It offers features such as port scanning, dynamic port range modification, firewall rule control, and detailed information display about established connections, additionally, a database is implemented to store ports information. 
 
-El objetivo principal de Net Guard es proveer al usuario mayor control y seguridad sobre su equipo, permitiéndole poder realizar decisiones mejor informadas sobre las conexiones realizadas por su equipo.
+The main objective of NetGuard is to provide users with increased control and security over their network, enabling them to make informed decisions regarding incoming and outgoing connections on their computer.
 
-Net Guard es un software open source distribuido con GNU GENERAL PUBLIC LICENSE
+The Net Guard application is a comprehensive network management tool designed to provide users with control and information about their network settings and activity.
 
-Net Guard fue desarrollado por Luis Pedroza como proyecto de titulación.
-
-Para conocer más visita:
+For more, visit:
