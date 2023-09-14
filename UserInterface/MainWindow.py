@@ -478,16 +478,16 @@ class Ui_MainWindow(object):
             ui.retranslateUi(main_window)
 
         '''
-        # self.translator = QtCore.QTranslator()
-        # self.translator.load("Resources/lan/language_en.qm")
-        # QtCore.QCoreApplication.installTranslator(self.translator)
+        self.translator = QtCore.QTranslator()
+        self.translator.load("Resources/lan/MainWindow_es.qm")
+        QtCore.QCoreApplication.installTranslator(self.translator)
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "Net Guard"))
 
         # ************************************************************
         # ************************* TAB SCAN *************************
         # ************************************************************
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_Scan), _translate("main_window", "Scan"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_Scan), _translate("MainWindow", "Scan"))
 
         item = self.scan_table.horizontalHeaderItem(0)
         item.setText(_translate("MainWindow", "Protocol"))
@@ -585,7 +585,7 @@ class Ui_MainWindow(object):
 
         self.help_change_range.setText(_translate("MainWindow", "Change ports range"))
         self.help_new_rule.setText(_translate("MainWindow", "Add new rule"))
-        self.help_change_rule.setText(_translate("MainWindow", "modify rule"))
+        self.help_change_rule.setText(_translate("MainWindow", "Edit rule"))
         self.help_search_rule.setText(_translate("MainWindow", "Search rule"))
         self.help_search_port.setText(_translate("MainWindow", "Search port"))
         self.action_About.setText(_translate("MainWindow", "About Net Guard"))
