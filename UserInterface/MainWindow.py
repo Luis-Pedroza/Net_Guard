@@ -406,12 +406,19 @@ class Ui_MainWindow(object):
         self.action_reload_scan.triggered.connect(lambda: self.update_scan_table(self.scan_table))
 
         # ************************** CONFIG **************************"
-        self.action_select_language = QtWidgets.QAction(main_window)
-        self.action_select_language.setObjectName("action_select_language")
-        self.action_select_language.setShortcut('Ctrl+L')
-        self.action_select_theme = QtWidgets.QAction(main_window)
-        self.action_select_theme.setObjectName("action_select_theme")
-        self.action_select_theme.setShortcut('Ctrl+T')
+        self.menu_select_language = QtWidgets.QMenu(self.menu_bar)
+        self.menu_select_language.setObjectName("menu_select_language")
+        self.action_select_Spanish = QtWidgets.QAction(self.menu_select_language)
+        self.action_select_Spanish.setObjectName("action_select_Spanish")
+        self.action_select_english = QtWidgets.QAction(self.menu_select_language)
+        self.action_select_english.setObjectName("action_select_english")
+
+        self.menu_select_theme = QtWidgets.QMenu(self.menu_bar)
+        self.menu_select_theme.setObjectName("menu_select_theme")
+        self.action_select_dark = QtWidgets.QAction(self.menu_select_theme)
+        self.action_select_dark.setObjectName("action_select_dark")
+        self.action_select_light = QtWidgets.QAction(self.menu_select_theme)
+        self.action_select_light.setObjectName("action_select_light")
 
         # ************************** HELP **************************"
         self.help_change_range = QtWidgets.QAction(main_window)
@@ -436,8 +443,12 @@ class Ui_MainWindow(object):
         self.edit_menu.addAction(self.action_change_range)
         self.edit_menu.addAction(self.action_reload_scan)
 
-        self.config_menu.addAction(self.action_select_language)
-        self.config_menu.addAction(self.action_select_theme)
+        self.config_menu.addMenu(self.menu_select_language)
+        self.menu_select_language.addAction(self.action_select_Spanish)
+        self.menu_select_language.addAction(self.action_select_english)
+        self.config_menu.addMenu(self.menu_select_theme)
+        self.menu_select_theme.addAction(self.action_select_dark)
+        self.menu_select_theme.addAction(self.action_select_light)
 
         self.help_menu.addAction(self.help_change_range)
         self.help_menu.addAction(self.help_new_rule)
@@ -580,8 +591,12 @@ class Ui_MainWindow(object):
         self.action_change_range.setText(_translate("MainWindow", "Change ports range"))
         self.action_reload_scan.setText(_translate("MainWindow", "Update scan"))
 
-        self.action_select_language.setText(_translate("MainWindow", "Language"))
-        self.action_select_theme.setText(_translate("MainWindow", "Theme"))
+        self.menu_select_language.setTitle(_translate("MainWindow", "Language"))
+        self.action_select_Spanish.setText(_translate("MainWindow", "Spanish"))
+        self.action_select_english.setText(_translate("MainWindow", "English"))
+        self.menu_select_theme.setTitle(_translate("MainWindow", "Theme"))
+        self.action_select_dark.setText(_translate("MainWindow", "Dark"))
+        self.action_select_light.setText(_translate("MainWindow", "Light"))
 
         self.help_change_range.setText(_translate("MainWindow", "Change ports range"))
         self.help_new_rule.setText(_translate("MainWindow", "Add new rule"))
