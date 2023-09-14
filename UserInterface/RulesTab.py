@@ -62,7 +62,7 @@ class RulesTableCreator(object):
         self.rules_connection = FirewallManager()
         self.icon = QtWidgets.QMessageBox.Information
 
-    def setup_rules_table(self, main_window: QtWidgets.QMainWindow, name: str, profile: str, direction: str):
+    def setup_rules_table(self, main_window: QtWidgets.QMainWindow, name: str, profile: int, direction: int):
         '''
         Set up the table to display firewall rules information based on search criteria.
 
@@ -83,6 +83,12 @@ class RulesTableCreator(object):
             table_creator.setup_rules_table(main_window, "MyRule", "Domain", "Inbound")
 
         '''
+        profile_mapping = {0: 'Any', 1: 'Public', 2: 'Private', 3: 'Domain'}
+        direction_mapping = {0: 'Any', 1: 'Inbound', 2: 'Outbound'}
+
+        profile = profile_mapping.get(profile, 'Any')
+        direction = direction_mapping.get(direction, 'Any')
+
         main_window.setObjectName("main_window")
         main_window.setFixedSize(760, 350)
         main_window.setWindowTitle("Search")

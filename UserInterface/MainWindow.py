@@ -773,8 +773,8 @@ class Ui_MainWindow(object):
         '''
         icon = QtWidgets.QMessageBox.Information
         name = self.lineEdit_search_rule.text()
-        profile = self.comboBox_rule_profile.currentText()
-        direction = self.comboBox_rule_direction.currentText()
+        profile = self.comboBox_rule_profile.currentIndex()
+        direction = self.comboBox_rule_direction.currentIndex()
         self.InitSearchTable = QtWidgets.QDialog()
 
         self.searchRule = RulesTableCreator()
