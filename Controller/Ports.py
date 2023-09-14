@@ -94,7 +94,7 @@ class GetPortsData():
             data = ports_data.get_search(80, 'TCP', 'http')
         """
         # if port is 0 then search by service and show both protocols (TCP & UDP)
-        if protocol == 'both' and port == 0:
+        if protocol == 0 and port == 0:
             try:
                 query = 'SELECT * FROM Ports_Info WHERE Service LIKE ?'
                 params = ('%'+service+'%',)
@@ -106,7 +106,7 @@ class GetPortsData():
                 self.popUp_Message.show_message('UNABLE_TO_SEARCH_Both_Service', exception, QMessageBox.Critical)
                 return None
         # if port isn't 0 then search by port and show both protocols (TCP & UDP)
-        elif protocol == 'both' and port != 0:
+        elif protocol == 0 and port != 0:
             try:
                 query = 'SELECT * FROM Ports_Info WHERE Port == ?'
                 params = (port,)
@@ -119,11 +119,15 @@ class GetPortsData():
                 return None
         # if protocol isn't both specify the protocol
         else:
+            if protocol == 1:
+                str_protocol = 'tcp'
+            else:
+                str_protocol = 'udp'
             # if port is 0  then search by service and specify the protocol
             if port == 0:
                 try:
                     query = 'SELECT * FROM Ports_Info WHERE Service LIKE ? AND Protocol == ?'
-                    params = ('%'+service+'%', protocol)
+                    params = ('%'+service+'%', str_protocol)
                     self.database.connect()
                     table = self.database.query(query, params)
                     self.database.disconnect()
@@ -135,7 +139,7 @@ class GetPortsData():
             else:
                 try:
                     query = 'SELECT * FROM Ports_Info WHERE Port == ? AND Protocol == ?'
-                    params = (port, protocol)
+                    params = (port, str_protocol)
                     self.database.connect()
                     table = self.database.query(query, params)
                     self.database.disconnect()

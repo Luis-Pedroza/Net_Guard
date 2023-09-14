@@ -216,9 +216,6 @@ class Ui_MainWindow(object):
         self.label_direction.setObjectName("label_direction")
         self.comboBox_rule_direction = QtWidgets.QComboBox(self.tab_Rules)
         self.comboBox_rule_direction.setObjectName("comboBox_rule_direction")
-        self.comboBox_rule_direction.addItem('Any')
-        self.comboBox_rule_direction.addItem('Inbound')
-        self.comboBox_rule_direction.addItem('Outbound')
 
         self.search_rule_btn.setFixedSize(101, 26)
         self.search_rule_btn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
@@ -515,12 +512,15 @@ class Ui_MainWindow(object):
 
         self.label_rule.setText(_translate("MainWindow", "Name"))
         self.label_profile.setText(_translate("MainWindow", "Profile"))
+        self.comboBox_rule_profile.addItem(_translate("MainWindow", "Any"))
+        self.comboBox_rule_profile.addItem(_translate("MainWindow", "Public"))
+        self.comboBox_rule_profile.addItem(_translate("MainWindow", "Private"))
+        self.comboBox_rule_profile.addItem(_translate("MainWindow", "Domain"))
         self.label_direction.setText(_translate("MainWindow", "Direction"))
+        self.comboBox_rule_direction.addItem(_translate("MainWindow", "Any"))
+        self.comboBox_rule_direction.addItem(_translate("MainWindow", "Inbound"))
+        self.comboBox_rule_direction.addItem(_translate("MainWindow", "Outbound"))
         self.search_rule_btn.setText(_translate("MainWindow", "Search"))
-        self.comboBox_rule_profile.addItem(_translate("MainWindow", 'Any'))
-        self.comboBox_rule_profile.addItem(_translate("MainWindow", 'Public'))
-        self.comboBox_rule_profile.addItem(_translate("MainWindow", 'Private'))
-        self.comboBox_rule_profile.addItem(_translate("MainWindow", 'Domain'))
 
         item = self.rules_table.horizontalHeaderItem(0)
         item.setText(_translate("MainWindow", "Rule"))
@@ -811,7 +811,7 @@ class Ui_MainWindow(object):
         icon = QtWidgets.QMessageBox.Information
         port = self.spinBox_port.value()
         service = self.lineEdit_search.text()
-        protocol = self.comboBox_protocol.currentText()
+        protocol = self.comboBox_protocol.currentIndex()
 
         if service == '' and port == 0:
             self.messages_manager.show_message(self.invalid_search_message, self.invalid_search_description, icon)

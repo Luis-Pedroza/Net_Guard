@@ -40,11 +40,11 @@ class TablePortsCreator(object):
             Show a message indicating that the init_ports_window function is under construction.
 
     """
-    def __init__(self, port: int, protocol: str, service: str):
+    def __init__(self, port: int, protocol: int, service: str):
         self.data_table_ports = GetPortsData()
         self.error_message = PopUpMessage()
         self.port = port
-        self.protocol = protocol.lower()
+        self.protocol = protocol
         self.service = service
 
     def setup_table(self, main_window: QtWidgets.QMainWindow):
