@@ -24,6 +24,7 @@ from Controller.Ports import GetPortsData, TableCounter
 from Controller.Rules import FirewallManager
 from Controller.Report import ReportPDF
 from Controller.Scan import ScanPorts
+from Controller.Language import LanguageManager
 from .RulesTab import RulesTableCreator
 from .PortsTab import TablePortsCreator
 from .ScanTab import PortsRangeWindow
@@ -107,6 +108,7 @@ class Ui_MainWindow(object):
 
         '''
         self.report_manager = ReportPDF()
+        self.language = LanguageManager()
         report_path = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.DocumentsLocation)
 
         main_window.setObjectName("main_window")
@@ -410,8 +412,10 @@ class Ui_MainWindow(object):
         self.menu_select_language.setObjectName("menu_select_language")
         self.action_select_Spanish = QtWidgets.QAction(self.menu_select_language)
         self.action_select_Spanish.setObjectName("action_select_Spanish")
+        self.action_select_Spanish.triggered.connect(lambda: self.retranslateUi(main_window, 'es'))
         self.action_select_english = QtWidgets.QAction(self.menu_select_language)
         self.action_select_english.setObjectName("action_select_english")
+        self.action_select_english.triggered.connect(lambda: self.retranslateUi(main_window, 'en'))
 
         self.menu_select_theme = QtWidgets.QMenu(self.menu_bar)
         self.menu_select_theme.setObjectName("menu_select_theme")
@@ -465,10 +469,10 @@ class Ui_MainWindow(object):
 
         self.tabWidget.setCurrentIndex(0)
         self.main_layout.addWidget(self.tabWidget)
-        self.retranslateUi(main_window)
+        self.retranslateUi(main_window, 'en')
         QtCore.QMetaObject.connectSlotsByName(main_window)
 
-    def retranslateUi(self, MainWindow: QtWidgets.QMainWindow):
+    def retranslateUi(self, MainWindow: QtWidgets.QMainWindow, language: str):
         '''
         Translates and sets text labels for user interface elements.
 
@@ -486,9 +490,15 @@ class Ui_MainWindow(object):
             ui.retranslateUi(main_window)
 
         '''
-        self.translator = QtCore.QTranslator()
-        self.translator.load("Resources/lan/MainWindow_es.qm")
-        QtCore.QCoreApplication.installTranslator(self.translator)
+        self.language.set_language(language)
+        current_language = self.language.get_language()
+        if current_language != 'en':
+            self.translator = QtCore.QTranslator()
+            self.translator.load(f"Resources/lan/MainWindow_{current_language}.qm")
+            QtCore.QCoreApplication.installTranslator(self.translator)
+        elif hasattr(self, 'translator'):
+            QtCore.QCoreApplication.removeTranslator(self.translator)
+
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "Net Guard"))
 

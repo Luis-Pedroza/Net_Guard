@@ -41,7 +41,7 @@ class GetPortsData():
 
     '''
     def __init__(self):
-        self.database = DatabaseConnection('Resources/ports.db')
+        self.database = DatabaseConnection('Resources/app_data.db')
         self.popUp_Message = PopUpMessage()
 
     def get_all_ports(self, minimum: int, maximum: int) -> list[tuple]:
