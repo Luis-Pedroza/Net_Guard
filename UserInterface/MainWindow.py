@@ -850,7 +850,7 @@ class Ui_MainWindow(object):
         else:
             self.InitSearchTable = QtWidgets.QDialog()
             self.TableApp = TablePortsCreator(port, protocol, service)
-            self.TableApp.setup_table(self.InitSearchTable)        
+            self.TableApp.setup_table(self.InitSearchTable)
             if self.TableApp.new_table.rowCount() == 0:
                 self.messages_manager.show_message(self.port_not_found_message, self.port_not_found_description, icon)
             else:
