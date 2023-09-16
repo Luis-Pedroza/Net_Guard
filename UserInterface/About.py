@@ -27,6 +27,7 @@
 # ****************************************************
 
 from PyQt5 import QtCore, QtWidgets, QtGui
+from .SetText import SetCurrentText
 
 
 class UiDialog(object):
@@ -54,8 +55,9 @@ class UiDialog(object):
             None
 
         """
+        self.current_text = SetCurrentText()
         Dialog.setObjectName("Dialog")
-        Dialog.resize(541, 393)
+        Dialog.resize(500, 350)
         Dialog.setWindowIcon(QtGui.QIcon("Resources/icon.ico"))
         flags = Dialog.windowFlags()
         Dialog.setWindowFlags(flags & ~QtCore.Qt.WindowContextHelpButtonHint)
@@ -67,39 +69,20 @@ class UiDialog(object):
         self.image_icon.setPixmap(image.scaled(60, 60, QtCore.Qt.KeepAspectRatio, QtCore.Qt.SmoothTransformation))
 
         self.about_text = QtWidgets.QPlainTextEdit(Dialog)
-        self.about_text.setGeometry(QtCore.QRect(70, 0, 471, 471))
+        self.about_text.setGeometry(QtCore.QRect(70, 0, 430, 400))
         self.about_text.setObjectName("plainTextEdit")
         self.about_text.setReadOnly(True)
-        with open("Resources/about.txt", "r", encoding="utf-8") as archivo:
-            self.text_about = archivo.read()
 
         self.label_link = QtWidgets.QLabel(Dialog)
-        self.label_link.setGeometry(QtCore.QRect(75, 230, 300, 20))
+        self.label_link.setGeometry(QtCore.QRect(75, 260, 300, 20))
         self.label_link.setObjectName("label_link")
         self.label_link.setText('<a href="https://luis-pedroza.github.io/Net_Guard_Web/">luis-pedroza.github.io/Net_Guard_Web</a>')
         self.label_link.setOpenExternalLinks(True)
 
         self.close_window = QtWidgets.QPushButton(Dialog)
-        self.close_window.setGeometry(QtCore.QRect(430, 360, 75, 23))
+        self.close_window.setGeometry(QtCore.QRect(375, 290, 75, 23))
         self.close_window.setObjectName("closeWindow")
         self.close_window.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.close_window.clicked.connect(Dialog.close)
 
-        self.retranslateUi(Dialog)
-        QtCore.QMetaObject.connectSlotsByName(Dialog)
-
-    def retranslateUi(self, Dialog):
-        """
-        Translate the UI elements to the desired language.
-
-        Args:
-            Dialog (QtWidgets.QDialog): The dialog window to translate.
-
-        Returns:
-            None
-
-        """
-        _translate = QtCore.QCoreApplication.translate
-        Dialog.setWindowTitle(_translate("Dialog", "Net Guard"))
-        self.about_text.setPlainText(_translate("Dialog", self.text_about))
-        self.close_window.setText(_translate("Dialog", "Ok"))
+        self.current_text.set_about(self, Dialog)

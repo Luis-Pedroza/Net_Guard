@@ -30,6 +30,7 @@ from .PortsTab import TablePortsCreator
 from .ScanTab import PortsRangeWindow
 from .Alerts import PopUpMessage
 from .About import UiDialog
+from .SetText import SetCurrentText
 
 
 class Ui_MainWindow(object):
@@ -107,6 +108,7 @@ class Ui_MainWindow(object):
             ui.setupUi(main_window)
 
         '''
+        self.current_text = SetCurrentText()
         self.report_manager = ReportPDF()
         self.language = LanguageManager()
         report_path = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.DocumentsLocation)
@@ -412,10 +414,12 @@ class Ui_MainWindow(object):
         self.menu_select_language.setObjectName("menu_select_language")
         self.action_select_Spanish = QtWidgets.QAction(self.menu_select_language)
         self.action_select_Spanish.setObjectName("action_select_Spanish")
-        self.action_select_Spanish.triggered.connect(lambda: self.retranslateUi(main_window, 'es'))
+        self.action_select_Spanish.triggered.connect(lambda: self.language.set_language('es'))
+        self.action_select_Spanish.triggered.connect(lambda: self.current_text.set_main_window(self, main_window))
         self.action_select_english = QtWidgets.QAction(self.menu_select_language)
         self.action_select_english.setObjectName("action_select_english")
-        self.action_select_english.triggered.connect(lambda: self.retranslateUi(main_window, 'en'))
+        self.action_select_english.triggered.connect(lambda: self.language.set_language('en'))
+        self.action_select_english.triggered.connect(lambda: self.current_text.set_main_window(self, main_window))
 
         self.menu_select_theme = QtWidgets.QMenu(self.menu_bar)
         self.menu_select_theme.setObjectName("menu_select_theme")
@@ -469,176 +473,24 @@ class Ui_MainWindow(object):
 
         self.tabWidget.setCurrentIndex(0)
         self.main_layout.addWidget(self.tabWidget)
-        current_language = self.language.get_language()
-        self.retranslateUi(main_window, current_language)
-        QtCore.QMetaObject.connectSlotsByName(main_window)
 
-    def retranslateUi(self, MainWindow: QtWidgets.QMainWindow, language: str):
-        '''
-        Translates and sets text labels for user interface elements.
+        self.rule_name_missing_message = ''
+        self.rule_name_missing_description = ''
 
-        Args:
-            MainWindow (QtWidgets.QMainWindow): The main application window.
+        self.no_matching_data_message = ''
+        self.no_matching_data_description = ''
 
-        Returns:
-            None
+        self.unregistered_port_message = ''
+        self.unregistered_port_description = ''
 
-        Raises:
-            None
+        self.invalid_search_message = ''
+        self.invalid_search_description = ''
 
-        Example Usage:
-            ui = Ui_MainWindow()
-            ui.retranslateUi(main_window)
+        self.port_not_found_message = ''
+        self.port_not_found_description = ''
 
-        '''
-        self.language.set_language(language)
-        current_language = self.language.get_language()
-        if current_language != 'en':
-            self.translator = QtCore.QTranslator()
-            self.translator.load(f"Resources/lan/MainWindow_{current_language}.qm")
-            QtCore.QCoreApplication.installTranslator(self.translator)
-        elif hasattr(self, 'translator'):
-            QtCore.QCoreApplication.removeTranslator(self.translator)
-
-        _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "Net Guard"))
-
-        # ************************************************************
-        # ************************* TAB SCAN *************************
-        # ************************************************************
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_Scan), _translate("MainWindow", "Scan"))
-
-        item = self.scan_table.horizontalHeaderItem(0)
-        item.setText(_translate("MainWindow", "Protocol"))
-        item = self.scan_table.horizontalHeaderItem(1)
-        item.setText(_translate("MainWindow", "Local Address"))
-        item = self.scan_table.horizontalHeaderItem(2)
-        item.setText(_translate("MainWindow", "Remote Address"))
-        item = self.scan_table.horizontalHeaderItem(3)
-        item.setText(_translate("MainWindow", "State"))
-        item = self.scan_table.horizontalHeaderItem(4)
-        item.setText(_translate("MainWindow", "PID"))
-        item = self.scan_table.horizontalHeaderItem(5)
-        item.setText(_translate("MainWindow", "Program"))
-
-        self.label_rangeTCP.setText(_translate("MainWindow", "TCP Range:"))
-        self.label_rangeUDP.setText(_translate("MainWindow", "UDP Range:"))
-
-        self.port_scan_btn.setText(_translate("MainWindow", "Update"))
-        self.edit_range_btn.setText(_translate("MainWindow", "Modify"))
-
-        # ************************************************************
-        # ************************* TAB RULES ************************
-        # ************************************************************
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_Rules), _translate("MainWindow", "Rules"))
-
-        self.label_rule.setText(_translate("MainWindow", "Name"))
-        self.label_profile.setText(_translate("MainWindow", "Profile"))
-
-        self.comboBox_rule_profile.addItem(_translate("MainWindow", "Any"))
-        self.comboBox_rule_profile.addItem(_translate("MainWindow", "Domain"))
-        self.comboBox_rule_profile.addItem(_translate("MainWindow", "Private"))
-        self.comboBox_rule_profile.addItem(_translate("MainWindow", "Domain & Private"))
-        self.comboBox_rule_profile.addItem(_translate("MainWindow", "Public"))
-        self.comboBox_rule_profile.addItem(_translate("MainWindow", "Domain & Public"))
-        self.comboBox_rule_profile.addItem(_translate("MainWindow", "Private & Public"))
-
-        self.label_direction.setText(_translate("MainWindow", "Direction"))
-        self.comboBox_rule_direction.addItem(_translate("MainWindow", "Any"))
-        self.comboBox_rule_direction.addItem(_translate("MainWindow", "Inbound"))
-        self.comboBox_rule_direction.addItem(_translate("MainWindow", "Outbound"))
-        self.search_rule_btn.setText(_translate("MainWindow", "Search"))
-
-        item = self.rules_table.horizontalHeaderItem(0)
-        item.setText(_translate("MainWindow", "Rule"))
-        item = self.rules_table.horizontalHeaderItem(1)
-        item.setText(_translate("MainWindow", "Enable"))
-        item = self.rules_table.horizontalHeaderItem(2)
-        item.setText(_translate("MainWindow", "Profile"))
-        item = self.rules_table.horizontalHeaderItem(3)
-        item.setText(_translate("MainWindow", "Action"))
-        item = self.rules_table.horizontalHeaderItem(4)
-        item.setText(_translate("MainWindow", "Direction"))
-        item = self.rules_table.horizontalHeaderItem(5)
-        item.setText(_translate("MainWindow", "Protocol"))
-
-        self.reload_rules_table.setText(_translate("MainWindow", "Update"))
-        self.new_rule_btn.setText(_translate("MainWindow", "Add"))
-
-        # ************************************************************
-        # ************************* TAB PORTS ************************
-        # ************************************************************
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_Ports), _translate("MainWindow", "Ports"))
-
-        self.search_port_btn.setText(_translate("MainWindow", "Search"))
-        self.label_port.setText(_translate("MainWindow", "Port"))
-        self.label_service.setText(_translate("MainWindow", "Service"))
-        self.label_protocol.setText(_translate("MainWindow", "Protocol"))
-        self.comboBox_protocol.addItem(_translate("MainWindow", "Both"))
-        self.comboBox_protocol.addItem(_translate("MainWindow", "TCP"))
-        self.comboBox_protocol.addItem(_translate("MainWindow", "UDP"))
-
-        item = self.ports_table.horizontalHeaderItem(0)
-        item.setText(_translate("MainWindow", "Port"))
-        item = self.ports_table.horizontalHeaderItem(1)
-        item.setText(_translate("MainWindow", "Service"))
-        item = self.ports_table.horizontalHeaderItem(2)
-        item.setText(_translate("MainWindow", "Protocol"))
-        item = self.ports_table.horizontalHeaderItem(3)
-        item.setText(_translate("MainWindow", "Description"))
-        item = self.ports_table.horizontalHeaderItem(4)
-        item.setText(_translate("MainWindow", "Reference"))
-
-        self.previous_table_btn.setText(_translate("MainWindow", "Back"))
-        self.next_table_btn.setText(_translate("MainWindow", "Next"))
-
-        # *************************************************************"
-        # ************************* MENU BAR **************************"
-        # *************************************************************"
-        self.file_menu.setTitle(_translate("MainWindow", "File"))
-        self.edit_menu.setTitle(_translate("MainWindow", "Edit"))
-        self.config_menu.setTitle(_translate("MainWindow", "Configuration"))
-        self.help_menu.setTitle(_translate("MainWindow", "Help"))
-
-        self.action_save_scan.setText(_translate("MainWindow", "Save scan"))
-        self.action_save_rules.setText(_translate("MainWindow", "Save rules"))
-
-        self.action_new_rule.setText(_translate("MainWindow", "New rule"))
-        self.action_change_range.setText(_translate("MainWindow", "Change ports range"))
-        self.action_reload_scan.setText(_translate("MainWindow", "Update scan"))
-
-        self.menu_select_language.setTitle(_translate("MainWindow", "Language"))
-        self.action_select_Spanish.setText(_translate("MainWindow", "Spanish"))
-        self.action_select_english.setText(_translate("MainWindow", "English"))
-        self.menu_select_theme.setTitle(_translate("MainWindow", "Theme"))
-        self.action_select_dark.setText(_translate("MainWindow", "Dark"))
-        self.action_select_light.setText(_translate("MainWindow", "Light"))
-
-        self.help_change_range.setText(_translate("MainWindow", "Change ports range"))
-        self.help_new_rule.setText(_translate("MainWindow", "Add new rule"))
-        self.help_change_rule.setText(_translate("MainWindow", "Edit rule"))
-        self.help_search_rule.setText(_translate("MainWindow", "Search rule"))
-        self.help_search_port.setText(_translate("MainWindow", "Search port"))
-        self.action_About.setText(_translate("MainWindow", "About Net Guard"))
-
-        # *************************************************************"
-        # ************************* EXCEPTIONS **************************"
-        # *************************************************************"
-        self.rule_name_missing_message = _translate("MainWindow", "Must specify the name of the rule")
-        self.rule_name_missing_description = _translate("MainWindow", "You must enter the name of the rule to be able to perform a search")
-
-        self.no_matching_data_message = _translate("MainWindow", "No matching data found")
-        self.no_matching_data_description = _translate("MainWindow", "The search did not return any data matching the parameters")
-
-        self.unregistered_port_message = _translate("MainWindow", "Unregistered port")
-        self.unregistered_port_description = _translate("MainWindow", "The port you are trying to search for is not registered by the IANA")
-
-        self.invalid_search_message = _translate("MainWindow", "Cannot perform search")
-        self.invalid_search_description = _translate("MainWindow", "The search cannot be processed as specified, please review the search help")
-
-        self.port_not_found_message = _translate("MainWindow", "No matching data found")
-        self.port_not_found_description = _translate("MainWindow", "The search did not return any data matching the parameters")
-
+        self.current_text.set_main_window(self, main_window)
+        
     def update_scan_table(self, mainTable: QtWidgets.QTableWidget):
         '''
         Updates the table in the "Scan" tab with scan data.

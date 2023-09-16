@@ -245,15 +245,20 @@ class RulesTableCreator(object):
         self.btn_right.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.btn_right.setObjectName("btn_right")
 
+        self.txt_add_btn = ''
+        self.txt_cancel_btn = ''
+
+        self.txt_edit_btn = ''
+        self.txt_delete_btn = ''
         self.current_text.set_rules_window(self, Form)
 
         if action:
             self.setUp_filled_window(Form, rule)
         else:
-            self.btn_left.setText("Add")
+            self.btn_left.setText(self.txt_add_btn)
             self.btn_left.clicked.connect(self.add_new_rule)
             self.btn_left.clicked.connect(Form.close)
-            self.btn_right.setText("Cancel")
+            self.btn_right.setText(self.txt_cancel_btn)
             self.btn_right.clicked.connect(Form.close)
 
     def enable_selected(self, text: str, line_edit_widget: QtWidgets.QLineEdit):
@@ -404,10 +409,10 @@ class RulesTableCreator(object):
             if rule[0][10] != '' and rule[0][10] != '*':
                 self.text_edit_IP.setPlainText(rule[0][10])
 
-            self.btn_left.setText("Edit")
+            self.btn_left.setText(self.txt_edit_btn)
             self.btn_left.clicked.connect(lambda: self.edit_selected_rule(rule))
             self.btn_left.clicked.connect(form.close)
-            self.btn_right.setText("Delete")
+            self.btn_right.setText(self.txt_delete_btn)
             self.btn_right.clicked.connect(lambda: self.delete_selected_rule(rule))
             self.btn_right.clicked.connect(form.close)
         except Exception as exception:
