@@ -2,11 +2,61 @@ from PyQt5 import QtCore
 from Controller.Language import LanguageManager
 
 class SetCurrentText():
+    '''
+    A class for setting the current text of various UI elements based on the selected language.
+
+    Attributes:
+        language (LanguageManager): Manages language settings and interactions with the database.
+        translator (QtCore.QTranslator): Handles translation of text to the selected language.
+
+    Methods:
+        __init__(self)
+            Initializes the SetCurrentText class. It sets up the language manager and translator.
+
+        execute_translator(self)
+            Configures the translator based on the current language setting.
+
+        set_about(self, about_object, main_window)
+            Sets the text of UI elements related to the About window.
+
+        set_alerts(self, alerts_object)
+            Sets the text of UI elements related to alerts and notifications.
+
+        set_ports_tab(self, ports_object, main_window)
+            Sets the text of UI elements in the Ports Tab.
+
+        set_scan_tab(self, scan_object, main_window)
+            Sets the text of UI elements in the Scan Ports Tab.
+
+        set_rules_table(self, rules_object, main_window)
+            Sets the text of UI elements in the Rules Tab.
+
+        set_rules_window(self, rules_object, main_window)
+            Sets the text of UI elements in the Rules Window.
+
+        set_main_window(self, main_object, main_window)
+            Sets the text of UI elements in the main window.
+
+    '''
     def __init__(self):
         self.language = LanguageManager()
         self.translator = QtCore.QTranslator()
 
     def execute_translator(self):
+        '''
+        Configures the translator based on the current language setting.
+
+        Args:
+            None
+
+        Returns:
+            None
+
+        Example Usage:
+            current_texts = SetCurrentText()
+            current_texts.execute_translator()
+
+        '''
         self.current_language = self.language.get_language()
         if hasattr(self, 'translator'):
             QtCore.QCoreApplication.removeTranslator(self.translator)
@@ -22,6 +72,21 @@ class SetCurrentText():
         self._translate = QtCore.QCoreApplication.translate
 
     def set_about(self, about_object, main_window):
+        '''
+        Sets the text of UI elements related to the About window.
+
+        Args:
+            about_object: The About window object.
+            main_window: The main window object.
+
+        Returns:
+            None
+
+        Example Usage:
+            current_texts = SetCurrentText()
+            current_texts.set_about(about_window, main_window)
+
+        '''
         self.execute_translator()
         main_window.setWindowTitle(self._translate("AboutWindow", "Net Guard"))
 
@@ -42,10 +107,39 @@ For more, visit:
         about_object.close_window.setText(self._translate("AboutWindow", "Ok"))
 
     def set_alerts(self, alerts_object):
+        '''
+        Sets the text of UI elements related to alerts and notifications.
+
+        Args:
+            alerts_object: The alerts object.
+
+        Returns:
+            None
+
+        Example Usage:
+            current_texts = SetCurrentText()
+            current_texts.set_alerts(alerts_object)
+
+        '''
         self.execute_translator()
         alerts_object.mainMessage.setWindowTitle(self._translate('Alerts', 'Notice'))
 
     def set_ports_tab(self, ports_object, main_window):
+        '''
+        Sets the text of UI elements in the Ports Tab.
+
+        Args:
+            ports_object: The Ports Tab object.
+            main_window: The main window object.
+
+        Returns:
+            None
+
+        Example Usage:
+            current_texts = SetCurrentText()
+            current_texts.set_ports_tab(ports_object, main_window)
+
+        '''
         self.execute_translator()
         main_window.setWindowTitle(self._translate("PortsTab", 'Search'))
 
@@ -61,6 +155,21 @@ For more, visit:
         item.setText(self._translate("PortsTab", "Reference"))
 
     def set_scan_tab(self, scan_object, main_window):
+        '''
+        Sets the text of UI elements in the Scan Ports Tab.
+
+        Args:
+            scan_object: The Scan Ports Tab object.
+            main_window: The main window object.
+
+        Returns:
+            None
+
+        Example Usage:
+            current_texts = SetCurrentText()
+            current_texts.set_scan_tab(scan_object, main_window)
+
+        '''
         self.execute_translator()
         main_window.setWindowTitle(self._translate('ScanTab', "Ports Range"))
         scan_object.checkBox_TCP.setText(self._translate('ScanTab', "Change TCP range"))
@@ -73,6 +182,21 @@ For more, visit:
         scan_object.option_not_selected = self._translate("ScanTab", 'Must select an option')
 
     def set_rules_table(self, rules_object, main_window):
+        '''
+        Sets the text of UI elements in the Rules Tab.
+
+        Args:
+            rules_object: The Rules Tab object.
+            main_window: The main window object.
+
+        Returns:
+            None
+
+        Example Usage:
+            current_texts = SetCurrentText()
+            current_texts.set_rules_table(rules_object, main_window)
+
+        '''
         self.execute_translator()
         main_window.setWindowTitle(self._translate("RulesTable", "Search"))
 
@@ -90,6 +214,21 @@ For more, visit:
         item.setText(self._translate("RulesTable", "Protocol"))
 
     def set_rules_window(self, rules_object, main_window):
+        '''
+        Sets the text of UI elements in the Rules Window.
+
+        Args:
+            rules_object: The Rules Window object.
+            main_window: The main window object.
+
+        Returns:
+            None
+
+        Example Usage:
+            current_texts = SetCurrentText()
+            current_texts.set_rules_window(rules_object, main_window)
+
+        '''
         self.execute_translator()
         main_window.setWindowTitle(self._translate("RulesWindow", "Rule"))
 
@@ -128,6 +267,21 @@ For more, visit:
         rules_object.txt_delete_btn = self._translate("RulesWindow", "Delete")
 
     def set_main_window(self, main_object, main_window):
+        '''
+        Sets the text of UI elements in the main window.
+
+        Args:
+            main_object: The main object.
+            main_window: The main window object.
+
+        Returns:
+            None
+
+        Example Usage:
+            current_texts = SetCurrentText()
+            current_texts.set_main_window(main_object, main_window)
+
+        '''
         self.execute_translator()
         main_window.setWindowTitle(self._translate("MainWindow", "Net Guard"))
 
