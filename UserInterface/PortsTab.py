@@ -15,7 +15,8 @@
 
 from PyQt5 import QtCore, QtWidgets, QtGui
 from Controller.Ports import GetPortsData
-from UserInterface.Alerts import PopUpMessage
+from .Alerts import PopUpMessage
+from .SetText import SetCurrentText
 
 
 class TablePortsCreator(object):
@@ -41,6 +42,7 @@ class TablePortsCreator(object):
 
     """
     def __init__(self, port: int, protocol: int, service: str):
+        self.current_text = SetCurrentText()
         self.data_table_ports = GetPortsData()
         self.error_message = PopUpMessage()
         self.port = port
@@ -73,23 +75,34 @@ class TablePortsCreator(object):
         main_window.setWindowFlags(flags & ~QtCore.Qt.WindowContextHelpButtonHint)
 
         ports_list = self.data_table_ports.get_search(self.port, self.protocol, self.service)
-
         if ports_list:
             rows = len(ports_list)
             self.new_table = QtWidgets.QTableWidget(main_window)
-            header = ['Port', 'Service', 'Protocol', 'Description', 'Reference']
+
             self.new_table.setColumnCount(5)
             self.new_table.setRowCount(rows)
-            self.new_table.setHorizontalHeaderLabels(header)
             self.new_table.setGeometry(QtCore.QRect(1, 0, 759, 349))
             self.new_table.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
             self.new_table.horizontalHeader().setSectionResizeMode(3, QtWidgets.QHeaderView.Stretch)
             self.new_table.cellDoubleClicked.connect(self.init_ports_window)
 
+            item = QtWidgets.QTableWidgetItem()
+            self.new_table.setHorizontalHeaderItem(0, item)
+            item = QtWidgets.QTableWidgetItem()
+            self.new_table.setHorizontalHeaderItem(1, item)
+            item = QtWidgets.QTableWidgetItem()
+            self.new_table.setHorizontalHeaderItem(2, item)
+            item = QtWidgets.QTableWidgetItem()
+            self.new_table.setHorizontalHeaderItem(3, item)
+            self.new_table.horizontalHeader().setSectionResizeMode(3, QtWidgets.QHeaderView.Stretch)
+            item = QtWidgets.QTableWidgetItem()
+            self.new_table.setHorizontalHeaderItem(4, item)
+
             for row_num, row_data in enumerate(ports_list):
                 for col_num, col_data in enumerate(row_data):
                     item = QtWidgets.QTableWidgetItem(str(col_data))
                     self.new_table.setItem(row_num, col_num, item)
+            self.current_text.set_ports_tab(self, main_window)
 
         else: self.new_table = QtWidgets.QTableWidget(main_window)
 

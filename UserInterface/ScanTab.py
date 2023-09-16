@@ -14,7 +14,8 @@
 
 from PyQt5 import QtCore, QtWidgets, QtGui
 from Controller.Scan import ScanPorts
-from UserInterface.Alerts import PopUpMessage
+from .Alerts import PopUpMessage
+from .SetText import SetCurrentText
 
 
 class PortsRangeWindow(object):
@@ -42,6 +43,7 @@ class PortsRangeWindow(object):
     '''
     def __init__(self):
         super().__init__()
+        self.current_text = SetCurrentText()
         self.range = ScanPorts()
         self.message = PopUpMessage()
         self.icon = QtWidgets.QMessageBox.Information
@@ -66,13 +68,11 @@ class PortsRangeWindow(object):
         '''
         main_window.setObjectName("main_window")
         main_window.setFixedSize(380, 250)
-        main_window.setWindowTitle("Ports Range")
         main_window.setWindowIcon(QtGui.QIcon("Resources/icon.ico"))
 
         self.checkBox_TCP = QtWidgets.QCheckBox(main_window)
         self.checkBox_TCP.setGeometry(QtCore.QRect(80, 50, 121, 17))
         self.checkBox_TCP.setObjectName("checkBox_TCP")
-        self.checkBox_TCP.setText("Change TCP range")
         self.rangeTCP = QtWidgets.QSpinBox(main_window)
         self.rangeTCP.setGeometry(QtCore.QRect(220, 50, 60, 22))
         self.rangeTCP.setObjectName("rangeTCP")
@@ -82,7 +82,6 @@ class PortsRangeWindow(object):
         self.checkBox_UDP = QtWidgets.QCheckBox(main_window)
         self.checkBox_UDP.setGeometry(QtCore.QRect(80, 95, 121, 17))
         self.checkBox_UDP.setObjectName("checkBox_UDP")
-        self.checkBox_UDP.setText("Change UDP range")
         self.rangeUDP = QtWidgets.QSpinBox(main_window)
         self.rangeUDP.setGeometry(QtCore.QRect(220, 90, 60, 22))
         self.rangeUDP.setObjectName("rangeUDP")
@@ -93,7 +92,6 @@ class PortsRangeWindow(object):
         self.change_range_btn.setGeometry(QtCore.QRect(20, 200, 101, 26))
         self.change_range_btn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.change_range_btn.setObjectName("change_range_btn")
-        self.change_range_btn.setText("Change")
         self.change_range_btn.clicked.connect(lambda: self.change_range())
         self.change_range_btn.clicked.connect(main_window.close)
 
@@ -102,7 +100,6 @@ class PortsRangeWindow(object):
         self.reset_values_btn.setGeometry(QtCore.QRect(140, 200, 101, 26))
         self.reset_values_btn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.reset_values_btn.setObjectName("reset_values_btn")
-        self.reset_values_btn.setText("Reset")
         self.reset_values_btn.clicked.connect(lambda: self.reset_default_values())
         self.reset_values_btn.clicked.connect(main_window.close)
 
@@ -110,8 +107,12 @@ class PortsRangeWindow(object):
         self.cancel_btn.setGeometry(QtCore.QRect(260, 200, 101, 26))
         self.cancel_btn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.cancel_btn.setObjectName("cancel_btn")
-        self.cancel_btn.setText("Cancel")
         self.cancel_btn.clicked.connect(main_window.close)
+
+        self.change_successful = ''
+        self.option_not_selected = ''
+
+        self.current_text.set_scan_tab(self, main_window)
 
     def change_range(self):
         '''
@@ -131,24 +132,22 @@ class PortsRangeWindow(object):
             ports_range_window.change_range()
 
         '''
-        code = 'Selected range has been changed'
         # status False means an error
         if self.checkBox_TCP.isChecked() and self.checkBox_UDP.isChecked():
             statusTCP = self.range.change_ports_range('tcp', self.rangeTCP.value())
             statusUDP = self.range.change_ports_range('udp', self.rangeUDP.value())
             if statusTCP is not False or statusUDP is not False:
-                self.message.show_message(code, '', self.icon)
+                self.message.show_message(self.change_successful, '', self.icon)
         elif self.checkBox_UDP.isChecked():
             statusUDP = self.range.change_ports_range('udp', self.rangeUDP.value())
             if statusUDP is not False:
-                self.message.show_message(code, '', self.icon)
+                self.message.show_message(self.change_successful, '', self.icon)
         elif self.checkBox_TCP.isChecked():
             statusTCP = self.range.change_ports_range('tcp', self.rangeTCP.value())
             if statusTCP is not False:
-                self.message.show_message(code, '', self.icon)
+                self.message.show_message(self.change_successful, '', self.icon)
         else:
-            code = 'Must select an option'
-            self.message.show_message(code, '', self.icon)
+            self.message.show_message(self.option_not_selected, '', self.icon)
 
     def reset_default_values(self):
         '''

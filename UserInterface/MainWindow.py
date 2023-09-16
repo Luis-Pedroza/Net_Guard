@@ -469,7 +469,8 @@ class Ui_MainWindow(object):
 
         self.tabWidget.setCurrentIndex(0)
         self.main_layout.addWidget(self.tabWidget)
-        self.retranslateUi(main_window, 'en')
+        current_language = self.language.get_language()
+        self.retranslateUi(main_window, current_language)
         QtCore.QMetaObject.connectSlotsByName(main_window)
 
     def retranslateUi(self, MainWindow: QtWidgets.QMainWindow, language: str):

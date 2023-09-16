@@ -13,8 +13,6 @@
 # ***************************************************
 
 import sqlite3
-from PyQt5.QtWidgets import QMessageBox
-from UserInterface.Alerts import PopUpMessage
 
 
 class DatabaseConnection():
@@ -42,8 +40,8 @@ class DatabaseConnection():
 
     """
     def __init__(self, db_name: str):
-        self.popUp_Message = PopUpMessage()
-        self.icon = QMessageBox.Critical
+        #self.popUp_Message = PopUpMessage()
+        #self.icon = QMessageBox.Critical
         self.db_name = db_name
         self.connection = None
 
@@ -68,7 +66,8 @@ class DatabaseConnection():
         try:
             self.connection = sqlite3.connect(self.db_name)
         except sqlite3.Error as exception:
-            self.popUp_Message.show_message('ERROR_CONNECT_DB', exception, self.icon)
+            raise exception
+            #self.popUp_Message.show_message('ERROR_CONNECT_DB', exception, self.icon)
 
     def disconnect(self):
         '''
@@ -92,7 +91,8 @@ class DatabaseConnection():
         try:
             self.connection.close()
         except sqlite3.Error as exception:
-            self.popUp_Message.show_message('ERROR_DISCONNECT_DB', exception, self.icon)
+            raise exception
+            # self.popUp_Message.show_message('ERROR_DISCONNECT_DB', exception, self.icon)
 
     def query(self, query: str, params: tuple = None) -> list[tuple]:
         """
@@ -124,4 +124,5 @@ class DatabaseConnection():
             self.connection.commit()
             return cursor.fetchall()
         except sqlite3.Error as exception:
-            self.popUp_Message.show_message('ERROR_QUERY_DB', exception, self.icon)
+            raise exception
+            #self.popUp_Message.show_message('ERROR_QUERY_DB', exception, self.icon)

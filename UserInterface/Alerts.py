@@ -18,6 +18,7 @@
 
 from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtGui import QIcon
+from .SetText import SetCurrentText
 
 
 class PopUpMessage():
@@ -36,8 +37,7 @@ class PopUpMessage():
         popup.show_message("Error", "An unexpected error occurred.", QMessageBox.Critical)
 
     """
-    @staticmethod
-    def show_message(code:str, error:str, icon:QMessageBox.Icon):
+    def show_message(self, code:str, error:str, icon:QMessageBox.Icon):
         """
         Display a pop-up message with the given code, error message, and icon.
 
@@ -50,11 +50,12 @@ class PopUpMessage():
             None
 
         """
-        mainMessage = QMessageBox()
-        mainMessage.setWindowTitle('Notice')
-        mainMessage.setText(code)
-        mainMessage.setInformativeText(str(error))
-        mainMessage.setIcon(icon)
-        mainMessage.setStandardButtons(QMessageBox.Ok)
-        mainMessage.setWindowIcon(QIcon("Resources/icon.ico"))
-        mainMessage.exec_()
+        current_text = SetCurrentText()
+        self.mainMessage = QMessageBox()
+        self.mainMessage.setText(code)
+        self.mainMessage.setInformativeText(str(error))
+        self.mainMessage.setIcon(icon)
+        self.mainMessage.setStandardButtons(QMessageBox.Ok)
+        self.mainMessage.setWindowIcon(QIcon("Resources/icon.ico"))
+        current_text.set_alerts(self)
+        self.mainMessage.exec_()
