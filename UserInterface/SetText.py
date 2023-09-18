@@ -265,6 +265,9 @@ For more, visit:
         rules_object.txt_cancel_btn = self._translate("RulesWindow", "Cancel")
         rules_object.txt_edit_btn = self._translate("RulesWindow", "Edit")
         rules_object.txt_delete_btn = self._translate("RulesWindow", "Delete")
+        rules_object.name_missing_error = 'Specify the name of the rule'
+        rules_object.name_missing_description = 'To create a new rule you must specify at least the name of the rule.\nCheck help to create a new rule'
+        rules_object.rule_unable = 'Unable to access the selected rule'
 
     def set_main_window(self, main_object, main_window):
         '''

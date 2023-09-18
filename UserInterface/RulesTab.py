@@ -213,8 +213,8 @@ class RulesTableCreator(object):
         self.line_edit_port = QtWidgets.QLineEdit(Form)
         self.line_edit_port.setGeometry(QtCore.QRect(210, 240, 150, 22))
         self.line_edit_port.setObjectName("lineEditPort")
-        self.comboBox_port.currentTextChanged.connect(lambda text: self.enable_selected(text, self.line_edit_port))
-        self.enable_selected(self.comboBox_port.currentText(), self.line_edit_port)
+        self.comboBox_port.currentIndexChanged.connect(lambda text: self.enable_selected(text, self.line_edit_port))
+        self.enable_selected(self.comboBox_port.currentIndex(), self.line_edit_port)
 
         self.label_program = QtWidgets.QLabel(Form)
         self.label_program.setGeometry(QtCore.QRect(210, 280, 51, 16))
@@ -225,8 +225,8 @@ class RulesTableCreator(object):
         self.line_edit_program = QtWidgets.QLineEdit(Form)
         self.line_edit_program.setGeometry(QtCore.QRect(210, 320, 151, 20))
         self.line_edit_program.setObjectName("lineEditProgram")
-        self.comboBox_program.currentTextChanged.connect(lambda text: self.enable_selected(text, self.line_edit_program))
-        self.enable_selected(self.comboBox_program.currentText(), self.line_edit_program)
+        self.comboBox_program.currentIndexChanged.connect(lambda text: self.enable_selected(text, self.line_edit_program))
+        self.enable_selected(self.comboBox_program.currentIndex(), self.line_edit_program)
 
         self.label_IP = QtWidgets.QLabel(Form)
         self.label_IP.setGeometry(QtCore.QRect(30, 350, 100, 20))
@@ -250,6 +250,12 @@ class RulesTableCreator(object):
 
         self.txt_edit_btn = ''
         self.txt_delete_btn = ''
+
+        self.name_missing_error = ''
+        self.name_missing_description = ''
+
+        self.rule_unable = ''
+
         self.current_text.set_rules_window(self, Form)
 
         if action:
@@ -261,7 +267,7 @@ class RulesTableCreator(object):
             self.btn_right.setText(self.txt_cancel_btn)
             self.btn_right.clicked.connect(Form.close)
 
-    def enable_selected(self, text: str, line_edit_widget: QtWidgets.QLineEdit):
+    def enable_selected(self, selection: int, line_edit_widget: QtWidgets.QLineEdit):
         '''
         Enable or disable input fields based on selected options.
 
@@ -280,7 +286,7 @@ class RulesTableCreator(object):
             table_creator.enable_selected("Any", line_edit_widget)
 
         '''
-        if text == 'Any':
+        if selection == 0:
             line_edit_widget.setEnabled(False)
         else:
             line_edit_widget.setEnabled(True)
@@ -321,9 +327,7 @@ class RulesTableCreator(object):
         if rule_data["name"] != '':
             self.rules_connection.add_new_rule(rule_data)
         else:
-            code = 'Specify the name of the rule'
-            error = 'To create a new rule you must specify at least the name of the rule.\nCheck help to create a new rule'
-            self.message.show_message(code, error, self.icon)
+            self.message.show_message(self.name_missing_error, self.name_missing_description, self.icon)
 
     def get_selected_rule(self, table: QtWidgets.QTableWidget, row: int):
         '''
@@ -395,9 +399,9 @@ class RulesTableCreator(object):
             self.comboBox_profile.setCurrentIndex(profile)
 
             if port_value == '' or port_value == '*':
-                self.comboBox_port.setCurrentText('Any')
+                self.comboBox_port.setCurrentIndex(0)
             else:
-                self.comboBox_port.setCurrentText('Range')
+                self.comboBox_port.setCurrentIndex(1)
                 self.line_edit_port.setText(port_value)
 
             if rule[0][9] == '':
@@ -416,8 +420,7 @@ class RulesTableCreator(object):
             self.btn_right.clicked.connect(lambda: self.delete_selected_rule(rule))
             self.btn_right.clicked.connect(form.close)
         except Exception as exception:
-            code = 'Unable to access the selected rule'
-            self.message.show_message(code, exception, self.icon)
+            self.message.show_message(self.rule_unable, exception, self.icon)
 
     def edit_selected_rule(self, rule: list):
         '''
