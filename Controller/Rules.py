@@ -18,8 +18,6 @@
 
 import win32com.client
 import win32api
-from PyQt5.QtWidgets import QMessageBox
-from UserInterface.Alerts import PopUpMessage
 
 
 class FirewallManager():
@@ -38,9 +36,6 @@ class FirewallManager():
 
     """
     def __init__(self):
-        self.message = PopUpMessage()
-        self.iconFail = QMessageBox.Critical
-        self.iconCorrect = QMessageBox.Information
         self.firewall = win32com.client.Dispatch("HNetCfg.FwPolicy2")
 
     def add_new_rule(self, rule: dict):
@@ -86,13 +81,13 @@ class FirewallManager():
             firewall_rules.add_new_rule(new_rule)
 
         """
-        new_rule = win32com.client.Dispatch("HNetCfg.FWRule")
         try:
+            new_rule = win32com.client.Dispatch("HNetCfg.FWRule")
             new_rule.Name = rule['name']
             new_rule.Description = 'None' if rule['description'] == '' else rule['description']
-            new_rule.Action = 1 if rule['action'] == 'Allow' else 0
+            new_rule.Action = rule['action']
             new_rule.Enabled = rule['enable']
-            new_rule.Direction = 1 if rule['direction'] == 'Inbound' else 2
+            new_rule.Direction = 1 if rule['direction'] == 0 else 2
 
             if rule['protocol'] == 'TCP':
                 new_rule.Protocol = 6
@@ -109,9 +104,9 @@ class FirewallManager():
                 new_rule.Profiles = profile
 
             # check value
-            if rule['port'] is not None and rule['direction'] == 'Inbound':
+            if rule['port'] is not None and rule['direction'] == 0:
                 new_rule.LocalPorts = str(rule['selected_port'])
-            elif rule['port'] is not None and rule['direction'] == 'Outbound':
+            elif rule['port'] is not None and rule['direction'] == 1:
                 new_rule.RemotePorts = str(rule['selected_port'])
             # check value
             if rule['program'] is not None:
@@ -119,17 +114,17 @@ class FirewallManager():
             # check value
             if rule['ip'] is not None:
                 new_rule.RemoteAddresses = rule['ip']
-
             self.firewall.Rules.Add(new_rule)
-            self.message.show_message('Se agregó la regla', '', self.iconCorrect)
         except Exception as exception:
-            com_error_info = exception.excepinfo
+            com_error_info = getattr(exception, 'excepinfo', None)
             if com_error_info and len(com_error_info) > 5:
                 error_code = com_error_info[5]
                 error_message = win32api.FormatMessage(error_code)
-                self.message.show_message('UNABLE_TO_EXECUTE_add_new_rule', error_message, self.iconFail)
+                raise FirewallManagerError('ERROR_win32api_Add: ', str(error_message)) from exception
             else:
-                self.message.show_message('UNABLE_TO_EXECUTE_add_new_rule_1', exception.args[1], self.iconFail)
+                error_message = str(exception)
+                raise FirewallManagerError('ERROR_FirewallManager_Add', error_message) from exception
+  
 
     def get_all_rules(self) -> list[dict]:
         """
@@ -170,7 +165,7 @@ class FirewallManager():
                 firewall_rules.append(rule_info)
             return firewall_rules
         except Exception as exception:
-            self.message.show_message('UNABLE_TO_EXECUTE_get_all_rules', exception, self.iconFail)
+            raise FirewallManagerError('ERROR_FirewallManager_GET_ALL', str(exception)) from exception  
 
     def get_searched_rule(self, name: str, profile: int = None, direction: int = None) -> list[list]:
         """
@@ -212,10 +207,9 @@ class FirewallManager():
                     (profile is None or rule.Profiles == profile) and \
                         (direction is None or rule.Direction == direction):
                     rules_list = self.enlist_rules(rule, rules_list)
-        except Exception as exception:
-            self.message.show_message('UNABLE_TO_EXECUTE_get_searched_rule', exception, self.iconFail)
-        finally:
             return rules_list
+        except Exception as exception:
+            raise FirewallManagerError('ERROR_FirewallManager_GET_SEARCH', str(exception)) from exception   
 
     def enlist_rules(self, rule: win32com.client.CDispatch, rules_list: list) -> list:
         """
@@ -324,9 +318,9 @@ class FirewallManager():
 
                     rule.Name = rule_dict['name']
                     rule.Description = 'None' if rule_dict['description'] == '' else rule_dict['description']
-                    rule.Action = 1 if rule_dict['action'] == 'Allow' else 0
+                    rule.Action = rule_dict['action']
                     rule.Enabled = rule_dict['enable']
-                    rule.Direction = 1 if rule_dict['direction'] == 'Inbound' else 2
+                    rule.Direction = 1 if rule_dict['direction'] == 0 else 2
 
                     if rule_dict['protocol'] == 'TCP':
                         rule.Protocol = 6
@@ -347,15 +341,15 @@ class FirewallManager():
                     else:
                         rule.Profiles = new_profile
 
-                    if rule_dict['protocol'] == 'Any' and rule_dict['election_port'] == 'Any':
+                    if rule_dict['protocol'] == 0 and rule_dict['election_port'] == 0:
                         pass
-                    elif rule_dict['election_port'] == 'Range' and port is not None:
-                        if rule_dict['protocol'] == 'Any':
+                    elif rule_dict['election_port'] == 1 and port is not None:
+                        if rule_dict['protocol'] == 0:
                             pass
-                        elif rule_dict['direction'] == 'Inbound':
+                        elif rule_dict['direction'] == 0:
                             # check value
                             rule.LocalPorts = str(port)
-                        elif rule_dict['direction'] == 'Outbound':
+                        elif rule_dict['direction'] == 1:
                             rule.RemotePorts = str(port)
                     else:
                         rule.LocalPorts = ''
@@ -372,17 +366,15 @@ class FirewallManager():
                     # This line doesn't work
                     # else:
                     #     rule.ApplicationName = ''
-
-                    self.message.show_message('The rule has been modified', '', self.iconCorrect)
-
         except Exception as exception:
-            com_error_info = exception.excepinfo
+            com_error_info = getattr(exception, 'excepinfo', None)
             if com_error_info and len(com_error_info) > 5:
                 error_code = com_error_info[5]
                 error_message = win32api.FormatMessage(error_code)
-                self.message.show_message('UNABLE_TO_EXECUTE_edit_selected_rule', error_message, self.iconFail)
+                raise FirewallManagerError('ERROR_win32api_Edit_Rule: ', str(error_message)) from exception
             else:
-                self.message.show_message('UNABLE_TO_EXECUTE_edit_selected_rule_1', exception.args[1], self.iconFail)
+                error_message = str(exception)
+                raise FirewallManagerError('ERROR_FirewallManager_Edit_Rule', error_message) from exception
 
     def get_protocol_name(self, protocol: int) -> str:
         """
@@ -489,12 +481,18 @@ class FirewallManager():
             for rule in rules:
                 if rule.Name.lower() == name.lower():
                     rules.Remove(rule.Name)
-            self.message.show_message('The rule has been deleted', '', self.iconCorrect)
         except Exception as exception:
-            com_error_info = exception.excepinfo
+            com_error_info = getattr(exception, 'excepinfo', None)
             if com_error_info and len(com_error_info) > 5:
                 error_code = com_error_info[5]
                 error_message = win32api.FormatMessage(error_code)
-                self.message.show_message('UNABLE_TO_EXECUTE_edit_selected_rule', error_message, self.iconFail)
+                raise FirewallManagerError('ERROR_win32api_Delete_Rule: ', str(error_message)) from exception
             else:
-                self.message.show_message('UNABLE_TO_EXECUTE_edit_selected_rule_1', exception.args[1], self.iconFail)
+                error_message = str(exception)
+                raise FirewallManagerError('ERROR_FirewallManager_Delete_Rule', error_message) from exception
+
+
+class FirewallManagerError(Exception):
+    def __init__(self, error_code, error_description):
+        super().__init__(error_description)
+        self.error_code = error_code

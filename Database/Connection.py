@@ -40,8 +40,6 @@ class DatabaseConnection():
 
     """
     def __init__(self, db_name: str):
-        #self.popUp_Message = PopUpMessage()
-        #self.icon = QMessageBox.Critical
         self.db_name = db_name
         self.connection = None
 
@@ -66,8 +64,10 @@ class DatabaseConnection():
         try:
             self.connection = sqlite3.connect(self.db_name)
         except sqlite3.Error as exception:
-            raise exception
-            #self.popUp_Message.show_message('ERROR_CONNECT_DB', exception, self.icon)
+            raise ErrorConnection('ERROR_sqlite3_connect', str(exception)) from exception
+        except Exception as exception:
+            raise ErrorConnection('ERROR_DatabaseConnection_connect', str(exception)) from exception
+
 
     def disconnect(self):
         '''
@@ -91,8 +91,9 @@ class DatabaseConnection():
         try:
             self.connection.close()
         except sqlite3.Error as exception:
-            raise exception
-            # self.popUp_Message.show_message('ERROR_DISCONNECT_DB', exception, self.icon)
+            raise ErrorConnection('ERROR_sqlite3_disconnect', str(exception)) from exception
+        except Exception as exception:
+            raise ErrorConnection('ERROR_DatabaseConnection_disconnect', str(exception)) from exception
 
     def query(self, query: str, params: tuple = None) -> list[tuple]:
         """
@@ -124,5 +125,12 @@ class DatabaseConnection():
             self.connection.commit()
             return cursor.fetchall()
         except sqlite3.Error as exception:
-            raise exception
-            #self.popUp_Message.show_message('ERROR_QUERY_DB', exception, self.icon)
+            raise ErrorConnection('ERROR_sqlite3_query', str(exception))
+        except Exception as exception:
+            raise ErrorConnection('ERROR_DatabaseConnection_query', str(exception)) from exception        
+
+
+class ErrorConnection(Exception):
+    def __init__(self, error_code, error_description):
+        super().__init__(error_description)
+        self.error_code = error_code

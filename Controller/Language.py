@@ -1,4 +1,4 @@
-from Database.Connection import DatabaseConnection
+from Database.Connection import DatabaseConnection, ErrorConnection
 
 
 class LanguageManager():
@@ -40,11 +40,18 @@ class LanguageManager():
             current_language = lang_manager.get_language()
 
         '''
-        query = 'SELECT Language FROM Languages WHERE Election = 1'
-        self.database.connect()
-        language = self.database.query(query)
-        self.database.disconnect()
-        return language[0][0]
+        try:
+            query = 'SELECT Language FROM Languages WHERE Election = 1'
+            self.database.connect()
+            language = self.database.query(query)
+            self.database.disconnect()
+            return language[0][0]
+        except ErrorConnection as exception:
+            error_code = exception.error_code
+            error_description = str(exception)
+            raise ErrorLanguage(error_code, error_description)
+        except Exception as exception:
+            raise ErrorLanguage('ERROR_LanguageManager_GET', str(exception))
 
     def set_language(self, language: str):
         '''
@@ -64,10 +71,24 @@ class LanguageManager():
             lang_manager.set_language('en')
 
         '''
-        query1 = 'UPDATE Languages SET Election = 1 WHERE Language = ? AND Election = 0'
-        query2 = 'UPDATE Languages SET Election = 0 WHERE Language != ? AND Election = 1'
-        params = (language,)
-        self.database.connect()
-        self.database.query(query1, params)
-        self.database.query(query2, params)
-        self.database.disconnect()
+        try:
+            query1 = 'UPDATE Languages SET Election = 1 WHERE Language = ? AND Election = 0'
+            query2 = 'UPDATE Languages SET Election = 0 WHERE Language != ? AND Election = 1'
+            params = (language,)
+            self.database.connect()
+            self.database.query(query1, params)
+            self.database.query(query2, params)
+            self.database.disconnect()
+        except ErrorConnection as exception:
+            error_code = exception.error_code
+            error_description = str(exception)
+            raise ErrorLanguage(error_code, error_description)
+        except Exception as exception:
+            raise ErrorLanguage('ERROR_LanguageManager_SET', str(exception))
+
+
+
+class ErrorLanguage(Exception):
+    def __init__(self, error_code, error_description):
+        super().__init__(error_description)
+        self.error_code = error_code

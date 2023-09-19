@@ -1,5 +1,7 @@
 from PyQt5 import QtCore
-from Controller.Language import LanguageManager
+from PyQt5.QtWidgets import QMessageBox
+from PyQt5.QtGui import QIcon
+from Controller.Language import LanguageManager, ErrorLanguage
 
 class SetCurrentText():
     '''
@@ -57,19 +59,33 @@ class SetCurrentText():
             current_texts.execute_translator()
 
         '''
-        self.current_language = self.language.get_language()
-        if hasattr(self, 'translator'):
-            QtCore.QCoreApplication.removeTranslator(self.translator)
-
-        if self.current_language != 'en' and hasattr(self, 'translator'):
-            QtCore.QCoreApplication.removeTranslator(self.translator)
-            self.translator = QtCore.QTranslator()
-            self.translator.load(f"Resources/lan/language_{self.current_language}.qm")
-            QtCore.QCoreApplication.installTranslator(self.translator)
-        elif hasattr(self, 'translator'):
-            QtCore.QCoreApplication.removeTranslator(self.translator)
-        
         self._translate = QtCore.QCoreApplication.translate
+        self.mainMessage = QMessageBox()
+        self.mainMessage.setIcon(QMessageBox.Critical)
+        self.mainMessage.setStandardButtons(QMessageBox.Ok)
+        self.mainMessage.setWindowIcon(QIcon("Resources/icon.ico"))
+        self.mainMessage.setWindowTitle('ERROR')
+        try: 
+            self.current_language = self.language.get_language()
+            if hasattr(self, 'translator'):
+                QtCore.QCoreApplication.removeTranslator(self.translator)
+
+            if self.current_language != 'en' and hasattr(self, 'translator'):
+                QtCore.QCoreApplication.removeTranslator(self.translator)
+                self.translator = QtCore.QTranslator()
+                self.translator.load(f"Resources/lan/language_{self.current_language}.qm")
+                QtCore.QCoreApplication.installTranslator(self.translator)
+        except ErrorLanguage as exception:
+            error_code = exception.error_code
+            error_description = str(exception)
+            self.mainMessage.setText(error_code)
+            self.mainMessage.setInformativeText(str(error_description))
+            self.mainMessage.exec_()
+        except Exception as exception:
+            error_description = str(exception)
+            self.mainMessage.setText('ERROR_SetCurrentText_Translator')
+            self.mainMessage.setInformativeText(str(exception))
+            self.mainMessage.exec_()
 
     def set_about(self, about_object, main_window):
         '''
@@ -268,6 +284,10 @@ For more, visit:
         rules_object.name_missing_error = 'Specify the name of the rule'
         rules_object.name_missing_description = 'To create a new rule you must specify at least the name of the rule.\nCheck help to create a new rule'
         rules_object.rule_unable = 'Unable to access the selected rule'
+        rules_object.deleted_alert = 'The selected rules has been deleted'
+        rules_object.rule_changed = 'The rule has been changed'
+        rules_object.added_rule = 'The new rules has been added'
+
 
     def set_main_window(self, main_object, main_window):
         '''

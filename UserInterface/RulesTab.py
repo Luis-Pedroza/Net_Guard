@@ -12,7 +12,7 @@
 # ***************************************************
 
 from PyQt5 import QtCore, QtWidgets, QtGui
-from Controller.Rules import FirewallManager
+from Controller.Rules import FirewallManager, FirewallManagerError
 from .Alerts import PopUpMessage
 from .SetText import SetCurrentText
 
@@ -60,6 +60,7 @@ class RulesTableCreator(object):
         self.message = PopUpMessage()
         self.rules_connection = FirewallManager()
         self.icon = QtWidgets.QMessageBox.Information
+        self.icon_critical = QtWidgets.QMessageBox.Critical
 
     def setup_rules_table(self, main_window: QtWidgets.QMainWindow, name: str, profile: int, direction: int):
         '''
@@ -87,51 +88,59 @@ class RulesTableCreator(object):
         main_window.setObjectName("main_window")
         main_window.setFixedSize(760, 350)
         main_window.setWindowIcon(QtGui.QIcon("Resources/icon.ico"))
+        try:
+            rules_data_list = self.rules_connection.get_searched_rule(name, profile, direction)
 
-        rules_data_list = self.rules_connection.get_searched_rule(name, profile, direction)
+            if rules_data_list:
+                self.Form = QtWidgets.QWidget()
+                self.new_table = QtWidgets.QTableWidget(main_window)
+                self.new_table.setColumnCount(6)
+                self.new_table.setRowCount(len(rules_data_list))
+                self.new_table.setGeometry(QtCore.QRect(1, 0, 759, 511))
+                self.new_table.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
+                self.new_table.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.ResizeToContents)
+                self.new_table.horizontalHeader().setSectionResizeMode(0, QtWidgets.QHeaderView.Stretch)
+                self.new_table.cellDoubleClicked.connect(lambda row: self.get_selected_rule(self.new_table, row))
 
-        if rules_data_list:
-            self.Form = QtWidgets.QWidget()
-            self.new_table = QtWidgets.QTableWidget(main_window)
-            self.new_table.setColumnCount(6)
-            self.new_table.setRowCount(len(rules_data_list))
-            self.new_table.setGeometry(QtCore.QRect(1, 0, 759, 511))
-            self.new_table.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
-            self.new_table.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.ResizeToContents)
-            self.new_table.horizontalHeader().setSectionResizeMode(0, QtWidgets.QHeaderView.Stretch)
-            self.new_table.cellDoubleClicked.connect(lambda row: self.get_selected_rule(self.new_table, row))
+                item = QtWidgets.QTableWidgetItem()
+                self.new_table.horizontalHeader().setSectionResizeMode(0, QtWidgets.QHeaderView.Stretch)
+                item = QtWidgets.QTableWidgetItem()
+                self.new_table.setHorizontalHeaderItem(0, item)
+                item = QtWidgets.QTableWidgetItem()
+                self.new_table.setHorizontalHeaderItem(1, item)
+                item = QtWidgets.QTableWidgetItem()
+                self.new_table.setHorizontalHeaderItem(2, item)
+                item = QtWidgets.QTableWidgetItem()
+                self.new_table.setHorizontalHeaderItem(3, item)
+                item = QtWidgets.QTableWidgetItem()
+                self.new_table.setHorizontalHeaderItem(4, item)
+                item = QtWidgets.QTableWidgetItem()
+                self.new_table.setHorizontalHeaderItem(5, item)
 
-            item = QtWidgets.QTableWidgetItem()
-            self.new_table.horizontalHeader().setSectionResizeMode(0, QtWidgets.QHeaderView.Stretch)
-            item = QtWidgets.QTableWidgetItem()
-            self.new_table.setHorizontalHeaderItem(0, item)
-            item = QtWidgets.QTableWidgetItem()
-            self.new_table.setHorizontalHeaderItem(1, item)
-            item = QtWidgets.QTableWidgetItem()
-            self.new_table.setHorizontalHeaderItem(2, item)
-            item = QtWidgets.QTableWidgetItem()
-            self.new_table.setHorizontalHeaderItem(3, item)
-            item = QtWidgets.QTableWidgetItem()
-            self.new_table.setHorizontalHeaderItem(4, item)
-            item = QtWidgets.QTableWidgetItem()
-            self.new_table.setHorizontalHeaderItem(5, item)
+                for i, row in enumerate(rules_data_list):
+                    item = QtWidgets.QTableWidgetItem(str(row[0]))
+                    self.new_table.setItem(i, 0, item)
+                    item = QtWidgets.QTableWidgetItem(str(row[1]))
+                    self.new_table.setItem(i, 1, item)
+                    item = QtWidgets.QTableWidgetItem(str(row[2]))
+                    self.new_table.setItem(i, 2, item)
+                    item = QtWidgets.QTableWidgetItem(str(row[3]))
+                    self.new_table.setItem(i, 3, item)
+                    item = QtWidgets.QTableWidgetItem(str(row[4]))
+                    self.new_table.setItem(i, 4, item)
+                    item = QtWidgets.QTableWidgetItem(str(row[5]))
+                    self.new_table.setItem(i, 5, item)
+                self.current_text.set_rules_table(self, main_window)
 
-            for i, row in enumerate(rules_data_list):
-                item = QtWidgets.QTableWidgetItem(str(row[0]))
-                self.new_table.setItem(i, 0, item)
-                item = QtWidgets.QTableWidgetItem(str(row[1]))
-                self.new_table.setItem(i, 1, item)
-                item = QtWidgets.QTableWidgetItem(str(row[2]))
-                self.new_table.setItem(i, 2, item)
-                item = QtWidgets.QTableWidgetItem(str(row[3]))
-                self.new_table.setItem(i, 3, item)
-                item = QtWidgets.QTableWidgetItem(str(row[4]))
-                self.new_table.setItem(i, 4, item)
-                item = QtWidgets.QTableWidgetItem(str(row[5]))
-                self.new_table.setItem(i, 5, item)
-            self.current_text.set_rules_table(self, main_window)
+            else: self.new_table = QtWidgets.QTableWidget(main_window)
 
-        else: self.new_table = QtWidgets.QTableWidget(main_window)
+        except FirewallManagerError as exception:
+            error_code = exception.error_code
+            error_description = str(exception)
+            self.message.show_message(error_code, str(error_description), self.icon_critical)
+        except Exception as exception:
+            self.message.show_message('ERROR_RulesTableCreator_SetUp_Rules', str(exception), self.icon)
+
 
     def init_rule_window(self, Form: QtWidgets.QDialog, action: bool = False, rule: list = None):
         '''
@@ -256,6 +265,11 @@ class RulesTableCreator(object):
 
         self.rule_unable = ''
 
+        self.deleted_alert = ''
+        self.rule_changed = ''
+        self.added_rule = ''
+
+
         self.current_text.set_rules_window(self, Form)
 
         if action:
@@ -309,25 +323,33 @@ class RulesTableCreator(object):
             table_creator.add_new_rule()
 
         '''
-        rule_data = {
-            "name": self.line_edit_name.text(),
-            "description": self.text_edit_description.toPlainText(),
-            "enable": self.checkBox_enable.isChecked(),
-            "direction": self.comboBox_direction.currentText(),
-            "action": self.comboBox_action.currentText(),
-            "protocol": self.comboBox_protocol.currentText(),
-            "profile": self.comboBox_profile.currentIndex(),
-            "port": None if self.comboBox_port.currentText() == 'Any' else self.line_edit_port.text(),
-            "selected_port": self.line_edit_port.text(),
-            "program": None if self.comboBox_program.currentText() == 'Any' else self.line_edit_program.text(),
-            "selected_program": self.line_edit_program.text(),
-            "ip": None if self.text_edit_IP.toPlainText() == '' else self.text_edit_IP.toPlainText()
-        }
+        try:
+            rule_data = {
+                "name": self.line_edit_name.text(),
+                "description": self.text_edit_description.toPlainText(),
+                "enable": self.checkBox_enable.isChecked(),
+                "direction": self.comboBox_direction.currentIndex(),
+                "action": self.comboBox_action.currentIndex(),
+                "protocol": self.comboBox_protocol.currentText(),
+                "profile": self.comboBox_profile.currentIndex(),
+                "port": None if self.comboBox_port.currentIndex() == 0 else self.line_edit_port.text(),
+                "selected_port": self.line_edit_port.text(),
+                "program": None if self.comboBox_program.currentIndex() == 0 else self.line_edit_program.text(),
+                "selected_program": self.line_edit_program.text(),
+                "ip": None if self.text_edit_IP.toPlainText() == '' else self.text_edit_IP.toPlainText()
+            }
+            if rule_data["name"] != '':
+                self.rules_connection.add_new_rule(rule_data)
+                self.message.show_message(self.added_rule, '', self.icon)
+            else:
+                self.message.show_message(self.name_missing_error, self.name_missing_description, self.icon)
+        except FirewallManagerError as exception:
+            error_code = exception.error_code
+            error_description = str(exception)
+            self.message.show_message(error_code, error_description, self.icon_critical)
+        except Exception as exception:
+            self.message.show_message('ERROR_RulesTableCreator_Add', str(exception), self.icon)
 
-        if rule_data["name"] != '':
-            self.rules_connection.add_new_rule(rule_data)
-        else:
-            self.message.show_message(self.name_missing_error, self.name_missing_description, self.icon)
 
     def get_selected_rule(self, table: QtWidgets.QTableWidget, row: int):
         '''
@@ -348,15 +370,23 @@ class RulesTableCreator(object):
             table_creator.get_selected_rule(table, 0)
 
         '''
-        new_form = QtWidgets.QDialog()
-        name = table.item(row, 0)
-        name = name.text()
-        profile = table.item(row, 2).text()
-        profile = self.rules_connection.get_profiles(profile)
-        direction = 1 if table.item(row, 4).text() == 'Inbound' else 2
-        search = self.rules_connection.get_searched_rule(name, profile, direction)
-        self.init_rule_window(new_form, True, search)
-        new_form.exec_()
+        try:
+            new_form = QtWidgets.QDialog()
+            name = table.item(row, 0)
+            name = name.text()
+            profile = table.item(row, 2).text()
+            profile = self.rules_connection.get_profiles(profile)
+            direction = 1 if table.item(row, 4).text() == 'Inbound' else 2
+            search = self.rules_connection.get_searched_rule(name, profile, direction)
+            self.init_rule_window(new_form, True, search)
+            new_form.exec_()
+        except FirewallManagerError as exception:
+            error_code = exception.error_code
+            error_description = str(exception)
+            self.message.show_message(error_code, error_description, self.icon_critical)
+        except Exception as exception:
+            self.message.show_message('ERROR_TablePortsCreator_Get_Rule', str(exception), self.icon)
+
 
     def setUp_filled_window(self, form: QtWidgets.QDialog, rule: list):
         '''
@@ -420,7 +450,7 @@ class RulesTableCreator(object):
             self.btn_right.clicked.connect(lambda: self.delete_selected_rule(rule))
             self.btn_right.clicked.connect(form.close)
         except Exception as exception:
-            self.message.show_message(self.rule_unable, exception, self.icon)
+            self.message.show_message('ERROR_TablePortsCreator_Filled_Window', str(exception), self.icon)
 
     def edit_selected_rule(self, rule: list):
         '''
@@ -440,26 +470,33 @@ class RulesTableCreator(object):
             table_creator.edit_selected_rule(rule)
 
         '''
-        rule_data = {
-            'old_name': rule[0][0],
-            'old_profile': rule[0][2],
-            'old_direction': rule[0][4],
+        try:
+            rule_data = {
+                'old_name': rule[0][0],
+                'old_profile': rule[0][2],
+                'old_direction': rule[0][4],
 
-            'name': self.line_edit_name.text(),
-            'direction': self.comboBox_direction.currentText(),
-            'description': self.text_edit_description.toPlainText(),
-            'enable': self.checkBox_enable.isChecked(),
-            'action': self.comboBox_action.currentText(),
-            'protocol': self.comboBox_protocol.currentText(),
-            'profile': self.comboBox_profile.currentIndex(),
-            'profile': self.comboBox_profile.currentIndex(),
-            'election_port': self.comboBox_port.currentText(),
-            'port': self.line_edit_port.text(),
-            'election_program': self. comboBox_program.currentText(),
-            'program': self.line_edit_program.text(),
-            'ip': self.text_edit_IP.toPlainText()
-        }
-        self.rules_connection.edit_selected_rule(rule_data)
+                'name': self.line_edit_name.text(),
+                'direction': self.comboBox_direction.currentIndex(),
+                'description': self.text_edit_description.toPlainText(),
+                'enable': self.checkBox_enable.isChecked(),
+                'action': self.comboBox_action.currentIndex(),
+                'protocol': self.comboBox_protocol.currentIndex(),
+                'profile': self.comboBox_profile.currentIndex(),
+                'election_port': self.comboBox_port.currentIndex(),
+                'port': self.line_edit_port.text(),
+                'election_program': self. comboBox_program.currentText(),
+                'program': self.line_edit_program.text(),
+                'ip': self.text_edit_IP.toPlainText()
+            }
+            self.rules_connection.edit_selected_rule(rule_data)
+            self.message.show_message(self.rule_changed, '', self.icon)
+        except FirewallManagerError as exception:
+            error_code = exception.error_code
+            error_description = str(exception)
+            self.message.show_message(error_code, error_description, self.icon_critical)
+        except Exception as exception:
+            self.message.show_message('ERROR_RulesTableCreator_EDIT_RULE', str(exception), self.icon)
 
     def delete_selected_rule(self, rule: list):
         '''
@@ -479,8 +516,16 @@ class RulesTableCreator(object):
             table_creator.deleteSelectedRule(rule)
 
         '''
-        name = rule[0][0]
-        direction = rule[0][4]
-        profile = rule[0][2]
-        protocol = rule[0][5]
-        self.rules_connection.delete_selected_rule(name, direction, profile, protocol)
+        try:
+            name = rule[0][0]
+            direction = rule[0][4]
+            profile = rule[0][2]
+            protocol = rule[0][5]
+            self.rules_connection.delete_selected_rule(name, direction, profile, protocol)
+            self.message.show_message(self.deleted_alert, '', self.icon)
+        except FirewallManagerError as exception:
+            error_code = exception.error_code
+            error_description = str(exception)
+            self.message.show_message(error_code, error_description, self.icon_critical)
+        except Exception as exception:
+            self.message.show_message('ERROR_RulesTableCreator_Delete_Rule', str(exception), self.icon)

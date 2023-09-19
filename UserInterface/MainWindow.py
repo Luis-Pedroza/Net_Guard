@@ -20,11 +20,11 @@
 # ***************************************************
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-from Controller.Ports import GetPortsData, TableCounter
-from Controller.Rules import FirewallManager
+from Controller.Ports import GetPortsData, TableCounter, ErrorPorts
+from Controller.Rules import FirewallManager, FirewallManagerError
 from Controller.Report import ReportPDF
 from Controller.Scan import ScanPorts
-from Controller.Language import LanguageManager
+from Controller.Language import LanguageManager, ErrorLanguage
 from .RulesTab import RulesTableCreator
 from .PortsTab import TablePortsCreator
 from .ScanTab import PortsRangeWindow
@@ -90,6 +90,13 @@ class Ui_MainWindow(object):
             Opens a dialog displaying information about the application.
 
     '''
+    def __init__(self) -> None:
+        self.counter = TableCounter(1, 65535)
+        self.messages_manager = PopUpMessage()
+        self.current_text = SetCurrentText()
+        self.icon_information = QtWidgets.QMessageBox.Information
+        self.icon_critical = QtWidgets.QMessageBox.Critical
+
     def setupUi(self, main_window: QtWidgets.QMainWindow):
         '''
         Sets up the user interface components of the main window.
@@ -108,9 +115,7 @@ class Ui_MainWindow(object):
             ui.setupUi(main_window)
 
         '''
-        self.current_text = SetCurrentText()
         self.report_manager = ReportPDF()
-        self.language = LanguageManager()
         report_path = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.DocumentsLocation)
 
         main_window.setObjectName("main_window")
@@ -197,7 +202,6 @@ class Ui_MainWindow(object):
         # ************************* TAB RULES *************************"
         # *************************************************************"
         self.tab_Rules = QtWidgets.QWidget()
-        self.rules_manager = FirewallManager()
         self.get_searched_rules = RulesTableCreator()
         self.tab_Rules.setObjectName("tab_Rules")
         self.tabWidget.addTab(self.tab_Rules, "")
@@ -286,10 +290,6 @@ class Ui_MainWindow(object):
         self.tab_Ports = QtWidgets.QWidget()
         self.tab_Ports.setObjectName("tab_Ports")
         self.tabWidget.addTab(self.tab_Ports, "")
-
-        self.counter = TableCounter(1, 65535)
-        self.ports_manager = GetPortsData()
-        self.messages_manager = PopUpMessage()
 
         # ************************** HEADER ***************************"
         self.search_port_btn = QtWidgets.QToolButton(self.tab_Ports)
@@ -414,12 +414,10 @@ class Ui_MainWindow(object):
         self.menu_select_language.setObjectName("menu_select_language")
         self.action_select_Spanish = QtWidgets.QAction(self.menu_select_language)
         self.action_select_Spanish.setObjectName("action_select_Spanish")
-        self.action_select_Spanish.triggered.connect(lambda: self.language.set_language('es'))
-        self.action_select_Spanish.triggered.connect(lambda: self.current_text.set_main_window(self, main_window))
+        self.action_select_Spanish.triggered.connect(lambda: self.set_language('es', main_window))
         self.action_select_english = QtWidgets.QAction(self.menu_select_language)
         self.action_select_english.setObjectName("action_select_english")
-        self.action_select_english.triggered.connect(lambda: self.language.set_language('en'))
-        self.action_select_english.triggered.connect(lambda: self.current_text.set_main_window(self, main_window))
+        self.action_select_english.triggered.connect(lambda: self.set_language('en', main_window))
 
         self.menu_select_theme = QtWidgets.QMenu(self.menu_bar)
         self.menu_select_theme.setObjectName("menu_select_theme")
@@ -544,24 +542,32 @@ class Ui_MainWindow(object):
             ui.update_rules_table(mainTable)
 
         '''
+        self.rules_manager = FirewallManager()
         mainTable.clearContents()
         mainTable.setRowCount(0)
-        rules = self.rules_manager.get_all_rules()
-        mainTable.setRowCount(len(rules))
-        for i, row in enumerate(rules):
-            item = QtWidgets.QTableWidgetItem(str(row["Name"]))
-            mainTable.setItem(i, 0, item)
-            item = QtWidgets.QTableWidgetItem(str(row["Enabled"]))
-            mainTable.setItem(i, 1, item)
-            item = QtWidgets.QTableWidgetItem(", ".join(row["Profiles"]))
-            mainTable.setItem(i, 2, item)
-            item = QtWidgets.QTableWidgetItem(str(row["Action"]))
-            mainTable.setItem(i, 3, item)
-            item = QtWidgets.QTableWidgetItem(str(row["Direction"]))
-            mainTable.setItem(i, 4, item)
-            item = QtWidgets.QTableWidgetItem(str(row["Protocol"]))
-            mainTable.setItem(i, 5, item)
-        mainTable.repaint()
+        try:
+            rules = self.rules_manager.get_all_rules()
+            mainTable.setRowCount(len(rules))
+            for i, row in enumerate(rules):
+                item = QtWidgets.QTableWidgetItem(str(row["Name"]))
+                mainTable.setItem(i, 0, item)
+                item = QtWidgets.QTableWidgetItem(str(row["Enabled"]))
+                mainTable.setItem(i, 1, item)
+                item = QtWidgets.QTableWidgetItem(", ".join(row["Profiles"]))
+                mainTable.setItem(i, 2, item)
+                item = QtWidgets.QTableWidgetItem(str(row["Action"]))
+                mainTable.setItem(i, 3, item)
+                item = QtWidgets.QTableWidgetItem(str(row["Direction"]))
+                mainTable.setItem(i, 4, item)
+                item = QtWidgets.QTableWidgetItem(str(row["Protocol"]))
+                mainTable.setItem(i, 5, item)
+            mainTable.repaint()
+        except FirewallManagerError as exception:
+            error_code = exception.error_code
+            error_description = str(exception)
+            self.messages_manager.show_message(error_code, error_description, self.icon_critical)
+        except Exception as exception:
+            self.messages_manager.show_message('ERROR_MainWindow_Update_Rules_Table', str(exception), self.icon_information)
 
     def update_ports_table(self, mainTable: QtWidgets.QTableWidget):
         '''
@@ -581,16 +587,24 @@ class Ui_MainWindow(object):
             ui.update_ports_table(mainTable)
 
         '''
+        self.ports_manager = GetPortsData()
         self.minValue = self.counter.current_value
         self.maxValue = self.counter.current_value + 13
-        self.newTable = self.ports_manager.get_all_ports(self.minValue, self.maxValue)
-        if self.newTable:
-            mainTable.clearContents()
-            for row, row_data in enumerate(self.newTable):
-                for col, col_data in enumerate(row_data):
-                    item = QtWidgets.QTableWidgetItem(str(col_data))
-                    mainTable.setItem(row, col, item)
-            mainTable.repaint()
+        try:
+            self.newTable = self.ports_manager.get_all_ports(self.minValue, self.maxValue)
+            if self.newTable:
+                mainTable.clearContents()
+                for row, row_data in enumerate(self.newTable):
+                    for col, col_data in enumerate(row_data):
+                        item = QtWidgets.QTableWidgetItem(str(col_data))
+                        mainTable.setItem(row, col, item)
+                mainTable.repaint()
+        except ErrorPorts as exception:
+            error_code = exception.error_code
+            error_description = str(exception)
+            self.messages_manager.show_message(error_code, error_description, self.icon_critical)
+        except Exception as exception:
+            self.messages_manager.show_message('UI_ERROR__UNABLE_TO_update_ports_table', str(exception), self.icon_information)
 
     def sort_table(self, table: QtWidgets.QTableWidget, column: int):
         '''
@@ -654,24 +668,30 @@ class Ui_MainWindow(object):
             ui.show_search_rule_table()
 
         '''
-        icon = QtWidgets.QMessageBox.Information
         name = self.lineEdit_search_rule.text()
         profile = self.comboBox_rule_profile.currentIndex()
         direction = self.comboBox_rule_direction.currentIndex()
         self.InitSearchTable = QtWidgets.QDialog()
-
         self.searchRule = RulesTableCreator()
-        self.searchRule.setup_rules_table(self.InitSearchTable, name, profile, direction)
+        try:
+            self.searchRule.setup_rules_table(self.InitSearchTable, name, profile, direction)
 
-        if self.lineEdit_search_rule.text() == '':
-            self.messages_manager.show_message(self.rule_name_missing_message, self.rule_name_missing_description, icon)
-        elif self.searchRule.new_table.rowCount() == 0:
-            self.messages_manager.show_message(self.no_matching_data_message, self.no_matching_data_description, icon)
-        else:
-            self.InitSearchTable.exec_()
-        self.lineEdit_search_rule.clear()
-        self.comboBox_rule_profile.setCurrentIndex(0)
-        self.comboBox_rule_direction.setCurrentIndex(0)
+            if self.lineEdit_search_rule.text() == '':
+                self.messages_manager.show_message(self.rule_name_missing_message, self.rule_name_missing_description, self.icon_information)
+            elif self.searchRule.new_table.rowCount() == 0:
+                self.messages_manager.show_message(self.no_matching_data_message, self.no_matching_data_description, self.icon_information)
+            else:
+                self.InitSearchTable.exec_()
+            self.lineEdit_search_rule.clear()
+            self.comboBox_rule_profile.setCurrentIndex(0)
+            self.comboBox_rule_direction.setCurrentIndex(0)
+        except FirewallManagerError as exception:
+            error_code = exception.error_code
+            error_description = str(exception)
+            self.messages_manager.show_message(error_code, error_description, self.icon_critical)
+        except Exception as exception:
+            self.messages_manager.show_message('ERROR_MainWindow_Search_Rule', str(exception), self.icon_information)
+
 
     def show_search_ports_table(self):
         '''
@@ -691,26 +711,33 @@ class Ui_MainWindow(object):
             ui.show_search_ports_table()
 
         '''
-        icon = QtWidgets.QMessageBox.Information
-        port = self.spinBox_port.value()
-        service = self.lineEdit_search.text()
-        protocol = self.comboBox_protocol.currentIndex()
+        try:
+            port = self.spinBox_port.value()
+            service = self.lineEdit_search.text()
+            protocol = self.comboBox_protocol.currentIndex()
 
-        if service == '' and port == 0:
-            self.messages_manager.show_message(self.invalid_search_message, self.invalid_search_description, icon)
-        elif port >= 49152:
-            self.messages_manager.show_message(self.unregistered_port_message, self.unregistered_port_description, icon)
-        else:
-            self.InitSearchTable = QtWidgets.QDialog()
-            self.TableApp = TablePortsCreator(port, protocol, service)
-            self.TableApp.setup_table(self.InitSearchTable)
-            if self.TableApp.new_table.rowCount() == 0:
-                self.messages_manager.show_message(self.port_not_found_message, self.port_not_found_description, icon)
+            if service == '' and port == 0:
+                self.messages_manager.show_message(self.invalid_search_message, self.invalid_search_description, self.icon_information)
+            elif port >= 49152:
+                self.messages_manager.show_message(self.unregistered_port_message, self.unregistered_port_description, self.icon_information)
             else:
-                self.InitSearchTable.exec_()
-        self.lineEdit_search.clear()
-        self.spinBox_port.setValue(0)
-        self.comboBox_protocol.setCurrentIndex(0)
+                self.InitSearchTable = QtWidgets.QDialog()
+                self.TableApp = TablePortsCreator(port, protocol, service)
+                self.TableApp.setup_table(self.InitSearchTable)
+                if self.TableApp.new_table.rowCount() == 0:
+                    self.messages_manager.show_message(self.port_not_found_message, self.port_not_found_description, self.icon_information)
+                else:
+                    self.InitSearchTable.exec_()
+            self.lineEdit_search.clear()
+            self.spinBox_port.setValue(0)
+            self.comboBox_protocol.setCurrentIndex(0)
+        except ErrorPorts as exception:
+            error_code = exception.error_code
+            error_description = str(exception)
+            self.messages_manager.show_message(error_code, error_description, self.icon_critical)
+        except Exception as exception:
+            self.messages_manager.show_message('UI_ERROR__UNABLE_TO_show_search_ports_table', str(exception), self.icon_information)
+
 
     def show_scan_table_info(self):
         '''
@@ -733,7 +760,7 @@ class Ui_MainWindow(object):
         code = 'This does not work'
         message = 'still in develop'
         icon = QtWidgets.QMessageBox.Information
-        self.messages_manager.show_message(code, message, icon)
+        self.messages_manager.show_message(code, message, self.icon_information)
 
     def show_new_rule_window(self):
         '''
@@ -753,10 +780,17 @@ class Ui_MainWindow(object):
             ui.show_new_rule_window()
 
         '''
-        self.init_rules_dialog = QtWidgets.QDialog()
-        self.RuleWindow = RulesTableCreator()
-        self.RuleWindow.init_rule_window(self.init_rules_dialog)
-        self.init_rules_dialog.exec_()
+        try:
+            self.init_rules_dialog = QtWidgets.QDialog()
+            self.RuleWindow = RulesTableCreator()
+            self.RuleWindow.init_rule_window(self.init_rules_dialog)
+            self.init_rules_dialog.exec_()
+        except FirewallManagerError as exception:
+            error_code = exception.error_code
+            error_description = str(exception)
+            self.messages_manager.show_message(error_code, error_description, self.icon_critical)
+        except Exception as exception:
+            self.messages_manager.show_message('ERROR_MainWindow_New_Rule_Window', exception, self.icon_critical)
 
     def show_ports_table_info(self):
         '''
@@ -778,8 +812,21 @@ class Ui_MainWindow(object):
         '''
         code = 'This does not work'
         message = 'still in develop'
-        icon = QtWidgets.QMessageBox.Information
-        self.messages_manager.show_message(code, message, icon)
+        
+        self.messages_manager.show_message(code, message, self.icon_information)
+
+    def set_language(self, language: str, main_window: QtWidgets.QMainWindow):
+        self.language = LanguageManager()
+        try:
+            self.language.set_language(language)
+            self.current_text.set_main_window(self, main_window)
+        except ErrorLanguage as exception:
+            error_code = exception.error_code
+            error_description = str(exception)
+            self.messages_manager.show_message(error_code, error_description, self.icon_critical)
+        except Exception as exception:
+            self.messages_manager.show_message('UI_ERROR__UNABLE_TO_set_language', str(exception), self.icon_information)
+
 
     def next_value(self, mainTable: QtWidgets.QTableWidget):
         '''

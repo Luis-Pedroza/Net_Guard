@@ -15,10 +15,7 @@
 # AUTHOR: Luis Pedroza
 # CREATED: 16/03/2023 (dd/mm/yy)
 # ***************************************************
-
-from PyQt5.QtWidgets import QMessageBox
-from UserInterface.Alerts import PopUpMessage
-from Database.Connection import DatabaseConnection
+from Database.Connection import DatabaseConnection, ErrorConnection
 
 
 class GetPortsData():
@@ -42,7 +39,6 @@ class GetPortsData():
     '''
     def __init__(self):
         self.database = DatabaseConnection('Resources/app_data.db')
-        self.popUp_Message = PopUpMessage()
 
     def get_all_ports(self, minimum: int, maximum: int) -> list[tuple]:
         """
@@ -70,9 +66,12 @@ class GetPortsData():
             table = self.database.query(query, params)
             self.database.disconnect()
             return table
+        except ErrorConnection as exception:
+            error_code = exception.error_code
+            error_description = str(exception)
+            raise ErrorPorts(error_code, error_description)
         except Exception as exception:
-            self.popUp_Message.show_message('UNABLE_TO_USE_get_all_ports', exception, QMessageBox.Critical)
-            return None
+            raise ErrorPorts('ERROR_GetPortsData_GET_ALL', str(exception))
 
     def get_search(self, port: int, protocol: str, service: str) -> list[tuple]:
         """
@@ -102,9 +101,12 @@ class GetPortsData():
                 table = self.database.query(query, params)
                 self.database.disconnect()
                 return table
+            except ErrorConnection as exception:
+                error_code = exception.error_code
+                error_description = str(exception)
+                raise ErrorPorts(error_code, error_description)
             except Exception as exception:
-                self.popUp_Message.show_message('UNABLE_TO_SEARCH_Both_Service', exception, QMessageBox.Critical)
-                return None
+                raise ErrorPorts('ERROR_GetPortsData_GET_Both_Service', str(exception))
         # if port isn't 0 then search by port and show both protocols (TCP & UDP)
         elif protocol == 0 and port != 0:
             try:
@@ -114,9 +116,12 @@ class GetPortsData():
                 table = self.database.query(query, params)
                 self.database.disconnect()
                 return table
+            except ErrorConnection as exception:
+                error_code = exception.error_code
+                error_description = str(exception)
+                raise ErrorPorts(error_code, error_description)
             except Exception as exception:
-                self.popUp_Message.show_message('UNABLE_TO_SEARCH_Both_Ports', exception, QMessageBox.Critical)
-                return None
+                raise ErrorPorts('ERROR_GetPortsData_GET_Both_Ports', str(exception))
         # if protocol isn't both specify the protocol
         else:
             if protocol == 1:
@@ -132,9 +137,12 @@ class GetPortsData():
                     table = self.database.query(query, params)
                     self.database.disconnect()
                     return table
+                except ErrorConnection as exception:
+                    error_code = exception.error_code
+                    error_description = str(exception)
+                    raise ErrorPorts(error_code, error_description)
                 except Exception as exception:
-                    self.popUp_Message.show_message('UNABLE_TO_SEARCH_Service', exception, QMessageBox.Critical)
-                    return None
+                    raise ErrorPorts('ERROR_GetPortsData_GET__Service', str(exception))
             # if port isn't 0 then search by port and specify the protocol
             else:
                 try:
@@ -144,9 +152,12 @@ class GetPortsData():
                     table = self.database.query(query, params)
                     self.database.disconnect()
                     return table
+                except ErrorConnection as exception:
+                    error_code = exception.error_code
+                    error_description = str(exception)
+                    raise ErrorPorts(error_code, error_description)
                 except Exception as exception:
-                    self.popUp_Message.show_message('UNABLE_TO_SEARCH_Both_Port', exception, QMessageBox.Critical)
-                    return None
+                    raise ErrorPorts('ERROR_GetPortsData_GET__Port', str(exception))
 
 
 class TableCounter():
@@ -225,3 +236,9 @@ class TableCounter():
         '''
         if self.current_value > self.min_value:
             self.current_value -= 14
+
+
+class ErrorPorts(Exception):
+    def __init__(self, error_code, error_description):
+        super().__init__(error_description)
+        self.error_code = error_code
