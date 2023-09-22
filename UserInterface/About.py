@@ -28,7 +28,7 @@
 
 from PyQt5 import QtCore, QtWidgets, QtGui
 from .SetText import SetCurrentText
-
+from .styles import SetCurrentTheme
 
 class UiDialog(object):
     """
@@ -56,6 +56,7 @@ class UiDialog(object):
 
         """
         self.current_text = SetCurrentText()
+        self.theme = SetCurrentTheme()
         Dialog.setObjectName("Dialog")
         Dialog.resize(500, 350)
         Dialog.setWindowIcon(QtGui.QIcon("Resources/icon.ico"))
@@ -85,4 +86,5 @@ class UiDialog(object):
         self.close_window.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.close_window.clicked.connect(Dialog.close)
 
+        self.theme.set_selected_theme(Dialog)
         self.current_text.set_about(self, Dialog)

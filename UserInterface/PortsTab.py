@@ -17,6 +17,7 @@ from PyQt5 import QtCore, QtWidgets, QtGui
 from Controller.Ports import GetPortsData, ErrorPorts
 from .Alerts import PopUpMessage
 from .SetText import SetCurrentText
+from .styles import SetCurrentTheme
 
 
 class TablePortsCreator(object):
@@ -43,6 +44,7 @@ class TablePortsCreator(object):
     """
     def __init__(self, port: int, protocol: int, service: str):
         self.current_text = SetCurrentText()
+        self.current_theme = SetCurrentTheme()
         self.data_table_ports = GetPortsData()
         self.error_message = PopUpMessage()
         self.port = port
@@ -103,6 +105,8 @@ class TablePortsCreator(object):
                     for col_num, col_data in enumerate(row_data):
                         item = QtWidgets.QTableWidgetItem(str(col_data))
                         self.new_table.setItem(row_num, col_num, item)
+
+                self.current_theme.set_selected_theme(main_window)
                 self.current_text.set_ports_tab(self, main_window)
 
             else: self.new_table = QtWidgets.QTableWidget(main_window)

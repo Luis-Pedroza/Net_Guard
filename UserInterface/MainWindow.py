@@ -24,13 +24,14 @@ from Controller.Ports import GetPortsData, TableCounter, ErrorPorts
 from Controller.Rules import FirewallManager, FirewallManagerError
 from Controller.Report import ReportPDF
 from Controller.Scan import ScanPorts
-from Controller.Language import LanguageManager, ErrorLanguage
+from Controller.Language import LanguageManager, ErrorLanguage, ThemeManager
 from .RulesTab import RulesTableCreator
 from .PortsTab import TablePortsCreator
 from .ScanTab import PortsRangeWindow
 from .Alerts import PopUpMessage
 from .About import UiDialog
 from .SetText import SetCurrentText
+from .styles import SetCurrentTheme
 
 
 class Ui_MainWindow(object):
@@ -121,6 +122,7 @@ class Ui_MainWindow(object):
         main_window.setObjectName("main_window")
         main_window.resize(755, 616)
         main_window.setWindowIcon(QtGui.QIcon("Resources/icon.ico"))
+        self.set_selected_theme(main_window)
 
         self.central_widget = QtWidgets.QWidget(main_window)
         self.central_widget.setObjectName("central_widget")
@@ -325,6 +327,8 @@ class Ui_MainWindow(object):
         self.ports_table.setRowCount(14)
         self.ports_table.cellDoubleClicked.connect(self.show_ports_table_info)
 
+
+
         item = QtWidgets.QTableWidgetItem()
         self.ports_table.setHorizontalHeaderItem(0, item)
         item = QtWidgets.QTableWidgetItem()
@@ -423,8 +427,10 @@ class Ui_MainWindow(object):
         self.menu_select_theme.setObjectName("menu_select_theme")
         self.action_select_dark = QtWidgets.QAction(self.menu_select_theme)
         self.action_select_dark.setObjectName("action_select_dark")
+        self.action_select_dark.triggered.connect(lambda: self.set_theme('dark'))
         self.action_select_light = QtWidgets.QAction(self.menu_select_theme)
         self.action_select_light.setObjectName("action_select_light")
+        self.action_select_light.triggered.connect(lambda: self.set_theme('light'))
 
         # ************************** HELP **************************"
         self.help_change_range = QtWidgets.QAction(main_window)
@@ -827,6 +833,27 @@ class Ui_MainWindow(object):
         except Exception as exception:
             self.messages_manager.show_message('UI_ERROR__UNABLE_TO_set_language', str(exception), self.icon_information)
 
+    def set_theme(self, theme: str):
+        self.theme = ThemeManager()
+        try:
+            self.theme.set_theme(theme)
+        except ErrorLanguage as exception:
+            error_code = exception.error_code
+            error_description = str(exception)
+            self.messages_manager.show_message(error_code, error_description, self.icon_critical)
+        except Exception as exception:
+            self.messages_manager.show_message('UI_ERROR__UNABLE_TO_set_theme', str(exception), self.icon_information)
+
+    def set_selected_theme(self, main_window):
+        self.theme = SetCurrentTheme()
+        try:
+            self.theme.set_selected_theme(main_window)
+        except ErrorLanguage as exception:
+            error_code = exception.error_code
+            error_description = str(exception)
+            self.messages_manager.show_message(error_code, error_description, self.icon_critical)
+        except Exception as exception:
+            self.messages_manager.show_message('UI_ERROR__UNABLE_TO_set_selected_theme', str(exception), self.icon_information)
 
     def next_value(self, mainTable: QtWidgets.QTableWidget):
         '''

@@ -15,6 +15,7 @@ from PyQt5 import QtCore, QtWidgets, QtGui
 from Controller.Rules import FirewallManager, FirewallManagerError
 from .Alerts import PopUpMessage
 from .SetText import SetCurrentText
+from .styles import SetCurrentTheme
 
 
 class RulesTableCreator(object):
@@ -57,6 +58,7 @@ class RulesTableCreator(object):
     '''
     def __init__(self):
         self.current_text = SetCurrentText()
+        self.current_theme = SetCurrentTheme()
         self.message = PopUpMessage()
         self.rules_connection = FirewallManager()
         self.icon = QtWidgets.QMessageBox.Information
@@ -88,6 +90,7 @@ class RulesTableCreator(object):
         main_window.setObjectName("main_window")
         main_window.setFixedSize(760, 350)
         main_window.setWindowIcon(QtGui.QIcon("Resources/icon.ico"))
+
         try:
             rules_data_list = self.rules_connection.get_searched_rule(name, profile, direction)
 
@@ -130,6 +133,7 @@ class RulesTableCreator(object):
                     self.new_table.setItem(i, 4, item)
                     item = QtWidgets.QTableWidgetItem(str(row[5]))
                     self.new_table.setItem(i, 5, item)
+                self.current_theme.set_selected_theme(main_window)
                 self.current_text.set_rules_table(self, main_window)
 
             else: self.new_table = QtWidgets.QTableWidget(main_window)
@@ -166,6 +170,7 @@ class RulesTableCreator(object):
         Form.setObjectName("Form")
         Form.setFixedSize(400, 500)
         Form.setWindowIcon(QtGui.QIcon("Resources/icon.ico"))
+
 
         self.label_name = QtWidgets.QLabel(Form)
         self.label_name.setGeometry(QtCore.QRect(20, 20, 47, 13))
@@ -269,7 +274,7 @@ class RulesTableCreator(object):
         self.rule_changed = ''
         self.added_rule = ''
 
-
+        self.current_theme.set_selected_theme(Form)
         self.current_text.set_rules_window(self, Form)
 
         if action:

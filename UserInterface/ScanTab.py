@@ -16,6 +16,7 @@ from PyQt5 import QtCore, QtWidgets, QtGui
 from Controller.Scan import ScanPorts
 from .Alerts import PopUpMessage
 from .SetText import SetCurrentText
+from .styles import SetCurrentTheme
 
 
 class PortsRangeWindow(object):
@@ -44,6 +45,7 @@ class PortsRangeWindow(object):
     def __init__(self):
         super().__init__()
         self.current_text = SetCurrentText()
+        self.current_theme = SetCurrentTheme()
         self.range = ScanPorts()
         self.message = PopUpMessage()
         self.icon = QtWidgets.QMessageBox.Information
@@ -112,6 +114,7 @@ class PortsRangeWindow(object):
         self.change_successful = ''
         self.option_not_selected = ''
 
+        self.current_theme.set_selected_theme(main_window)
         self.current_text.set_scan_tab(self, main_window)
 
     def change_range(self):

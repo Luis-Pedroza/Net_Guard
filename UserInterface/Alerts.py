@@ -19,6 +19,7 @@
 from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtGui import QIcon
 from .SetText import SetCurrentText
+from .styles import SetCurrentTheme
 
 
 class PopUpMessage():
@@ -51,6 +52,7 @@ class PopUpMessage():
 
         """
         current_text = SetCurrentText()
+        current_theme = SetCurrentTheme()
         self.mainMessage = QMessageBox()
         self.mainMessage.setText(code)
         self.mainMessage.setInformativeText(str(error))
@@ -58,4 +60,5 @@ class PopUpMessage():
         self.mainMessage.setStandardButtons(QMessageBox.Ok)
         self.mainMessage.setWindowIcon(QIcon("Resources/icon.ico"))
         current_text.set_alerts(self)
+        current_theme.set_selected_theme(self.mainMessage)
         self.mainMessage.exec_()
