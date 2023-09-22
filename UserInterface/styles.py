@@ -173,6 +173,9 @@ class SetCurrentTheme():
             value = self.theme.get_theme()
             if value == 'dark':
                 main_window.setStyleSheet(dark_style)
+            else:
+                main_window.setStyleSheet('')
+
         except ErrorLanguage as exception:
             error_code = exception.error_code
             error_description = str(exception)

@@ -60,6 +60,7 @@ class SetCurrentText():
 
         '''
         self._translate = QtCore.QCoreApplication.translate
+        self.translator = QtCore.QTranslator()
         self.mainMessage = QMessageBox()
         self.mainMessage.setIcon(QMessageBox.Critical)
         self.mainMessage.setStandardButtons(QMessageBox.Ok)
@@ -67,14 +68,8 @@ class SetCurrentText():
         self.mainMessage.setWindowTitle('ERROR')
         try: 
             self.current_language = self.language.get_language()
-            if hasattr(self, 'translator'):
-                QtCore.QCoreApplication.removeTranslator(self.translator)
-
-            if self.current_language != 'en' and hasattr(self, 'translator'):
-                QtCore.QCoreApplication.removeTranslator(self.translator)
-                self.translator = QtCore.QTranslator()
-                self.translator.load(f"Resources/lan/language_{self.current_language}.qm")
-                QtCore.QCoreApplication.installTranslator(self.translator)
+            self.translator.load(f"Resources/lan/language_{self.current_language}.qm")
+            QtCore.QCoreApplication.installTranslator(self.translator)
         except ErrorLanguage as exception:
             error_code = exception.error_code
             error_description = str(exception)

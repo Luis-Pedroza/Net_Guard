@@ -825,7 +825,6 @@ class Ui_MainWindow(object):
         self.language = LanguageManager()
         try:
             self.language.set_language(language)
-            self.current_text.set_main_window(self, main_window)
         except ErrorLanguage as exception:
             error_code = exception.error_code
             error_description = str(exception)
