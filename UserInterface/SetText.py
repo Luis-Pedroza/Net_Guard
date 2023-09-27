@@ -1,7 +1,7 @@
 from PyQt5 import QtCore
 from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtGui import QIcon
-from Controller.Language import LanguageManager, ErrorLanguage
+from Controller.Configuration import LanguageManager, ErrorDataManager
 
 class SetCurrentText():
     '''
@@ -70,7 +70,7 @@ class SetCurrentText():
             self.current_language = self.language.get_language()
             self.translator.load(f"Resources/lan/language_{self.current_language}.qm")
             QtCore.QCoreApplication.installTranslator(self.translator)
-        except ErrorLanguage as exception:
+        except ErrorDataManager as exception:
             error_code = exception.error_code
             error_description = str(exception)
             self.mainMessage.setText(error_code)

@@ -156,8 +156,7 @@ QCheckBox {
 from PyQt5 import QtCore
 from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtGui import QIcon
-from Controller.Language import ErrorLanguage
-from Controller.Language import ThemeManager
+from Controller.Configuration import ThemeManager, ErrorDataManager
 
 
 class SetCurrentTheme():
@@ -176,7 +175,7 @@ class SetCurrentTheme():
             else:
                 main_window.setStyleSheet('')
 
-        except ErrorLanguage as exception:
+        except ErrorDataManager as exception:
             error_code = exception.error_code
             error_description = str(exception)
             self.mainMessage.setText(error_code)

@@ -24,7 +24,7 @@ from Controller.Ports import GetPortsData, TableCounter, ErrorPorts
 from Controller.Rules import FirewallManager, FirewallManagerError
 from Controller.Report import ReportPDF
 from Controller.Scan import ScanPorts
-from Controller.Language import LanguageManager, ErrorLanguage, ThemeManager
+from Controller.Configuration import LanguageManager, ErrorDataManager, ThemeManager
 from .RulesTab import RulesTableCreator
 from .PortsTab import TablePortsCreator
 from .ScanTab import PortsRangeWindow
@@ -825,7 +825,7 @@ class Ui_MainWindow(object):
         self.language = LanguageManager()
         try:
             self.language.set_language(language)
-        except ErrorLanguage as exception:
+        except ErrorDataManager as exception:
             error_code = exception.error_code
             error_description = str(exception)
             self.messages_manager.show_message(error_code, error_description, self.icon_critical)
@@ -836,7 +836,7 @@ class Ui_MainWindow(object):
         self.theme = ThemeManager()
         try:
             self.theme.set_theme(theme)
-        except ErrorLanguage as exception:
+        except ErrorDataManager as exception:
             error_code = exception.error_code
             error_description = str(exception)
             self.messages_manager.show_message(error_code, error_description, self.icon_critical)
@@ -847,7 +847,7 @@ class Ui_MainWindow(object):
         self.theme = SetCurrentTheme()
         try:
             self.theme.set_selected_theme(main_window)
-        except ErrorLanguage as exception:
+        except ErrorDataManager as exception:
             error_code = exception.error_code
             error_description = str(exception)
             self.messages_manager.show_message(error_code, error_description, self.icon_critical)
