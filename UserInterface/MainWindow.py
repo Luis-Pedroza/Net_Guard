@@ -22,9 +22,9 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from Controller.Ports import GetPortsData, TableCounter, ErrorPorts
 from Controller.Rules import FirewallManager, FirewallManagerError
-from Controller.Report import ReportPDF
+from Controller.Report import ReportPDF, ErrorReport
 from Controller.Scan import ScanPorts
-from Controller.Configuration import LanguageManager, ErrorDataManager, ThemeManager
+from Controller.Configuration import LanguageManager, ThemeManager, ErrorDataManager
 from .RulesTab import RulesTableCreator
 from .PortsTab import TablePortsCreator
 from .ScanTab import PortsRangeWindow
@@ -116,9 +116,6 @@ class Ui_MainWindow(object):
             ui.setupUi(main_window)
 
         '''
-        self.report_manager = ReportPDF()
-        report_path = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.DocumentsLocation)
-
         main_window.setObjectName("main_window")
         main_window.resize(755, 616)
         main_window.setWindowIcon(QtGui.QIcon("Resources/icon.ico"))
@@ -393,11 +390,11 @@ class Ui_MainWindow(object):
         self.action_save_scan = QtWidgets.QAction(main_window)
         self.action_save_scan.setShortcut('Ctrl+S')
         self.action_save_scan.setObjectName("action_save_scan")
-        self.action_save_scan.triggered.connect(lambda: self.report_manager.save_to_PDF(report_path, self.scan_table, True))
+        self.action_save_scan.triggered.connect(lambda: self.save_report(self.scan_table, True))
         self.action_save_rules = QtWidgets.QAction(main_window)
         self.action_save_rules.setShortcut('Ctrl+R')
         self.action_save_rules.setObjectName("action_save_rules")
-        self.action_save_rules.triggered.connect(lambda: self.report_manager.save_to_PDF(report_path, self.rules_table, False))
+        self.action_save_rules.triggered.connect(lambda: self.save_report(self.rules_table, False))
 
         # ************************** EDIT **************************"
         self.action_new_rule = QtWidgets.QAction(main_window)
@@ -418,10 +415,10 @@ class Ui_MainWindow(object):
         self.menu_select_language.setObjectName("menu_select_language")
         self.action_select_Spanish = QtWidgets.QAction(self.menu_select_language)
         self.action_select_Spanish.setObjectName("action_select_Spanish")
-        self.action_select_Spanish.triggered.connect(lambda: self.set_language('es', main_window))
+        self.action_select_Spanish.triggered.connect(lambda: self.set_language('es'))
         self.action_select_english = QtWidgets.QAction(self.menu_select_language)
         self.action_select_english.setObjectName("action_select_english")
-        self.action_select_english.triggered.connect(lambda: self.set_language('en', main_window))
+        self.action_select_english.triggered.connect(lambda: self.set_language('en'))
 
         self.menu_select_theme = QtWidgets.QMenu(self.menu_bar)
         self.menu_select_theme.setObjectName("menu_select_theme")
@@ -492,6 +489,8 @@ class Ui_MainWindow(object):
 
         self.port_not_found_message = ''
         self.port_not_found_description = ''
+
+        self.report_saved_message = ''
 
         self.current_text.set_main_window(self, main_window)
         
@@ -821,7 +820,20 @@ class Ui_MainWindow(object):
         
         self.messages_manager.show_message(code, message, self.icon_information)
 
-    def set_language(self, language: str, main_window: QtWidgets.QMainWindow):
+    def save_report(self, table: QtWidgets.QTableWidget, value: bool):
+        self.report_manager = ReportPDF()
+        report_path = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.DocumentsLocation)
+        try:
+            self.report_manager.save_to_PDF(report_path, table, value)
+            self.messages_manager.show_message(self.report_saved_message, '', self.icon_information)
+        except ErrorReport as exception:
+            error_code = exception.error_code
+            error_description = str(exception)
+            self.messages_manager.show_message(error_code, error_description, self.icon_critical)
+        except Exception as exception:
+            self.messages_manager.show_message('ERROR_MainWindow_save_report', str(exception), self.icon_information)
+
+    def set_language(self, language: str):
         self.language = LanguageManager()
         try:
             self.language.set_language(language)

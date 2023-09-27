@@ -441,6 +441,7 @@ For more, visit:
 
         main_object.port_not_found_message = self._translate("MainWindow", "No matching data found")
         main_object.port_not_found_description = self._translate("MainWindow", "The search did not return any data matching the parameters")
+        main_object.report_saved_message = self._translate("MainWindow", 'The report has been saved.\nCheck on Documents')
 
 
 
