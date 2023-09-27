@@ -276,12 +276,12 @@ For more, visit:
         rules_object.txt_cancel_btn = self._translate("RulesWindow", "Cancel")
         rules_object.txt_edit_btn = self._translate("RulesWindow", "Edit")
         rules_object.txt_delete_btn = self._translate("RulesWindow", "Delete")
-        rules_object.name_missing_error = 'Specify the name of the rule'
-        rules_object.name_missing_description = 'To create a new rule you must specify at least the name of the rule.\nCheck help to create a new rule'
-        rules_object.rule_unable = 'Unable to access the selected rule'
-        rules_object.deleted_alert = 'The selected rules has been deleted'
-        rules_object.rule_changed = 'The rule has been changed'
-        rules_object.added_rule = 'The new rules has been added'
+        rules_object.name_missing_error = self._translate("RulesWindow", 'Specify the name of the rule')
+        rules_object.name_missing_description = self._translate("RulesWindow", 'To create a new rule you must specify at least the name of the rule.\nCheck help to create a new rule')
+        rules_object.rule_unable = self._translate("RulesWindow", 'Unable to access the selected rule')
+        rules_object.deleted_alert = self._translate("RulesWindow", 'The selected rules has been deleted')
+        rules_object.rule_changed = self._translate("RulesWindow", 'The rule has been changed')
+        rules_object.added_rule = self._translate("RulesWindow", 'The new rules has been added')
 
 
     def set_main_window(self, main_object, main_window):
