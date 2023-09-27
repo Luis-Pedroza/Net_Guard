@@ -15,7 +15,7 @@ from PyQt5 import QtCore, QtWidgets, QtGui
 from Controller.Rules import FirewallManager, FirewallManagerError
 from .Alerts import PopUpMessage
 from .SetText import SetCurrentText
-from .styles import SetCurrentTheme
+from .Styles import SetCurrentTheme
 
 
 class RulesTableCreator(object):

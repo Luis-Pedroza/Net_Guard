@@ -31,7 +31,7 @@ from .ScanTab import PortsRangeWindow
 from .Alerts import PopUpMessage
 from .About import UiDialog
 from .SetText import SetCurrentText
-from .styles import SetCurrentTheme
+from .Styles import SetCurrentTheme
 
 
 class Ui_MainWindow(object):

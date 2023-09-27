@@ -28,7 +28,7 @@
 
 from PyQt5 import QtCore, QtWidgets, QtGui
 from .SetText import SetCurrentText
-from .styles import SetCurrentTheme
+from .Styles import SetCurrentTheme
 
 class UiDialog(object):
     """

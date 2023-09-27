@@ -19,7 +19,7 @@
 from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtGui import QIcon
 from .SetText import SetCurrentText
-from .styles import SetCurrentTheme
+from .Styles import SetCurrentTheme
 
 
 class PopUpMessage():

@@ -16,7 +16,7 @@ from PyQt5 import QtCore, QtWidgets, QtGui
 from Controller.Scan import ScanPorts
 from .Alerts import PopUpMessage
 from .SetText import SetCurrentText
-from .styles import SetCurrentTheme
+from .Styles import SetCurrentTheme
 
 
 class PortsRangeWindow(object):

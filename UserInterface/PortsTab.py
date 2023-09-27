@@ -17,7 +17,7 @@ from PyQt5 import QtCore, QtWidgets, QtGui
 from Controller.Ports import GetPortsData, ErrorPorts
 from .Alerts import PopUpMessage
 from .SetText import SetCurrentText
-from .styles import SetCurrentTheme
+from .Styles import SetCurrentTheme
 
 
 class TablePortsCreator(object):
