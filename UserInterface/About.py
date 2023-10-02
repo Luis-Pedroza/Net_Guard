@@ -27,7 +27,6 @@
 # ****************************************************
 
 from PyQt5 import QtCore, QtWidgets, QtGui
-from .Styles import SetCurrentTheme
 
 class UiDialog(object):
     """
@@ -43,7 +42,7 @@ class UiDialog(object):
             Translates the UI elements to the desired language.
 
     """
-    def setupUi(self, Dialog, current_text):
+    def setupUi(self, Dialog, current_text, current_theme):
         """
         Set up the UI elements of the dialog.
 
@@ -55,7 +54,7 @@ class UiDialog(object):
 
         """
         self.current_text = current_text
-        self.theme = SetCurrentTheme()
+        self.theme = current_theme
         Dialog.setObjectName("Dialog")
         Dialog.resize(500, 350)
         Dialog.setWindowIcon(QtGui.QIcon("Resources/icon.ico"))

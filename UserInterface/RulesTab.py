@@ -14,8 +14,6 @@
 from PyQt5 import QtCore, QtWidgets, QtGui
 from Controller.Rules import FirewallManager, FirewallManagerError
 from .Alerts import PopUpMessage
-from .SetText import SetCurrentText
-from .Styles import SetCurrentTheme
 
 
 class RulesTableCreator(object):
@@ -56,10 +54,10 @@ class RulesTableCreator(object):
             Delete a selected firewall rule.
 
     '''
-    def __init__(self, current_text):
+    def __init__(self, current_text, current_theme):
         self.current_text = current_text
-        self.current_theme = SetCurrentTheme()
-        self.message = PopUpMessage(current_text)
+        self.current_theme = current_theme
+        self.message = PopUpMessage(current_text, current_theme)
         self.rules_connection = FirewallManager()
         self.icon = QtWidgets.QMessageBox.Information
         self.icon_critical = QtWidgets.QMessageBox.Critical

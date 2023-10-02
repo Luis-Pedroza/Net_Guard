@@ -16,8 +16,6 @@
 from PyQt5 import QtCore, QtWidgets, QtGui
 from Controller.Ports import GetPortsData, ErrorPorts
 from .Alerts import PopUpMessage
-from .SetText import SetCurrentText
-from .Styles import SetCurrentTheme
 
 
 class TablePortsCreator(object):
@@ -42,11 +40,11 @@ class TablePortsCreator(object):
             Show a message indicating that the init_ports_window function is under construction.
 
     """
-    def __init__(self, port: int, protocol: int, service: str, current_text):
+    def __init__(self, port: int, protocol: int, service: str, current_text, current_theme):
         self.current_text = current_text
-        self.current_theme = SetCurrentTheme()
+        self.current_theme = current_theme
         self.data_table_ports = GetPortsData()
-        self.error_message = PopUpMessage(current_text)
+        self.error_message = PopUpMessage(current_text, current_theme)
         self.port = port
         self.protocol = protocol
         self.service = service

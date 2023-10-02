@@ -1,3 +1,36 @@
+from PyQt5 import QtCore
+from PyQt5.QtWidgets import QMessageBox
+from PyQt5.QtGui import QIcon
+from Controller.Configuration import ThemeManager, ErrorDataManager
+
+
+class SetCurrentTheme():
+    def set_selected_theme(self, main_window):
+        self.theme = ThemeManager()
+        self._translate = QtCore.QCoreApplication.translate
+        self.mainMessage = QMessageBox()
+        self.mainMessage.setIcon(QMessageBox.Critical)
+        self.mainMessage.setStandardButtons(QMessageBox.Ok)
+        self.mainMessage.setWindowIcon(QIcon("Resources/icon.ico"))
+        self.mainMessage.setWindowTitle('ERROR')
+        try:
+            value = self.theme.get_theme()
+            if value == 'dark':
+                main_window.setStyleSheet(dark_style)
+            else:
+                main_window.setStyleSheet('')
+
+        except ErrorDataManager as exception:
+            error_code = exception.error_code
+            error_description = str(exception)
+            self.mainMessage.setText(error_code)
+            self.mainMessage.setInformativeText(str(error_description))
+            self.mainMessage.exec_()
+        except Exception as exception:
+            error_description = str(exception)
+            self.mainMessage.setText('UI_ERROR__UNABLE_TO_set_selected_theme')
+            self.mainMessage.setInformativeText(str(exception))
+            self.mainMessage.exec_()
 dark_style = """
 QMainWindow {
     background-color: #2E2E2E;
@@ -153,36 +186,3 @@ QCheckBox {
     spacing: 5px;
 }
 """
-from PyQt5 import QtCore
-from PyQt5.QtWidgets import QMessageBox
-from PyQt5.QtGui import QIcon
-from Controller.Configuration import ThemeManager, ErrorDataManager
-
-
-class SetCurrentTheme():
-    def set_selected_theme(self, main_window):
-        self.theme = ThemeManager()
-        self._translate = QtCore.QCoreApplication.translate
-        self.mainMessage = QMessageBox()
-        self.mainMessage.setIcon(QMessageBox.Critical)
-        self.mainMessage.setStandardButtons(QMessageBox.Ok)
-        self.mainMessage.setWindowIcon(QIcon("Resources/icon.ico"))
-        self.mainMessage.setWindowTitle('ERROR')
-        try:
-            value = self.theme.get_theme()
-            if value == 'dark':
-                main_window.setStyleSheet(dark_style)
-            else:
-                main_window.setStyleSheet('')
-
-        except ErrorDataManager as exception:
-            error_code = exception.error_code
-            error_description = str(exception)
-            self.mainMessage.setText(error_code)
-            self.mainMessage.setInformativeText(str(error_description))
-            self.mainMessage.exec_()
-        except Exception as exception:
-            error_description = str(exception)
-            self.mainMessage.setText('UI_ERROR__UNABLE_TO_set_selected_theme')
-            self.mainMessage.setInformativeText(str(exception))
-            self.mainMessage.exec_()

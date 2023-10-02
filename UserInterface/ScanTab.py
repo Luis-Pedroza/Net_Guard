@@ -15,8 +15,6 @@
 from PyQt5 import QtCore, QtWidgets, QtGui
 from Controller.Scan import ScanPorts, ScanError
 from .Alerts import PopUpMessage
-from .SetText import SetCurrentText
-from .Styles import SetCurrentTheme
 
 
 class PortsRangeWindow(object):
@@ -42,12 +40,12 @@ class PortsRangeWindow(object):
             Resets the port ranges to default values.
 
     '''
-    def __init__(self, current_text):
+    def __init__(self, current_text, current_theme):
         super().__init__()
         self.current_text = current_text
-        self.current_theme = SetCurrentTheme()
+        self.current_theme = current_theme
         self.range = ScanPorts()
-        self.message = PopUpMessage(current_text)
+        self.message = PopUpMessage(current_text, current_theme)
         self.icon = QtWidgets.QMessageBox.Information
 
     def setUp_window(self, main_window: QtWidgets.QMainWindow):
