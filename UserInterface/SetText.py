@@ -189,8 +189,9 @@ For more, visit:
         scan_object.reset_values_btn.setText(self._translate('ScanTab', "Reset"))
         scan_object.cancel_btn.setText(self._translate('ScanTab', "Cancel"))
 
-        scan_object.rule_name_missing_message = self._translate("ScanTab", 'Selected range has been changed')
+        scan_object.change_successful = self._translate("ScanTab", 'Selected range has been changed')
         scan_object.option_not_selected = self._translate("ScanTab", 'Must select an option')
+        scan_object.default_values = self._translate("ScanTab", 'Default values were reset')
 
     def set_rules_table(self, rules_object, main_window):
         '''

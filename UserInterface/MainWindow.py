@@ -23,7 +23,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from Controller.Ports import GetPortsData, TableCounter, ErrorPorts
 from Controller.Rules import FirewallManager, FirewallManagerError
 from Controller.Report import ReportPDF, ErrorReport
-from Controller.Scan import ScanPorts
+from Controller.Scan import ScanPorts, ScanError
 from Controller.Configuration import LanguageManager, ThemeManager, ErrorDataManager
 from .RulesTab import RulesTableCreator
 from .PortsTab import TablePortsCreator
@@ -512,22 +512,32 @@ class Ui_MainWindow(object):
             ui.update_scan_table(mainTable)
 
         '''
-        mainTable.clearContents()
-        mainTable.setRowCount(0)
-        getData = self.connection_manager.scan_active_ports()
-        mainTable.setRowCount(len(getData))
-        for row, row_data in enumerate(getData):
-            for col, col_data in enumerate(row_data):
-                item = QtWidgets.QTableWidgetItem(str(col_data))
-                mainTable.setItem(row, col, item)
-        mainTable.repaint()
+        try:
+            mainTable.clearContents()
+            mainTable.setRowCount(0)
+            getData = self.connection_manager.scan_active_ports()
+            mainTable.setRowCount(len(getData))
+            for row, row_data in enumerate(getData):
+                for col, col_data in enumerate(row_data):
+                    item = QtWidgets.QTableWidgetItem(str(col_data))
+                    mainTable.setItem(row, col, item)
+            mainTable.repaint()
 
-        getRange = self.connection_manager.get_ports_range()
-        tcpRange = getRange[0].splitlines()[4]
-        udpRange = getRange[1].splitlines()[4]
+            getRange = self.connection_manager.get_ports_range()
+            if getRange:
+                tcpRange = getRange[0].splitlines()[4]
+                udpRange = getRange[1].splitlines()[4]
+                self.label_valueTCP.setText(tcpRange.split(':')[1])
+                self.label_valueUDP.setText(udpRange.split(':')[1])
+            else:
+                self.messages_manager.show_message('Unable to get range', '', self.icon_critical)
+        except ScanError as exception:
+            error_code = exception.error_code
+            error_description = str(exception)
+            self.messages_manager.show_message(error_code, error_description, self.icon_critical)
+        except Exception as exception:
+            self.messages_manager.show_message('ERROR_MainWindow_update_scan_table', str(exception), self.icon_information)
 
-        self.label_valueTCP.setText(tcpRange.split(':')[1])
-        self.label_valueUDP.setText(udpRange.split(':')[1])
 
     def update_rules_table(self, mainTable: QtWidgets.QTableWidget):
         '''

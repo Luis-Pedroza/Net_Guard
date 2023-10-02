@@ -14,8 +14,6 @@
 
 import psutil
 import subprocess
-from PyQt5.QtWidgets import QMessageBox
-from UserInterface.Alerts import PopUpMessage
 
 
 class ScanPorts():
@@ -40,10 +38,6 @@ class ScanPorts():
             It uses a system command to modify the port range.
 
     """
-    def __init__(self):
-        self.message = PopUpMessage()
-        self.icon = QMessageBox.Critical
-
     @staticmethod
     def scan_active_ports() -> list:
         """
@@ -65,26 +59,30 @@ class ScanPorts():
                 print(port_info)
 
         """
-        connections = psutil.net_connections(kind='all')
-        connection_data = []
-
-        for data in connections:
-            local_address = f"{data.laddr.ip}:{data.laddr.port}"
-            remote_address = f"{data.raddr.ip}:{data.raddr.port}" if data.raddr else "-"
-            status = data.status
-            pid = data.pid
-            try:
-                program = psutil.Process(pid).name()
-            except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
-                program = "-"
-            if data.type == 1:
-                protocol = "TCP"
-            elif data.type == 2:
-                protocol = "UDP"
-            else:
-                protocol = "-" if data.kind != psutil.SOCK_RAW else "RAW"
-            connection_data.append([protocol, local_address, remote_address, status, pid, program])
-        return connection_data
+        try:
+            connections = psutil.net_connections(kind='all')
+            connection_data = []
+            for data in connections:
+                local_address = f"{data.laddr.ip}:{data.laddr.port}"
+                remote_address = f"{data.raddr.ip}:{data.raddr.port}" if data.raddr else "-"
+                status = data.status
+                pid = data.pid
+                try:
+                    program = psutil.Process(pid).name()
+                except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
+                    program = "-"
+                if data.type == 1:
+                    protocol = "TCP"
+                elif data.type == 2:
+                    protocol = "UDP"
+                else:
+                    protocol = "-" if data.kind != psutil.SOCK_RAW else "RAW"
+                connection_data.append([protocol, local_address, remote_address, status, pid, program])
+            return connection_data
+        except psutil.Error as exception:
+            raise ScanError('UNABLE_To_Execute_Command_in_scan_active_ports_psutil', str(exception))
+        except Exception as exception:
+            raise ScanError('UNABLE_To_Execute_Command_in_scan_active_ports_except', str(exception))
 
     def get_ports_range(self) -> list:
         """
@@ -106,17 +104,21 @@ class ScanPorts():
                 print(port_info)
 
         """
-        command_TCP = 'netsh int ipv4 show dynamicport tcp'
-        command_UDP = 'netsh int ipv4 show dynamicport udp'
         try:
+            command_TCP = 'netsh int ipv4 show dynamicport tcp'
+            command_UDP = 'netsh int ipv4 show dynamicport udp'
             output_TCP = subprocess.run(command_TCP, shell=True, capture_output=True, encoding='cp850')
             output_UDP = subprocess.run(command_UDP, shell=True, capture_output=True, encoding='cp850')
-            if output_TCP.returncode != 0 or output_UDP.returncode != 0:
-                self.message.show_message('UNABLE_To_get_ports_range', output_TCP.stdout.splitlines()[1], self.icon)
+            if output_TCP.returncode != 0:
+                raise ScanError('command error TCP', str(output_TCP.returncode))
+            elif output_UDP.returncode != 0:
+                raise ScanError('command error UDP', str(output_UDP.returncode))
             else:
                 return str(output_TCP.stdout), str(output_UDP.stdout)
         except subprocess.CalledProcessError as exception:
-            self.message.show_message('UNABLE_To_Execute_Command_in_get_ports_range', exception, self.icon)
+            raise ScanError('UNABLE_To_Execute_Command_in_get_ports_range_subprocess', str(exception))
+        except Exception as exception:
+            raise ScanError('UNABLE_To_Execute_Command_in_get_ports_range_exception', str(exception))
 
     def change_ports_range(self, protocol: str, range: int) -> bool:
         """
@@ -145,11 +147,17 @@ class ScanPorts():
         try:
             output_range = subprocess.run(command_range, shell=True, capture_output=True, encoding='cp850')
             if output_range.returncode != 0:
-                self.message.show_message('UNABLE_To_change_ports_range', output_range.stdout, self.icon)
                 status = False
             else:
                 status = True
+            return status
         except subprocess.CalledProcessError as exception:
-            self.message.show_message('UNABLE_To_Execute_Command_in_change_ports_range', exception, self.icon)
-            status = False
-        finally: return status
+            raise ScanError('ERROR_ScanPorts_change_subprocess', str(exception))
+        except Exception as exception:
+            raise ScanError('ERROR_ScanPorts_change_Exception', str(exception))
+
+
+class ScanError(Exception):
+    def __init__(self, error_code, error_description):
+        super().__init__(error_description)
+        self.error_code = error_code

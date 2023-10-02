@@ -13,7 +13,7 @@
 # ***************************************************
 
 from PyQt5 import QtCore, QtWidgets, QtGui
-from Controller.Scan import ScanPorts
+from Controller.Scan import ScanPorts, ScanError
 from .Alerts import PopUpMessage
 from .SetText import SetCurrentText
 from .Styles import SetCurrentTheme
@@ -113,6 +113,7 @@ class PortsRangeWindow(object):
 
         self.change_successful = ''
         self.option_not_selected = ''
+        self.default_values = ''
 
         self.current_theme.set_selected_theme(main_window)
         self.current_text.set_scan_tab(self, main_window)
@@ -135,22 +136,30 @@ class PortsRangeWindow(object):
             ports_range_window.change_range()
 
         '''
-        # status False means an error
-        if self.checkBox_TCP.isChecked() and self.checkBox_UDP.isChecked():
-            statusTCP = self.range.change_ports_range('tcp', self.rangeTCP.value())
-            statusUDP = self.range.change_ports_range('udp', self.rangeUDP.value())
-            if statusTCP is not False or statusUDP is not False:
-                self.message.show_message(self.change_successful, '', self.icon)
-        elif self.checkBox_UDP.isChecked():
-            statusUDP = self.range.change_ports_range('udp', self.rangeUDP.value())
-            if statusUDP is not False:
-                self.message.show_message(self.change_successful, '', self.icon)
-        elif self.checkBox_TCP.isChecked():
-            statusTCP = self.range.change_ports_range('tcp', self.rangeTCP.value())
-            if statusTCP is not False:
-                self.message.show_message(self.change_successful, '', self.icon)
-        else:
-            self.message.show_message(self.option_not_selected, '', self.icon)
+        try:
+            # status False means an error
+            if self.checkBox_TCP.isChecked() and self.checkBox_UDP.isChecked():
+                statusTCP = self.range.change_ports_range('tcp', self.rangeTCP.value())
+                statusUDP = self.range.change_ports_range('udp', self.rangeUDP.value())
+                if statusTCP is not False or statusUDP is not False:
+                    self.message.show_message(self.change_successful, '', self.icon)
+            elif self.checkBox_UDP.isChecked():
+                statusUDP = self.range.change_ports_range('udp', self.rangeUDP.value())
+                if statusUDP is not False:
+                    self.message.show_message(self.change_successful, '', self.icon)
+            elif self.checkBox_TCP.isChecked():
+                statusTCP = self.range.change_ports_range('tcp', self.rangeTCP.value())
+                if statusTCP is not False:
+                    self.message.show_message(self.change_successful, '', self.icon)
+            else:
+                self.message.show_message(self.option_not_selected, '', self.icon)
+        except ScanError as exception:
+            error_code = exception.error_code
+            error_description = str(exception)
+            self.message.show_message(error_code, error_description, self.icon)
+        except Exception as exception:
+            self.message.show_message('ERROR_UI_change_range', str(exception), self.icon)
+
 
     def reset_default_values(self):
         '''
@@ -170,11 +179,16 @@ class PortsRangeWindow(object):
             ports_range_window.reset()
 
         '''
-        code = 'Defaults values were reset'
-        # The recommended range is 16384
-        statusTCP = self.range.change_ports_range('tcp', 16384)
-        statusUDP = self.range.change_ports_range('udp', 16384)
+        try:
+            # The recommended range is 16384
+            statusTCP = self.range.change_ports_range('tcp', 16384)
+            statusUDP = self.range.change_ports_range('udp', 16384)
 
-        if statusTCP is not False or statusUDP is not False:
-            self.message.show_message(code, '', self.icon)
-        else: pass
+            if statusTCP is not False or statusUDP is not False:
+                self.message.show_message(self.default_values, '', self.icon)
+        except ScanError as exception:
+            error_code = exception.error_code
+            error_description = str(exception)
+            self.message.show_message(error_code, error_description, self.icon)
+        except Exception as exception:
+            self.message.show_message('ERROR_UI_reset_range', str(exception), self.icon)
