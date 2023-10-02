@@ -187,6 +187,7 @@ class Ui_MainWindow(object):
         self.edit_range_btn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.edit_range_btn.setObjectName("edit_range_btn")
         self.edit_range_btn.clicked.connect(lambda: self.show_range_ports_window())
+        self.edit_range_btn.clicked.connect(lambda: self.update_scan_table(self.scan_table))
 
         self.scan_table_layout = QtWidgets.QGridLayout(self.tab_Scan)
         self.scan_table_layout.addWidget(self.scan_table, 0, 0, 1, 3)
@@ -405,6 +406,7 @@ class Ui_MainWindow(object):
         self.action_change_range.setShortcut('Ctrl+C')
         self.action_change_range.setObjectName("action_change_range")
         self.action_change_range.triggered.connect(lambda: self.show_range_ports_window())
+        self.action_change_range.triggered.connect(lambda: self.update_scan_table(self.scan_table))
         self.action_reload_scan = QtWidgets.QAction(main_window)
         self.action_reload_scan.setShortcut('Ctrl+E')
         self.action_reload_scan.setObjectName("action_reload_scan")
