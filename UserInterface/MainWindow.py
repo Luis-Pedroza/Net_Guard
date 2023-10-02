@@ -93,8 +93,8 @@ class Ui_MainWindow(object):
     '''
     def __init__(self) -> None:
         self.counter = TableCounter(1, 65535)
-        self.messages_manager = PopUpMessage()
         self.current_text = SetCurrentText()
+        self.messages_manager = PopUpMessage(self.current_text)
         self.icon_information = QtWidgets.QMessageBox.Information
         self.icon_critical = QtWidgets.QMessageBox.Critical
 
@@ -202,7 +202,7 @@ class Ui_MainWindow(object):
         # ************************* TAB RULES *************************"
         # *************************************************************"
         self.tab_Rules = QtWidgets.QWidget()
-        self.get_searched_rules = RulesTableCreator()
+        self.get_searched_rules = RulesTableCreator(self.current_text)
         self.tab_Rules.setObjectName("tab_Rules")
         self.tabWidget.addTab(self.tab_Rules, "")
 
@@ -418,9 +418,11 @@ class Ui_MainWindow(object):
         self.action_select_Spanish = QtWidgets.QAction(self.menu_select_language)
         self.action_select_Spanish.setObjectName("action_select_Spanish")
         self.action_select_Spanish.triggered.connect(lambda: self.set_language('es'))
+        self.action_select_Spanish.triggered.connect(lambda: self.current_text.set_main_window(self, main_window))
         self.action_select_english = QtWidgets.QAction(self.menu_select_language)
         self.action_select_english.setObjectName("action_select_english")
         self.action_select_english.triggered.connect(lambda: self.set_language('en'))
+        self.action_select_english.triggered.connect(lambda: self.current_text.set_main_window(self, main_window))
 
         self.menu_select_theme = QtWidgets.QMenu(self.menu_bar)
         self.menu_select_theme.setObjectName("menu_select_theme")
@@ -663,7 +665,7 @@ class Ui_MainWindow(object):
 
         '''
         self.initRangeWindow = QtWidgets.QDialog()
-        self.RangeWindow = PortsRangeWindow()
+        self.RangeWindow = PortsRangeWindow(self.current_text)
         self.RangeWindow.setUp_window(self.initRangeWindow)
         self.initRangeWindow.exec_()
 
@@ -689,7 +691,7 @@ class Ui_MainWindow(object):
         profile = self.comboBox_rule_profile.currentIndex()
         direction = self.comboBox_rule_direction.currentIndex()
         self.InitSearchTable = QtWidgets.QDialog()
-        self.searchRule = RulesTableCreator()
+        self.searchRule = RulesTableCreator(self.current_text)
         try:
             self.searchRule.setup_rules_table(self.InitSearchTable, name, profile, direction)
 
@@ -739,7 +741,7 @@ class Ui_MainWindow(object):
                 self.messages_manager.show_message(self.unregistered_port_message, self.unregistered_port_description, self.icon_information)
             else:
                 self.InitSearchTable = QtWidgets.QDialog()
-                self.TableApp = TablePortsCreator(port, protocol, service)
+                self.TableApp = TablePortsCreator(port, protocol, service, self.current_text)
                 self.TableApp.setup_table(self.InitSearchTable)
                 if self.TableApp.new_table.rowCount() == 0:
                     self.messages_manager.show_message(self.port_not_found_message, self.port_not_found_description, self.icon_information)
@@ -799,7 +801,7 @@ class Ui_MainWindow(object):
         '''
         try:
             self.init_rules_dialog = QtWidgets.QDialog()
-            self.RuleWindow = RulesTableCreator()
+            self.RuleWindow = RulesTableCreator(self.current_text)
             self.RuleWindow.init_rule_window(self.init_rules_dialog)
             self.init_rules_dialog.exec_()
         except FirewallManagerError as exception:
@@ -940,5 +942,5 @@ class Ui_MainWindow(object):
         '''
         about_dialog = QtWidgets.QDialog()
         ui_about = UiDialog()
-        ui_about.setupUi(about_dialog)
+        ui_about.setupUi(about_dialog, self.current_text)
         about_dialog.exec_()

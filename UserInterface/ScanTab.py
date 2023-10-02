@@ -42,12 +42,12 @@ class PortsRangeWindow(object):
             Resets the port ranges to default values.
 
     '''
-    def __init__(self):
+    def __init__(self, current_text):
         super().__init__()
-        self.current_text = SetCurrentText()
+        self.current_text = current_text
         self.current_theme = SetCurrentTheme()
         self.range = ScanPorts()
-        self.message = PopUpMessage()
+        self.message = PopUpMessage(current_text)
         self.icon = QtWidgets.QMessageBox.Information
 
     def setUp_window(self, main_window: QtWidgets.QMainWindow):

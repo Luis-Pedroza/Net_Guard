@@ -56,10 +56,10 @@ class RulesTableCreator(object):
             Delete a selected firewall rule.
 
     '''
-    def __init__(self):
-        self.current_text = SetCurrentText()
+    def __init__(self, current_text):
+        self.current_text = current_text
         self.current_theme = SetCurrentTheme()
-        self.message = PopUpMessage()
+        self.message = PopUpMessage(current_text)
         self.rules_connection = FirewallManager()
         self.icon = QtWidgets.QMessageBox.Information
         self.icon_critical = QtWidgets.QMessageBox.Critical

@@ -38,6 +38,8 @@ class PopUpMessage():
         popup.show_message("Error", "An unexpected error occurred.", QMessageBox.Critical)
 
     """
+    def __init__(self, current_text) -> None:
+        self.current_text = current_text
     def show_message(self, code:str, error:str, icon:QMessageBox.Icon):
         """
         Display a pop-up message with the given code, error message, and icon.
@@ -51,7 +53,6 @@ class PopUpMessage():
             None
 
         """
-        current_text = SetCurrentText()
         current_theme = SetCurrentTheme()
         self.mainMessage = QMessageBox()
         self.mainMessage.setText(code)
@@ -59,6 +60,6 @@ class PopUpMessage():
         self.mainMessage.setIcon(icon)
         self.mainMessage.setStandardButtons(QMessageBox.Ok)
         self.mainMessage.setWindowIcon(QIcon("Resources/icon.ico"))
-        current_text.set_alerts(self)
+        self.current_text.set_alerts(self)
         current_theme.set_selected_theme(self.mainMessage)
         self.mainMessage.exec_()
