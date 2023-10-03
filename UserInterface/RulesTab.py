@@ -488,7 +488,7 @@ class RulesTableCreator(object):
                 'profile': self.comboBox_profile.currentIndex(),
                 'election_port': self.comboBox_port.currentIndex(),
                 'port': self.line_edit_port.text(),
-                'election_program': self. comboBox_program.currentText(),
+                'election_program': self. comboBox_program.currentIndex(),
                 'program': self.line_edit_program.text(),
                 'ip': self.text_edit_IP.toPlainText()
             }
