@@ -156,7 +156,7 @@ class PortsRangeWindow(object):
             error_description = str(exception)
             self.message.show_message(error_code, error_description, self.icon)
         except Exception as exception:
-            self.message.show_message('ERROR_UI_change_range', str(exception), self.icon)
+            self.message.show_message('ERROR: UI_Scan_Change', str(exception), self.icon)
 
 
     def reset_default_values(self):
@@ -189,4 +189,4 @@ class PortsRangeWindow(object):
             error_description = str(exception)
             self.message.show_message(error_code, error_description, self.icon)
         except Exception as exception:
-            self.message.show_message('ERROR_UI_reset_range', str(exception), self.icon)
+            self.message.show_message('ERROR: UI_Scan_Reset', str(exception), self.icon)

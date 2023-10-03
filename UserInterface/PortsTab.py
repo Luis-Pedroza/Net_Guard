@@ -113,7 +113,7 @@ class TablePortsCreator(object):
             error_description = str(exception)
             self.error_message.show_message(error_code, error_description, icon = QtWidgets.QMessageBox.Critical)
         except Exception as exception:
-            self.error_message.show_message('ERROR_TablePortsCreator_SetUp', str(exception), icon = QtWidgets.QMessageBox.Information)
+            self.error_message.show_message('ERROR: UI_Ports_SetUp', str(exception), icon = QtWidgets.QMessageBox.Information)
 
     def init_ports_window(self):
         """

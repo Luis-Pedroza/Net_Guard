@@ -141,7 +141,7 @@ class RulesTableCreator(object):
             error_description = str(exception)
             self.message.show_message(error_code, str(error_description), self.icon_critical)
         except Exception as exception:
-            self.message.show_message('ERROR_RulesTableCreator_SetUp_Rules', str(exception), self.icon)
+            self.message.show_message('ERROR: UI_Rules_Table', str(exception), self.icon)
 
 
     def init_rule_window(self, Form: QtWidgets.QDialog, action: bool = False, rule: list = None):
@@ -351,7 +351,7 @@ class RulesTableCreator(object):
             error_description = str(exception)
             self.message.show_message(error_code, error_description, self.icon_critical)
         except Exception as exception:
-            self.message.show_message('ERROR_RulesTableCreator_Add', str(exception), self.icon)
+            self.message.show_message('ERROR: UI_Rules_Add', str(exception), self.icon)
 
 
     def get_selected_rule(self, table: QtWidgets.QTableWidget, row: int):
@@ -388,7 +388,7 @@ class RulesTableCreator(object):
             error_description = str(exception)
             self.message.show_message(error_code, error_description, self.icon_critical)
         except Exception as exception:
-            self.message.show_message('ERROR_TablePortsCreator_Get_Rule', str(exception), self.icon)
+            self.message.show_message('ERROR: UI_Rules_Get', str(exception), self.icon)
 
 
     def setUp_filled_window(self, form: QtWidgets.QDialog, rule: list):
@@ -453,7 +453,7 @@ class RulesTableCreator(object):
             self.btn_right.clicked.connect(lambda: self.delete_selected_rule(rule))
             self.btn_right.clicked.connect(form.close)
         except Exception as exception:
-            self.message.show_message('ERROR_TablePortsCreator_Filled_Window', str(exception), self.icon)
+            self.message.show_message('ERROR: UI_Rules_Fill', str(exception), self.icon)
 
     def edit_selected_rule(self, rule: list):
         '''
@@ -499,7 +499,7 @@ class RulesTableCreator(object):
             error_description = str(exception)
             self.message.show_message(error_code, error_description, self.icon_critical)
         except Exception as exception:
-            self.message.show_message('ERROR_RulesTableCreator_EDIT_RULE', str(exception), self.icon)
+            self.message.show_message('ERROR: UI_Rules_Edit', str(exception), self.icon)
 
     def delete_selected_rule(self, rule: list):
         '''
@@ -531,4 +531,4 @@ class RulesTableCreator(object):
             error_description = str(exception)
             self.message.show_message(error_code, error_description, self.icon_critical)
         except Exception as exception:
-            self.message.show_message('ERROR_RulesTableCreator_Delete_Rule', str(exception), self.icon)
+            self.message.show_message('ERROR: UI_Rules_Delete', str(exception), self.icon)

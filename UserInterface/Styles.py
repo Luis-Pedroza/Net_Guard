@@ -28,7 +28,7 @@ class SetCurrentTheme():
             self.mainMessage.exec_()
         except Exception as exception:
             error_description = str(exception)
-            self.mainMessage.setText('UI_ERROR__UNABLE_TO_set_selected_theme')
+            self.mainMessage.setText('ERROR: UI_Styles_Theme')
             self.mainMessage.setInformativeText(str(exception))
             self.mainMessage.exec_()
 dark_style = """

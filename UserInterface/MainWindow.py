@@ -120,7 +120,7 @@ class Ui_MainWindow(object):
         main_window.setObjectName("main_window")
         main_window.resize(755, 616)
         main_window.setWindowIcon(QtGui.QIcon("Resources/icon.ico"))
-        self.set_selected_theme(main_window)
+        self.change_theme(main_window)
 
         self.central_widget = QtWidgets.QWidget(main_window)
         self.central_widget.setObjectName("central_widget")
@@ -431,11 +431,11 @@ class Ui_MainWindow(object):
         self.action_select_dark = QtWidgets.QAction(self.menu_select_theme)
         self.action_select_dark.setObjectName("action_select_dark")
         self.action_select_dark.triggered.connect(lambda: self.set_theme('dark'))
-        self.action_select_dark.triggered.connect(lambda: self.set_selected_theme(main_window))
+        self.action_select_dark.triggered.connect(lambda: self.change_theme(main_window))
         self.action_select_light = QtWidgets.QAction(self.menu_select_theme)
         self.action_select_light.setObjectName("action_select_light")
         self.action_select_light.triggered.connect(lambda: self.set_theme('light'))
-        self.action_select_light.triggered.connect(lambda: self.set_selected_theme(main_window))
+        self.action_select_light.triggered.connect(lambda: self.change_theme(main_window))
 
         # ************************** HELP **************************"
         self.help_change_range = QtWidgets.QAction(main_window)
@@ -544,7 +544,7 @@ class Ui_MainWindow(object):
             error_description = str(exception)
             self.messages_manager.show_message(error_code, error_description, self.icon_critical)
         except Exception as exception:
-            self.messages_manager.show_message('ERROR_MainWindow_update_scan_table', str(exception), self.icon_information)
+            self.messages_manager.show_message('ERROR: MainWindow_Update_Scan_Table', str(exception), self.icon_information)
 
 
     def update_rules_table(self, mainTable: QtWidgets.QTableWidget):
@@ -590,7 +590,7 @@ class Ui_MainWindow(object):
             error_description = str(exception)
             self.messages_manager.show_message(error_code, error_description, self.icon_critical)
         except Exception as exception:
-            self.messages_manager.show_message('ERROR_MainWindow_Update_Rules_Table', str(exception), self.icon_information)
+            self.messages_manager.show_message('ERROR: MainWindow_Update_Rules_Table', str(exception), self.icon_information)
 
     def update_ports_table(self, mainTable: QtWidgets.QTableWidget):
         '''
@@ -627,7 +627,7 @@ class Ui_MainWindow(object):
             error_description = str(exception)
             self.messages_manager.show_message(error_code, error_description, self.icon_critical)
         except Exception as exception:
-            self.messages_manager.show_message('UI_ERROR__UNABLE_TO_update_ports_table', str(exception), self.icon_information)
+            self.messages_manager.show_message('ERROR: MainWindow_Update_Ports_Table', str(exception), self.icon_information)
 
     def sort_table(self, table: QtWidgets.QTableWidget, column: int):
         '''
@@ -713,7 +713,7 @@ class Ui_MainWindow(object):
             error_description = str(exception)
             self.messages_manager.show_message(error_code, error_description, self.icon_critical)
         except Exception as exception:
-            self.messages_manager.show_message('ERROR_MainWindow_Search_Rule', str(exception), self.icon_information)
+            self.messages_manager.show_message('ERROR: MainWindow_Search_Rule', str(exception), self.icon_information)
 
 
     def show_search_ports_table(self):
@@ -759,7 +759,7 @@ class Ui_MainWindow(object):
             error_description = str(exception)
             self.messages_manager.show_message(error_code, error_description, self.icon_critical)
         except Exception as exception:
-            self.messages_manager.show_message('UI_ERROR__UNABLE_TO_show_search_ports_table', str(exception), self.icon_information)
+            self.messages_manager.show_message('ERROR: MainWindow_Search_Port', str(exception), self.icon_information)
 
 
     def show_scan_table_info(self):
@@ -782,7 +782,6 @@ class Ui_MainWindow(object):
         '''
         code = 'This does not work'
         message = 'still in develop'
-        icon = QtWidgets.QMessageBox.Information
         self.messages_manager.show_message(code, message, self.icon_information)
 
     def show_new_rule_window(self):
@@ -813,7 +812,7 @@ class Ui_MainWindow(object):
             error_description = str(exception)
             self.messages_manager.show_message(error_code, error_description, self.icon_critical)
         except Exception as exception:
-            self.messages_manager.show_message('ERROR_MainWindow_New_Rule_Window', exception, self.icon_critical)
+            self.messages_manager.show_message('ERROR: MainWindow_New_Rule', exception, self.icon_critical)
 
     def show_ports_table_info(self):
         '''
@@ -849,7 +848,7 @@ class Ui_MainWindow(object):
             error_description = str(exception)
             self.messages_manager.show_message(error_code, error_description, self.icon_critical)
         except Exception as exception:
-            self.messages_manager.show_message('ERROR_MainWindow_save_report', str(exception), self.icon_information)
+            self.messages_manager.show_message('ERROR: MainWindow_Save_Report', str(exception), self.icon_information)
 
     def set_language(self, language: str):
         self.language = LanguageManager()
@@ -860,7 +859,7 @@ class Ui_MainWindow(object):
             error_description = str(exception)
             self.messages_manager.show_message(error_code, error_description, self.icon_critical)
         except Exception as exception:
-            self.messages_manager.show_message('UI_ERROR__UNABLE_TO_set_language', str(exception), self.icon_information)
+            self.messages_manager.show_message('ERROR: MainWindow_Set_Language', str(exception), self.icon_information)
 
     def set_theme(self, theme: str):
         self.themeManager = ThemeManager()
@@ -871,9 +870,9 @@ class Ui_MainWindow(object):
             error_description = str(exception)
             self.messages_manager.show_message(error_code, error_description, self.icon_critical)
         except Exception as exception:
-            self.messages_manager.show_message('UI_ERROR__UNABLE_TO_set_theme', str(exception), self.icon_information)
+            self.messages_manager.show_message('ERROR: MainWindow_Set_Theme', str(exception), self.icon_information)
 
-    def set_selected_theme(self, main_window):
+    def change_theme(self, main_window):
         try:
             self.theme.set_selected_theme(main_window)
         except ErrorDataManager as exception:
@@ -881,7 +880,7 @@ class Ui_MainWindow(object):
             error_description = str(exception)
             self.messages_manager.show_message(error_code, error_description, self.icon_critical)
         except Exception as exception:
-            self.messages_manager.show_message('UI_ERROR__UNABLE_TO_set_selected_theme', str(exception), self.icon_information)
+            self.messages_manager.show_message('ERROR: MainWindow_Change_Theme', str(exception), self.icon_information)
 
     def next_value(self, mainTable: QtWidgets.QTableWidget):
         '''

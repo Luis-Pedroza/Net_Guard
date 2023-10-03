@@ -78,7 +78,7 @@ class SetCurrentText():
             self.mainMessage.exec_()
         except Exception as exception:
             error_description = str(exception)
-            self.mainMessage.setText('ERROR_SetCurrentText_Translator')
+            self.mainMessage.setText('ERROR: UI_Text_Translator')
             self.mainMessage.setInformativeText(str(exception))
             self.mainMessage.exec_()
 
