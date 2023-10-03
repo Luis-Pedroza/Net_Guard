@@ -838,10 +838,14 @@ class Ui_MainWindow(object):
         self.messages_manager.show_message(code, message, self.icon_information)
 
     def save_report(self, table: QtWidgets.QTableWidget, value: bool):
+        QtWidgets.QApplication.setOverrideCursor(QtGui.QCursor(QtCore.Qt.WaitCursor))
+        QtWidgets.QApplication.processEvents()
+
         self.report_manager = ReportPDF()
         report_path = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.DocumentsLocation)
         try:
             self.report_manager.save_to_PDF(report_path, table, value)
+            QtWidgets.QApplication.restoreOverrideCursor()
             self.messages_manager.show_message(self.report_saved_message, '', self.icon_information)
         except ErrorReport as exception:
             error_code = exception.error_code

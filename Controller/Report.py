@@ -78,8 +78,10 @@ class ReportPDF():
 
             if save_value:
                 text = "Active connections"
+                header = ["Protocol", "Local Address", "Remote Address", "State", "PID", "Program"]
             else:
                 text = "List of Firewall rules"
+                header = ["Rule", "Enable", "Profile", "Action", "Direction", "Protocol"]
 
             date_text = f"Date: {current_date}"
 
@@ -91,7 +93,6 @@ class ReportPDF():
             header_table.spaceAfter = 20
             data_template.append(header_table)
 
-            header = ["Protocol", "Local Address", "Remote Address", "State", "PID", "Program"]
             table_template.append(header)
 
             for row in range(data_table.rowCount()):
