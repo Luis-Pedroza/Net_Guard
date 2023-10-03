@@ -1,3 +1,14 @@
+# ***************************************************
+# FILE: SetText.py
+#
+# DESCRIPTION: 
+# The file contains all the text used in the UI
+# Is used for translations
+#
+# AUTHOR:  Luis Pedroza
+# CREATED: 21/09/2023 (dd/mm/yyyy)
+# ******************* ********************************
+
 from PyQt5 import QtCore
 from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtGui import QIcon
