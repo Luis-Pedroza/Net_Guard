@@ -20,8 +20,6 @@ class DatabaseConnection():
     A class for interacting with a SQLite database.
 
     Attributes:
-        popUpMessage (PopUpMessage): Class for handling exceptions.
-        icon (QMessageBox.Icon): An icon for message boxes in case of errors.
         db_name (str): The name of the database.
         connection (sqlite3.Connection): The SQLite database connection.
 
@@ -35,7 +33,7 @@ class DatabaseConnection():
         disconnect(self)
             Close the connection to the database.
 
-        query(self, query: str, params=None)
+        query(self, query: str, params: tuple=None)
             Execute a query on the database and retrieve data.
 
     """
@@ -64,9 +62,9 @@ class DatabaseConnection():
         try:
             self.connection = sqlite3.connect(self.db_name)
         except sqlite3.Error as exception:
-            raise ErrorConnection('ERROR_sqlite3_connect', str(exception)) from exception
+            raise ErrorConnection('ERROR: sqlite3_connect', str(exception)) from exception
         except Exception as exception:
-            raise ErrorConnection('ERROR_DatabaseConnection_connect', str(exception)) from exception
+            raise ErrorConnection('ERROR: DB_connect', str(exception)) from exception
 
 
     def disconnect(self):
@@ -91,9 +89,9 @@ class DatabaseConnection():
         try:
             self.connection.close()
         except sqlite3.Error as exception:
-            raise ErrorConnection('ERROR_sqlite3_disconnect', str(exception)) from exception
+            raise ErrorConnection('ERROR: sqlite3_disconnect', str(exception)) from exception
         except Exception as exception:
-            raise ErrorConnection('ERROR_DatabaseConnection_disconnect', str(exception)) from exception
+            raise ErrorConnection('ERROR: DB_disconnect', str(exception)) from exception
 
     def query(self, query: str, params: tuple = None) -> list[tuple]:
         """
@@ -125,9 +123,9 @@ class DatabaseConnection():
             self.connection.commit()
             return cursor.fetchall()
         except sqlite3.Error as exception:
-            raise ErrorConnection('ERROR_sqlite3_query', str(exception))
+            raise ErrorConnection('ERROR: sqlite3_query', str(exception))
         except Exception as exception:
-            raise ErrorConnection('ERROR_DatabaseConnection_query', str(exception)) from exception        
+            raise ErrorConnection('ERROR: DB_query', str(exception)) from exception        
 
 
 class ErrorConnection(Exception):
