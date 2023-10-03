@@ -1,3 +1,16 @@
+# ***************************************************
+# FILE: name.py
+#
+# DESCRIPTION: 
+# This allows user to change the theme on the UI
+# It contains the dark_style specifications
+# The SetCurrentTheme class allows to change between
+# dark and default value (light)
+#
+# AUTHOR:  Luis Pedroza
+# CREATED: 21/09/2023 (dd/mm/yyyy)
+# ******************* ********************************
+
 from PyQt5 import QtCore
 from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtGui import QIcon
@@ -5,7 +18,27 @@ from Controller.Configuration import ThemeManager, ErrorDataManager
 
 
 class SetCurrentTheme():
+    '''
+    A class for setting the current theme of the main window.
+
+    Methods:
+        set_selected_theme(self, main_window):
+            Sets the selected theme for the main window based on user preferences.
+
+    '''
     def set_selected_theme(self, main_window):
+        '''
+        Sets the selected theme for the main window based on user preferences.
+
+        Args:
+            main_window: The main window of the application.
+
+        Example Usage:
+            theme_manager = SetCurrentTheme()
+            main_window = QtWidgets.QMainWindow()
+            theme_manager.set_selected_theme(main_window)
+
+        '''
         self.theme = ThemeManager()
         self._translate = QtCore.QCoreApplication.translate
         self.mainMessage = QMessageBox()
