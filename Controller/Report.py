@@ -17,7 +17,6 @@
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Image
 from reportlab.lib import colors, pagesizes, styles
 from reportlab.pdfgen import canvas
-from PyQt5.QtWidgets import QMessageBox, QTableWidget
 import datetime
 import os
 
@@ -34,7 +33,7 @@ class ReportPDF():
             Adds page numbers to the generated PDF.
 
     """
-    def save_to_PDF(self, report_path: str, data_table: QTableWidget, save_value: bool):
+    def save_to_PDF(self, report_path: str, data_table, save_value: bool):
         """
         Saves a PDF report based on the provided data and options.
 
@@ -119,7 +118,7 @@ class ReportPDF():
             data_template.append(data_table)
             report.build(data_template, onFirstPage=self.add_page_number, onLaterPages=self.add_page_number)
         except Exception as exception:
-            raise ErrorReport('ERROR_ReportPDF_save_to_PDF', str(exception))
+            raise ErrorReport('ERROR: Report_Save', str(exception))
 
     def add_page_number(self, canvas: canvas.Canvas, doc: SimpleDocTemplate):
         """

@@ -27,9 +27,6 @@ class FirewallManager():
     A class for managing firewall rules.
 
     Attributes:
-        message (PopUpMessage): An instance of PopUpMessage for displaying pop-up messages.
-        iconFail (QMessageBox.Icon): An icon for displaying error messages.
-        iconCorrect (QMessageBox.Icon): An icon for displaying success messages.
         firewall: An instance of the Windows Firewall policy.
 
     Methods:
@@ -138,10 +135,10 @@ class FirewallManager():
             if com_error_info and len(com_error_info) > 5:
                 error_code = com_error_info[5]
                 error_message = win32api.FormatMessage(error_code)
-                raise FirewallManagerError('ERROR_win32api_Add: ', str(error_message)) from exception
+                raise FirewallManagerError('ERROR: Rules_win32api_Add: ', str(error_message)) from exception
             else:
                 error_message = str(exception)
-                raise FirewallManagerError('ERROR_FirewallManager_Add', error_message) from exception
+                raise FirewallManagerError('ERROR: FirewallManager_Add', error_message) from exception
   
 
     def get_all_rules(self) -> list[dict]:
@@ -183,7 +180,7 @@ class FirewallManager():
                 firewall_rules.append(rule_info)
             return firewall_rules
         except Exception as exception:
-            raise FirewallManagerError('ERROR_FirewallManager_GET_ALL', str(exception)) from exception  
+            raise FirewallManagerError('ERROR: FirewallManager_GetAll', str(exception)) from exception  
 
     def get_searched_rule(self, name: str, profile: int = None, direction: int = None) -> list[list]:
         """
@@ -227,7 +224,7 @@ class FirewallManager():
                     rules_list = self.enlist_rules(rule, rules_list)
             return rules_list
         except Exception as exception:
-            raise FirewallManagerError('ERROR_FirewallManager_GET_SEARCH', str(exception)) from exception   
+            raise FirewallManagerError('ERROR: FirewallManager_GetSearch', str(exception)) from exception   
 
     def enlist_rules(self, rule: win32com.client.CDispatch, rules_list: list) -> list:
         """
@@ -394,10 +391,10 @@ class FirewallManager():
             if com_error_info and len(com_error_info) > 5:
                 error_code = com_error_info[5]
                 error_message = win32api.FormatMessage(error_code)
-                raise FirewallManagerError('ERROR_win32api_Edit_Rule: ', str(error_message)) from exception
+                raise FirewallManagerError('ERROR: Rules_win32api_Edit: ', str(error_message)) from exception
             else:
                 error_message = str(exception)
-                raise FirewallManagerError('ERROR_FirewallManager_Edit_Rule', error_message) from exception
+                raise FirewallManagerError('ERROR: FirewallManager_Edit', error_message) from exception
 
     def delete_selected_rule(self, name: str, direction: str, profile: str, protocol: str):
         """
@@ -434,10 +431,10 @@ class FirewallManager():
             if com_error_info and len(com_error_info) > 5:
                 error_code = com_error_info[5]
                 error_message = win32api.FormatMessage(error_code)
-                raise FirewallManagerError('ERROR_win32api_Delete_Rule: ', str(error_message)) from exception
+                raise FirewallManagerError('ERROR: Rules_win32api_Delete: ', str(error_message)) from exception
             else:
                 error_message = str(exception)
-                raise FirewallManagerError('ERROR_FirewallManager_Delete_Rule', error_message) from exception
+                raise FirewallManagerError('ERROR: FirewallManager_Delete', error_message) from exception
 
     def get_protocol_name(self, protocol: int) -> str:
         """
@@ -515,6 +512,21 @@ class FirewallManager():
             return profiles
         
     def check_port(self, input_str: str):
+        '''
+        Checks if a given string contains valid port ranges separated by commas.
+
+        Args:
+            input_str (str): A string containing port ranges, separated by commas.
+
+        Returns:
+            bool: True if the input string contains valid port ranges; otherwise, False.
+
+        Example Usage:
+            checker = YourClassName()
+            is_valid = checker.check_port("80, 8080, 1000-2000")
+            # Returns True
+
+        '''
         input_str = input_str.strip()
         values = input_str.split(',')
         
@@ -531,6 +543,21 @@ class FirewallManager():
         return True
 
     def check_ip(self, ip_str: str):
+        '''
+        Checks if a given string represents a valid IP address or IP address range.
+
+        Args:
+            ip_str (str): A string containing an IP address or IP address range.
+
+        Returns:
+            bool: True if the input string represents a valid IP address or range; otherwise, False.
+
+        Example Usage:
+            checker = YourClassName()
+            is_valid = checker.check_ip("192.168.0.1")
+            # Returns True
+
+        '''
         ip_parts = ip_str.split("-")
         if len(ip_parts) == 2:
             start_ip_str, end_ip_str = ip_parts

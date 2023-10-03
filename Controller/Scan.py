@@ -21,8 +21,7 @@ class ScanPorts():
     A class for scanning and managing active network ports and port ranges.
 
     Attributes:
-        message (PopUpMessage): A class for displaying pop-up messages.
-        icon (QMessageBox.Icon): An icon for message boxes in case of errors.
+        None
 
     Methods:
         scan_active_ports():
@@ -51,7 +50,7 @@ class ScanPorts():
                   local address, remote address, status, process ID, and program name.
 
         Raises:
-            - Displays a pop-up message if there are errors while retrieving process names.
+            Various exceptions if there is an issue while getting the data
 
         Example Usage:
             active_ports = ScanPorts.scan_active_ports()
@@ -80,9 +79,9 @@ class ScanPorts():
                 connection_data.append([protocol, local_address, remote_address, status, pid, program])
             return connection_data
         except psutil.Error as exception:
-            raise ScanError('UNABLE_To_Execute_Command_in_scan_active_ports_psutil', str(exception))
+            raise ScanError('ERROR: Scan_psutil_ActivePorts', str(exception))
         except Exception as exception:
-            raise ScanError('UNABLE_To_Execute_Command_in_scan_active_ports_except', str(exception))
+            raise ScanError('ERROR: Scan_ActivePorts', str(exception))
 
     def get_ports_range(self) -> list:
         """
@@ -96,7 +95,7 @@ class ScanPorts():
                   local address, remote address, status, process ID, and program name.
 
         Raises:
-            - Displays a pop-up message if there are errors while retrieving process names.
+            Various exceptions if there are errors while retrieving process names.
 
         Example Usage:
             active_ports = ScanPorts.scan_active_ports()
@@ -116,9 +115,9 @@ class ScanPorts():
             else:
                 return str(output_TCP.stdout), str(output_UDP.stdout)
         except subprocess.CalledProcessError as exception:
-            raise ScanError('UNABLE_To_Execute_Command_in_get_ports_range_subprocess', str(exception))
+            raise ScanError('ERROR: Scan_subprocess_GetRange', str(exception))
         except Exception as exception:
-            raise ScanError('UNABLE_To_Execute_Command_in_get_ports_range_exception', str(exception))
+            raise ScanError('ERROR: Scan_GetRange', str(exception))
 
     def change_ports_range(self, protocol: str, range: int) -> bool:
         """
@@ -132,7 +131,7 @@ class ScanPorts():
             bool: True if the port range was successfully changed; False otherwise.
 
         Raises:
-            - Displays a pop-up message if there are errors while executing system commands.
+            Various exceptions if there are errors while executing system commands.
 
         Example Usage:
             if scan_ports.change_ports_range('TCP', 10000):
@@ -152,9 +151,9 @@ class ScanPorts():
                 status = True
             return status
         except subprocess.CalledProcessError as exception:
-            raise ScanError('ERROR_ScanPorts_change_subprocess', str(exception))
+            raise ScanError('ERROR: Scan_subprocess_ChangeRange', str(exception))
         except Exception as exception:
-            raise ScanError('ERROR_ScanPorts_change_Exception', str(exception))
+            raise ScanError('ERROR: Scan_ChangeRange', str(exception))
 
 
 class ScanError(Exception):
