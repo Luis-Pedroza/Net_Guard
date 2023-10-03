@@ -20,11 +20,11 @@
 # ***************************************************
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+from Controller.Configuration import LanguageManager, ThemeManager, ErrorDataManager
 from Controller.Ports import GetPortsData, TableCounter, ErrorPorts
 from Controller.Rules import FirewallManager, FirewallManagerError
 from Controller.Report import ReportPDF, ErrorReport
 from Controller.Scan import ScanPorts, ScanError
-from Controller.Configuration import LanguageManager, ThemeManager, ErrorDataManager
 from .RulesTab import RulesTableCreator
 from .PortsTab import TablePortsCreator
 from .ScanTab import PortsRangeWindow
