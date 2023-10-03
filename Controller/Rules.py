@@ -18,6 +18,8 @@
 
 import win32com.client
 import win32api
+import ipaddress
+import os
 
 
 class FirewallManager():
@@ -103,17 +105,33 @@ class FirewallManager():
             else:
                 new_rule.Profiles = profile
 
-            # check value
             if rule['port'] is not None and rule['direction'] == 0:
-                new_rule.LocalPorts = str(rule['selected_port'])
+                port_value = self.check_port(str(rule['selected_port']))
+                if port_value:
+                    new_rule.LocalPorts = str(rule['selected_port'])
+                else:
+                    raise FirewallManagerError('', 'ERROR_PORT_VALUE')
             elif rule['port'] is not None and rule['direction'] == 1:
-                new_rule.RemotePorts = str(rule['selected_port'])
-            # check value
+                port_value = self.check_port(str(rule['selected_port']))
+                if port_value:
+                    new_rule.RemotePorts = str(rule['selected_port'])
+                else:
+                    raise FirewallManagerError('', 'ERROR_PORT_VALUE')
+
             if rule['program'] is not None:
-                new_rule.ApplicationName = rule['selected_program']
-            # check value
+                path = os.path.exists(rule['selected_program'])
+                if path:
+                    new_rule.ApplicationName = rule['selected_program']
+                else:
+                    raise FirewallManagerError('', 'ERROR_PATH_VALUE')
+
             if rule['ip'] is not None:
-                new_rule.RemoteAddresses = rule['ip']
+                ip_value = self.check_ip(rule['ip'])
+                if ip_value:
+                    new_rule.RemoteAddresses = rule['ip']
+                else:
+                    raise FirewallManagerError('', 'ERROR_IP_VALUE')
+
             self.firewall.Rules.Add(new_rule)
         except Exception as exception:
             com_error_info = getattr(exception, 'excepinfo', None)
@@ -376,6 +394,46 @@ class FirewallManager():
                 error_message = str(exception)
                 raise FirewallManagerError('ERROR_FirewallManager_Edit_Rule', error_message) from exception
 
+    def delete_selected_rule(self, name: str, direction: str, profile: str, protocol: str):
+        """
+        Deletes a selected firewall rule based on the provided parameters.
+
+        Args:
+            name (str): The name of the firewall rule to be deleted.
+            direction (str): The direction of the firewall rule, either 'Inbound' or 'Outbound'.
+            profile (str): The profile of the firewall rule.
+            protocol (str): The protocol of the firewall rule.
+
+        Returns:
+            None
+
+        Raises:
+            Various exceptions if there is an issue while deleting the rule.
+
+        Example Usage:
+            firewall_rules = FirewallManager()
+            firewall_rules.delete_selected_rule("MyRule", "Inbound", "Private", "TCP")
+
+        Note:
+            HNetCfg.FwPolicy2 can delete only by name, so this method will delete
+            all rules with the given name. It does not use any other parameters
+
+        """
+        rules = self.firewall.Rules
+        try:
+            for rule in rules:
+                if rule.Name.lower() == name.lower():
+                    rules.Remove(rule.Name)
+        except Exception as exception:
+            com_error_info = getattr(exception, 'excepinfo', None)
+            if com_error_info and len(com_error_info) > 5:
+                error_code = com_error_info[5]
+                error_message = win32api.FormatMessage(error_code)
+                raise FirewallManagerError('ERROR_win32api_Delete_Rule: ', str(error_message)) from exception
+            else:
+                error_message = str(exception)
+                raise FirewallManagerError('ERROR_FirewallManager_Delete_Rule', error_message) from exception
+
     def get_protocol_name(self, protocol: int) -> str:
         """
         Maps a protocol number to its corresponding name.
@@ -450,46 +508,35 @@ class FirewallManager():
             if profile & 4:
                 profiles.append("Public")
             return profiles
+        
+    def check_port(self, input_str: str):
+        input_str = input_str.strip()
+        values = input_str.split(',')
+        
+        for value in values:
+            if '-' in value:
+                start, end = value.split('-')
+                if start.isdigit() and end.isdigit():
+                    start, end = int(start), int(end)
+                    if start <= end:
+                        continue
+            elif value.isdigit():
+                continue
+            return False
+        return True
 
-    def delete_selected_rule(self, name: str, direction: str, profile: str, protocol: str):
-        """
-        Deletes a selected firewall rule based on the provided parameters.
-
-        Args:
-            name (str): The name of the firewall rule to be deleted.
-            direction (str): The direction of the firewall rule, either 'Inbound' or 'Outbound'.
-            profile (str): The profile of the firewall rule.
-            protocol (str): The protocol of the firewall rule.
-
-        Returns:
-            None
-
-        Raises:
-            Various exceptions if there is an issue while deleting the rule.
-
-        Example Usage:
-            firewall_rules = FirewallManager()
-            firewall_rules.delete_selected_rule("MyRule", "Inbound", "Private", "TCP")
-
-        Note:
-            HNetCfg.FwPolicy2 can delete only by name, so this method will delete
-            all rules with the given name. It does not use any other parameters
-
-        """
-        rules = self.firewall.Rules
-        try:
-            for rule in rules:
-                if rule.Name.lower() == name.lower():
-                    rules.Remove(rule.Name)
-        except Exception as exception:
-            com_error_info = getattr(exception, 'excepinfo', None)
-            if com_error_info and len(com_error_info) > 5:
-                error_code = com_error_info[5]
-                error_message = win32api.FormatMessage(error_code)
-                raise FirewallManagerError('ERROR_win32api_Delete_Rule: ', str(error_message)) from exception
-            else:
-                error_message = str(exception)
-                raise FirewallManagerError('ERROR_FirewallManager_Delete_Rule', error_message) from exception
+    def check_ip(self, ip_str: str):
+        ip_parts = ip_str.split("-")
+        if len(ip_parts) == 2:
+            start_ip_str, end_ip_str = ip_parts
+            start_ip = ipaddress.ip_address(start_ip_str.strip())
+            end_ip = ipaddress.ip_address(end_ip_str.strip())
+            if start_ip <= end_ip:
+                return True
+        else:
+            ipaddress.ip_address(ip_str.strip())
+            return True
+        return False
 
 
 class FirewallManagerError(Exception):

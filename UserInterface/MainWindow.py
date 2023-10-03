@@ -403,6 +403,7 @@ class Ui_MainWindow(object):
         self.action_new_rule.setShortcut('Ctrl+N')
         self.action_new_rule.setObjectName("action_new_rule")
         self.action_new_rule.triggered.connect(lambda: self.show_new_rule_window())
+        self.action_new_rule.triggered.connect(lambda: self.update_rules_table(self.rules_table))
         self.action_change_range = QtWidgets.QAction(main_window)
         self.action_change_range.setShortcut('Ctrl+C')
         self.action_change_range.setObjectName("action_change_range")
