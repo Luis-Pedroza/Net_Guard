@@ -24,7 +24,6 @@ class GetPortsData():
 
     Attributes:
         database (DatabaseConnection): Manages the connection to the database.
-        popUpMessage (PopUpMessage): Handles exceptions and error messages.
 
     Methods:
         __init__(self)
@@ -71,7 +70,7 @@ class GetPortsData():
             error_description = str(exception)
             raise ErrorPorts(error_code, error_description)
         except Exception as exception:
-            raise ErrorPorts('ERROR_GetPortsData_GET_ALL', str(exception))
+            raise ErrorPorts('ERROR: Ports_GetAll', str(exception))
 
     def get_search(self, port: int, protocol: str, service: str) -> list[tuple]:
         """
@@ -106,7 +105,7 @@ class GetPortsData():
                 error_description = str(exception)
                 raise ErrorPorts(error_code, error_description)
             except Exception as exception:
-                raise ErrorPorts('ERROR_GetPortsData_GET_Both_Service', str(exception))
+                raise ErrorPorts('ERROR: Ports_GetBoth_Service', str(exception))
         # if port isn't 0 then search by port and show both protocols (TCP & UDP)
         elif protocol == 0 and port != 0:
             try:
@@ -121,7 +120,7 @@ class GetPortsData():
                 error_description = str(exception)
                 raise ErrorPorts(error_code, error_description)
             except Exception as exception:
-                raise ErrorPorts('ERROR_GetPortsData_GET_Both_Ports', str(exception))
+                raise ErrorPorts('ERROR: Ports_GetBoth_Ports', str(exception))
         # if protocol isn't both specify the protocol
         else:
             if protocol == 1:
@@ -142,7 +141,7 @@ class GetPortsData():
                     error_description = str(exception)
                     raise ErrorPorts(error_code, error_description)
                 except Exception as exception:
-                    raise ErrorPorts('ERROR_GetPortsData_GET__Service', str(exception))
+                    raise ErrorPorts('ERROR: Ports_Get_Service', str(exception))
             # if port isn't 0 then search by port and specify the protocol
             else:
                 try:
@@ -157,7 +156,7 @@ class GetPortsData():
                     error_description = str(exception)
                     raise ErrorPorts(error_code, error_description)
                 except Exception as exception:
-                    raise ErrorPorts('ERROR_GetPortsData_GET__Port', str(exception))
+                    raise ErrorPorts('ERROR: Ports_Get_Port', str(exception))
 
 
 class TableCounter():
