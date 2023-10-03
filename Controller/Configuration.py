@@ -67,7 +67,7 @@ class DataManager():
             error_description = str(exception)
             raise ErrorDataManager(error_code, error_description)
         except Exception as exception:
-            raise ErrorDataManager('ERROR_DataManager_GET', str(exception))
+            raise ErrorDataManager('ERROR: DataManager_GET', str(exception))
 
     def set_data(self, value: str):
         '''
@@ -100,7 +100,7 @@ class DataManager():
             error_description = str(exception)
             raise ErrorDataManager(error_code, error_description)
         except Exception as exception:
-            raise ErrorDataManager('ERROR_DataManager_SET', str(exception))
+            raise ErrorDataManager('ERROR: DataManager_SET', str(exception))
 
 
 class LanguageManager(DataManager):
@@ -144,7 +144,7 @@ class LanguageManager(DataManager):
         try:
             return self.get_data()
         except ErrorDataManager as exception:
-            raise ErrorDataManager('ERROR_LanguageManager_GET', str(exception))
+            raise ErrorDataManager('ERROR: LanguageManager_GET', str(exception))
 
     def set_language(self, language: str):
         '''
@@ -167,7 +167,7 @@ class LanguageManager(DataManager):
         try:
             self.set_data(language)
         except ErrorDataManager as exception:
-            raise ErrorDataManager('ERROR_LanguageManager_SET', str(exception))
+            raise ErrorDataManager('ERROR: LanguageManager_SET', str(exception))
 
 
 class ThemeManager(DataManager):
@@ -211,7 +211,7 @@ class ThemeManager(DataManager):
         try:
             return self.get_data()
         except ErrorDataManager as exception:
-            raise ErrorDataManager('ERROR_LanguageManager_GET', str(exception))
+            raise ErrorDataManager('ERROR: ThemeManager_GET', str(exception))
 
     def set_theme(self, theme: str):
         '''
@@ -234,7 +234,7 @@ class ThemeManager(DataManager):
         try:
             self.set_data(theme)
         except ErrorDataManager as exception:
-            raise ErrorDataManager('ERROR_LanguageManager_SET', str(exception))
+            raise ErrorDataManager('ERROR: ThemeManager_SET', str(exception))
 
 
 class ErrorDataManager(Exception):
