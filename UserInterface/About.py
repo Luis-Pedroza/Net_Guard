@@ -56,7 +56,7 @@ class UiDialog(object):
         self.current_text = current_text
         self.theme = current_theme
         Dialog.setObjectName("Dialog")
-        Dialog.resize(500, 350)
+        Dialog.setFixedSize(500, 350)
         Dialog.setWindowIcon(QtGui.QIcon("Resources/icon.ico"))
         flags = Dialog.windowFlags()
         Dialog.setWindowFlags(flags & ~QtCore.Qt.WindowContextHelpButtonHint)
