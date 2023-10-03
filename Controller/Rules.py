@@ -322,7 +322,6 @@ class FirewallManager():
             firewall_rules.edit_selected_rule(rule)
 
         """
-        # Check exceptions of invalid user inputs
         rules = self.firewall.Rules
         try:
             profile = None if self.get_profiles(rule_dict['old_profile']) == 7 else self.get_profiles(rule_dict['old_profile'])
@@ -333,18 +332,17 @@ class FirewallManager():
                 if rule.Name.lower() == rule_dict['old_name'].lower() and \
                     (profile is None or rule.Profiles == profile) and \
                         (rule_dict['direction'] is None or rule.Direction == old_direction):
-
                     rule.Name = rule_dict['name']
                     rule.Description = 'None' if rule_dict['description'] == '' else rule_dict['description']
                     rule.Action = rule_dict['action']
                     rule.Enabled = rule_dict['enable']
                     rule.Direction = 1 if rule_dict['direction'] == 0 else 2
 
-                    if rule_dict['protocol'] == 'TCP':
+                    if rule_dict['protocol'] == 1:
                         rule.Protocol = 6
-                    elif rule_dict['protocol'] == 'UDP':
+                    elif rule_dict['protocol'] == 2:
                         rule.Protocol = 17
-                    elif rule_dict['protocol'] == 'Any':
+                    elif rule_dict['protocol'] == 0:
                         if rule.Protocol == 256:
                             pass
                         else:
@@ -365,8 +363,11 @@ class FirewallManager():
                         if rule_dict['protocol'] == 0:
                             pass
                         elif rule_dict['direction'] == 0:
-                            # check value
-                            rule.LocalPorts = str(port)
+                            port_value = self.check_port(str(port))
+                            if port_value:
+                                rule.LocalPorts = str(port)
+                            else:
+                                raise FirewallManagerError('', 'ERROR_PORT_VALUE')
                         elif rule_dict['direction'] == 1:
                             rule.RemotePorts = str(port)
                     else:
@@ -374,16 +375,20 @@ class FirewallManager():
                         rule.RemotePorts = ''
 
                     if rule_dict['ip']:
-                        # check value
-                        rule.RemoteAddresses = rule_dict['ip']
+                        ip_value = self.check_ip(rule_dict['ip'])
+                        if ip_value:
+                            rule.RemoteAddresses = rule_dict['ip']
+                        else:
+                            raise FirewallManagerError('', 'ERROR_IP_VALUE')
                     else: rule.RemoteAddresses = '*'
 
                     if rule_dict['election_program'] == 'Select':
-                        # check value
-                        rule.ApplicationName = program
-                    # This line doesn't work
-                    # else:
-                    #     rule.ApplicationName = ''
+                        path = os.path.exists(program)
+                        if path:
+                            rule.ApplicationName = program
+                        else:
+                            raise FirewallManagerError('', 'ERROR_PATH_VALUE')
+
         except Exception as exception:
             com_error_info = getattr(exception, 'excepinfo', None)
             if com_error_info and len(com_error_info) > 5:
