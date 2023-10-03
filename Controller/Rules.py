@@ -379,7 +379,7 @@ class FirewallManager():
                             raise FirewallManagerError('', 'ERROR_IP_VALUE')
                     else: rule.RemoteAddresses = '*'
 
-                    if rule_dict['election_program'] == 'Select':
+                    if rule_dict['election_program'] == 1:
                         path = os.path.exists(program)
                         if path:
                             rule.ApplicationName = program
